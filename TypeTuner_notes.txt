@@ -1,0 +1,228 @@
+tag-centric may be better since interaction tests are based on tags
+and left over feat-val tags must be processed
+
+$feat_all{'version'}
+
+$feat_all{'features'}{' tags'} ordered list based on file order
+
+$feat_all{'features'}{$tag}{'name'}
+$feat_all{'features'}{$tag}{'default'}
+
+$feat_all{'features'}{$tag}{'values'}{' tags'} ordered list based on file order
+
+$feat_all{'features'}{$tag}{'values'}{$tag}{'name'}
+
+$feat_all{'features'}{$tag}{'values'}{$tag}{'cmds'}[$ix]{'cmd'} 
+$feat_all{'features'}{$tag}{'values'}{$tag}{'cmds'}[$ix]{'args'}
+or
+$feat_all{'features'}{$tag}{'values'}{$tag}{'cmds'}[$ix]{'cmd_block'}
+
+for outputing feat_set XML file
+$feat_all{'features'}{' tags'}[$ix];
+$feat_all{'features'}{$tag}{'values'}{' tags'}[$ix];
+
+for easy handling of feat_set data use to produce feature-value setting strings:
+$feat_tag{$name}
+
+feature value is not needed really but useful for specifying the default value
+	easier to make feat_set XML
+	easier for human readable default, avoids searching for null cmd
+features, interactions, cmd_blocks, aliases elements not really needed
+	human readablility?
+feature names must be unique
+value names must be unique within  feature
+if a value name repeats, the tag must be the same
+
+<!-- designer -->
+<all_features version="1.0">
+<features>
+	<feature name="Capital Eng alternates" value="Large eng with descender" tag="EN">
+	<!-- multi-valued -->
+		<value name="Large eng with descender" tag="d">
+			<cmd name="null" args="null"/> <!-- maybe not needed -->
+		</value>
+		<value name="Large eng on baseline" tag="b">
+			<cmd name="encode" args="<usv> <ps_name>"/>
+			<cmd name="gr_feat" args="1024 1"/> <!-- mix Graphite support in? -->
+		</value>
+		<value name="Capital N with tail" tag="t">
+			<cmd name="encode" args="<usv> <ps_name>"/>
+			<cmd name="gr_feat" args="<feat> <value>"/>
+		</value>
+	</feature>
+	<feature name="Cyrillic E alternates" value="true" tag="CE">
+	<!-- binary value -->
+		<value name = "False" tag="f">
+			<cmd name="null" args="null" />
+		</value>
+		<value name="True" tag="t">
+			<cmd name="encode" args="<usv> <ps_nm>"/>
+			<cmd name="encode" args=""/>
+			<cmd name="gr_feat" args=""/>
+		</value>
+	</feature>
+	<feature name="Vietnamese-style diacritics" tag="V">
+	<!-- lookup changes, use lookup_list element below to name them -->
+		<value name="False" tag="f"/>
+			<cmd name="null" args=""/>
+		</value>
+		<value name="True" tag="t">
+			<cmd name="lookup_add" args="<feat>,{viet_decomp},{viet_precomp}"/>
+			<cmd name="lookup_del" args=""/>
+		</value>
+	</feature>
+</features>
+
+$feat_all{'interactions'}[$ix]{'test'}
+$feat_all{'interactions'}[$ix]{'cmds'}[$ix]{'cmd'}
+$feat_all{'interactions'}[$ix]{'cmds'}[$ix]{'args'} 
+or
+$feat_all{'interactions'}[$ix]{'cmds'}[$ix]{'cmd_block'}
+
+<interactions> <!-- using tags in conditionals -->
+	<!-- only execute the first match -->
+	<test select="Ax By Cz">
+		<cmds name="zork"/>
+		<cmds name="bar"/>
+	</test>
+	<test select="Ax By">
+		<cmds name="zork"/>
+	</test>
+	<test select="Ax Cz">
+		<cmd encode args="<usv> <ps_nm>"/>
+	</test>
+	<test select="By Cz">
+		<cmds name="bar"/>
+	</test>
+	<!-- could extend this instead of putting cmds in feature defs -->
+	<!-- either approach would be legal -->
+	<test select="De">
+		<cmds name="spam"/>
+	</test>
+</interactions>
+
+use same cmds struct as above
+$feat_all{'cmd_blocks'}{$name}{'cmds'}[$ix]{'cmd'} 
+$feat_all{'cmd_blocks'}{$name}{'cmds'}[$ix]{'args'}
+<cmd_blocks>
+	<cmd_block name="zork">
+		<cmd name="" args=""/>
+		<cmds name="foo"/> <!-- cmd_blocks can be nested -->
+	</cmd_block>
+	<cmd_block name="foo">
+		<cmd name="" args=""/>
+		<cmd name="" args=""/>
+	</cmd_block>
+</cmd_blocks>
+
+$feat_all{'aliases'}{$name}
+alias referenced with {} in args element
+must use an alias for an arg that contains a space
+<aliases>
+	<alias name="viet_decomp" value="3"/>
+	<alias name="viet_precomp" value="4"/>
+</aliases>
+
+program algorithm:
+process feat_all file
+	$feat_all{'features' => , 'interactions' => , 'cmd_blocks' =>, 'aliases => , }
+	$feat_tag{$name} map
+process feat_set file:
+	$feat_tag{$name} to get tags for feat & val
+		output errors & die if mismatch
+	concatenate feature & value tags
+	add to $feat_set string = "Ab Mf Og Xh" based on tags
+compare interactions tests to $feat_set
+if all test elements match in $feat_set
+	remove elements from $feat_set
+	add to list of cmds
+		convert cmds elements to list of cmd-args elements
+process elements of $feat_set that are left
+	easy cmd lookup based on tags
+		easy to split feature & value tags based on letter case 
+	add to list of cmds
+		convert cmds elements to list of cmd-args elements
+execute cmds:
+switch based on 'cmd'
+	process variables
+		convert alias name to value
+	specific cmd splits 'args' to known number of variables
+	call Perl command with variables as arguments
+
+<!-- user sees only features and values -->
+<set_features>
+<features>
+	<feature name="All" value="ball">
+		<value name="arch"/>
+		<value name="ball"/>
+	</feature>
+</features>
+
+Designer would prepare the designer XML above and embed in ttf
+TweakOT could create user XML above for a user
+User would set the feature value attribs to make a changes in the font
+TweakOT would match the feature values against the value sub-elements 
+	and invoke the cmd elements with args
+	encode, lookup_add, lookup_del, line_space
+	possibly: feat_add, feat_del, lang_add, lang_del, script_del (no script_add)
+	gr_feat (Graphite)
+	lookup_add and lookup_del could use a variable length of lookup ids (not done)
+subroutines invoked by cmd would modify the default font to the new feature value
+tag attribs used to modify font name for changed features & in conditionals
+	feature element uses upper case. value element uses lower case
+	or store feature settings buried somewhere in font
+	if font name gets too long
+		truncate it and show that in the name
+		put full name in version string
+what if all lookups removed from a feature or all features from a language?
+	may need to add to font a lookup that does nothing stored in a feature (that does nothing)
+	to use as fillers
+may need more powerful subroutines to consider other factors in the font
+	literacy alternates vary depending on whether barred bowls or straight ogoneks are used
+	apply these after primitives?
+	may be unneeded with interactions element
+execute primitives in the file order?
+
+need a logical structure to handle interactions between features
+	such as literacy alternates and barred bowl forms or straight ogoneks
+	support up to the three interacting features
+		if (a & b & c) elif (a & b) elif (b & c) elif (a & c)
+	if any of the above match, do not perform the cmds where the feature is defined
+	else do perform the cmds where feature is defined
+		equal to else (if a endif if b endif if c endif)
+	OR isn't needed (though could add operator or do it as a conditional type)
+		a=1 b=0 execute at a feature def
+		a=0 b=1 execute at b feature def
+			the code for the above two cases could be redundant so use a cmd_block
+		a=1 b=1 execute from AND conditional
+	
+could be useful to have blocks of subroutines that could be reused
+	create a block with a name then reference it from a cmd element
+	should args be passed to blocks? (not done)
+	for example a list of encode cmds
+	implement if needed? (done)
+
+retweaking
+	import feature settings from an existing tweaked font
+		apply those settings to new released font
+	union of new settings & old tweaks?
+	add rules to untweak or reverse rules to get back to original font
+		to apply union of settings
+
+UI in version 1 that shows feature names & settings
+ver 2 show alternates, etc; show sample text
+	
+cmd lines:
+TypeTuner <font> <xml>
+	produces feat_set
+		based on embedded table type
+
+TypeTuner <xml> <font> 
+	produces new tuned font with xml embedded as feat_set XML
+	
+produce feat_set from free feat_all: createset feat_all.xml feat_set.xml
+produce feat_set from embedded feat_all: createset ttf feat_set.xml
+apply feat_set and feat_all to ttf & embed feat_set: applyset_xml feat_all.xml feat_set.xml ttf
+apply feat_set to ttf with embedded feat_all & embed feat_set: applyset feat_set.xml ttf
+embed, extract, delete feat_all in ttf: delete ttf, extract ttf feat_.xml, add xml ttf
+extract, delete feat_set in ttf: delete ttf, extract ttf feat_.xml

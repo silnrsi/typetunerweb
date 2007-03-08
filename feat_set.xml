@@ -1,0 +1,28 @@
+<features_set version="1.0">
+	<feature name="Capital Eng alternates" value="Large eng on baseline">
+		<value name="Large eng with descender"/>
+		<value name="Large eng on baseline"/>
+		<value name="Capital N with tail"/>
+	</feature>
+	<feature name="Literacy alternates" value="True">
+		<value name="False"/>
+		<value name="True"/>
+	</feature>
+	<feature name="Barred-bowl forms" value="True">
+		<value name="False"/>
+		<value name="True"/>
+	</feature>
+	<feature name="Vietnamese-style diacritics" value="False">
+		<value name="False"/>
+		<value name="True"/>
+	</feature>
+	<feature name="Romanian-style diacritics" value="True">
+		<value name="False"/>
+		<value name="True"/>
+	</feature>
+	<feature name="Line gap" value="Tight gap">
+		<value name="Normal gap"/>
+		<value name="Tight gap"/>
+		<value name="Loose gap"/>
+	</feature>
+</features_set>
