@@ -151,6 +151,8 @@ sub Feat_Set_write($\%)
 	my ($feats, $feat_tag, $feat_nm, $feat_val, $val_tag, $val_nm);
 	
 	open OUT_FILE, ">$feat_set_fn" or die("Could not open $feat_set_fn for writing\n");
+	print OUT_FILE "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	print OUT_FILE "<!DOCTYPE features_set SYSTEM \"feat_set.dtd\">\n";
 	print OUT_FILE "<features_set version=\"$feat_all->{'version'}\">\n";
 	
 	$feats = $feat_all->{'features'};
@@ -661,9 +663,8 @@ sub Table_extract($$$)
 	{
 		$font->{$table_nm}->read;
 		if ($feat_set_test)
-			{if (substr($font->{$table_nm}->{' dat'}, 1, length($feat_set_elem)) 
-					ne $feat_set_elem)
-				{die("table $table_nm does not start with $feat_set_elem\n");}}
+			{if (not $font->{$table_nm}->{' dat'} =~ /$feat_set_elem/)
+				{die("table $table_nm does not contain $feat_set_elem\n");}}
 		print FEAT $font->{$table_nm}{' dat'};
 		close FEAT;
 	}
@@ -684,8 +685,8 @@ sub Table_add($$$)
 		{die("XML file is too big\n");}
 	#die if $feat_all_fn does not start with <all_features>, override test with -f switch
 	if ($feat_all_test)
-		{if (substr($feat_xml, 1, length($feat_all_elem)) ne $feat_all_elem)
-			{die("XML file does not start with $feat_all_elem\n");}}
+		{if (not $feat_xml =~ /$feat_all_elem/)
+			{die("XML file does not contain $feat_all_elem\n");}}
 	
 	#add our XML table $table_nm to the ttf
 	#the instance variables were taken from where Font.pm creates its Tables
@@ -701,6 +702,7 @@ sub Table_add($$$)
 sub Usage_print()
 {
 	print <<END;
+Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
 	TypeTuner <ttf> <xml> (calls createset)
 	TypeTuner <xml> <ttf> (calls applyset)
@@ -721,7 +723,6 @@ subcommands:
 	add     feat_all.xml font.ttf (add xml file to font as our table)
 	delete  font.ttf (remove our table from font)
 	(add and delete create a new font file with _tt added to the file name)
-	
 END
 	exit();
 };
