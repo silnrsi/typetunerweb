@@ -10,7 +10,7 @@
 	name CDATA #REQUIRED
 	value CDATA #REQUIRED
 	tag CDATA #REQUIRED>
-<!ELEMENT value (cmd | cmds)*>
+<!ELEMENT value (cmd | cmds)+>
 <!ATTLIST value
 	name CDATA #REQUIRED
 	tag CDATA #REQUIRED>
@@ -22,11 +22,11 @@
 <!ATTLIST cmds
 	name CDATA #REQUIRED>
 <!ELEMENT interactions (test*)>
-<!ELEMENT test (cmd | cmds)*>
+<!ELEMENT test (cmd | cmds)+>
 <!ATTLIST test
 	select CDATA #REQUIRED>
 <!ELEMENT cmd_blocks (cmd_block*)>
-<!ELEMENT cmd_block (cmd | cmds)*>
+<!ELEMENT cmd_block (cmd | cmds)+>
 <!ATTLIST cmd_block
 	name CDATA #REQUIRED>
 <!ELEMENT aliases (alias*)>
