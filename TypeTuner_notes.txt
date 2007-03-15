@@ -226,3 +226,30 @@ apply feat_set and feat_all to ttf & embed feat_set: applyset_xml feat_all.xml f
 apply feat_set to ttf with embedded feat_all & embed feat_set: applyset feat_set.xml ttf
 embed, extract, delete feat_all in ttf: delete ttf, extract ttf feat_.xml, add xml ttf
 extract, delete feat_set in ttf: delete ttf, extract ttf feat_.xml
+
+****
+create feat_all.xml for RFS fonts
+use Feat table to find feature and setting structure
+	create tags for features and values
+		either by taking first letters (w repeat test) or from custom lookup tbl
+	modify font.pm to support Feat table with Feat.pm
+	fix up Feat.pm to handle 3 1 (vs 1 0) name strings
+process features based on sets of values using subroutines
+easy to output feat_all.xml with gr_feat commands
+for variants
+	use gsi.xml to find glyphs for a given feature & setting
+		parse gsi.xml
+	get both ps_name and var_uid
+	output encode commands
+for Vietnamese & Romanian style diaritics
+	use feat* or lookup* commands
+for tone features: need more info on how OT implemented
+some features are Graphite only: diacritic selection, bridging diacritics?
+must handles features not present in all fonts
+discard aalt feature? (remove from all langs)
+interaction section probably done by hand
+	create command blocks by hand based on how glyphs interact	
+
+gr_feat command support
+based on Feat.pm module
+verfy Graphite Feat tbl written correctly since small changes from Apple feat tbl
