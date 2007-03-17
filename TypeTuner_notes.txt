@@ -230,11 +230,12 @@ extract, delete feat_set in ttf: delete ttf, extract ttf feat_.xml
 ****
 create feat_all.xml for RFS fonts
 use Feat table to find feature and setting structure
+	need this instead of gsi.xml because it is more complete
 	create tags for features and values
 		either by taking first letters (w repeat test) or from custom lookup tbl
-	modify font.pm to support Feat table with Feat.pm
-	fix up Feat.pm to handle 3 1 (vs 1 0) name strings
-process features based on sets of values using subroutines
+	modify font.pm to support Feat table with FEat.pm (based on Feat.pm)
+	fix up FEat.pm to handle 3 1 (vs 1 0) name strings & version 2 (& ver 1) format
+process feature ids based on sets of values using subroutines
 easy to output feat_all.xml with gr_feat commands
 for variants
 	use gsi.xml to find glyphs for a given feature & setting
@@ -246,10 +247,96 @@ for Vietnamese & Romanian style diaritics
 for tone features: need more info on how OT implemented
 some features are Graphite only: diacritic selection, bridging diacritics?
 must handles features not present in all fonts
+	handled since using Feat table
 discard aalt feature? (remove from all langs)
-interaction section probably done by hand
-	create command blocks by hand based on how glyphs interact	
+handle variant glyphs without $feat but with var_uid & ps_name stored too?
+	so offered as choices later
+
+parse gsi.xml - only works for up to three interacting features
+$ps_name_for_usv_feat{$usv}{$feat}
+	add entry to usvs_for_featset for $feat & $usv
+	combine $feat with pre-existing $feat for this $usv
+		to add $feat combos to usvs_for_featset (AB, AC BC ABC)
+	add entry for $usv & $feat
+		
+		if $ps_name_for_usv_feat{$usv}
+			if scalar(keys(%ps_name_for_usv_feat{$usv})) == 1
+
+$usvs_for_featset{$featset}[]
+	$featset keys examples: LIt, BBt, LIt BBt
+
+Featset_add(%$$)
+	my %usvs_for_featset, $featset, $usv
+	if (not defined $usvs_for_featset{$featset})
+			$usvs_for_featset{$featset} = []
+	push $usvs_for_featset{$featset}, $usv
+
+feature elements
+for each feature from Feat table (ordering?)
+	output feature element incl default value & tag
+	for each setting
+		output value element incl tag
+		if default setting
+			output cmd null
+			next
+		output cmd gr_feat
+		if graphite only feature
+			next
+		if tone feature
+			unknown
+		if V or R style diac stacking feature
+			output lookup* or feat* cmds
+		if variant feature
+			look up @usv in %usvs_for_featset
+			for each $usv
+				output encode cmd with $usv, $ps_name from ps_name_for_usv_feat
+	close feature element
+		
+interactions elements - only works for up to three interacting features
+for each $featset key in usvs_for_featset
+	skip keys with one setting (handled above)
+	%used_usv = {}
+self:
+	look up @usv in usvs_for_featset
+	skip empty @usv
+	output test node with $featset key as select attrib
+	@feat = split $featset
+	for each $usv
+		if $used_usv($usv) next
+		for each $feat
+			build ps_name choices string from ps_name_for_usv_feat
+		output encode cmd with $usv, $ps_names choices 
+		$used_usv{$usv} = 1
+	if scalar @feat > 2
+		@c = All_pairs_get(@feat)
+		foreach @c
+			call self
+	else
+		foreach $feat
+			call self
+	close test node
+
+All_pairs_get(@)
+	my @results, $a;
+	$a = shift @_
+	while scalar @_
+		foreach @
+			push(@results, $a . $_)
+		a = shift @_
+	return results
+
+
 
 gr_feat command support
 based on Feat.pm module
-verfy Graphite Feat tbl written correctly since small changes from Apple feat tbl
+handle: platform & encoding ids (3 1), version 1 & 2 format
+
+to use cmd blocks (not finished designing, probably not worth it):
+analyze glyphs finding all var_uid collisions
+sets of USVs - onlyA, allA, onlyB, allB, onlyC, allC, onlyAB, allAB, onlyBC, allBC, onlyAC, allAC, allABC
+feat A: onlyA, allAB, allAC (ps_name choices: allAC{A}, allAC{B})
+feat B: onlyB, allAB, allBC
+feat C: onlyC, allBC, allAC
+test AC: onlyA, onlyB, allAB
+test ABC: onlyA, onlyB, onlyC, onlyAB, onlyBC, onlyAC, allABC
+
