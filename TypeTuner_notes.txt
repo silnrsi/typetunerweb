@@ -239,7 +239,7 @@ process feature ids based on sets of values using subroutines
 easy to output feat_all.xml with gr_feat commands
 for variants
 	use gsi.xml to find glyphs for a given feature & setting
-		parse gsi.xml
+		parse gsi.xml (below)
 	get both ps_name and var_uid
 	output encode commands
 for Vietnamese & Romanian style diaritics
@@ -251,6 +251,7 @@ must handles features not present in all fonts
 discard aalt feature? (remove from all langs)
 handle variant glyphs without $feat but with var_uid & ps_name stored too?
 	so offered as choices later
+handle double encoded glyphs (deprecated PUA)
 
 parse gsi.xml - only works for up to three interacting features
 $ps_name_for_usv_feat{$usv}{$feat}
