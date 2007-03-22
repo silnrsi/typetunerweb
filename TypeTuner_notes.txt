@@ -254,23 +254,15 @@ handle variant glyphs without $feat but with var_uid & ps_name stored too?
 handle double encoded glyphs (deprecated PUA)
 
 parse gsi.xml - only works for up to three interacting features
-$ps_name_for_usv_feat{$usv}{$feat}
-	add entry to usvs_for_featset for $feat & $usv
+$usv_feat_to_ps_name{$usv}{$feat}
+	add entry to featset_to_usvs for $feat & $usv
 	combine $feat with pre-existing $feat for this $usv
-		to add $feat combos to usvs_for_featset (AB, AC BC ABC)
+		to add $feat combos to featset_to_usvs
+			A, B, AB; A, B, C, AB, AC, BC, ABC)
 	add entry for $usv & $feat
-		
-		if $ps_name_for_usv_feat{$usv}
-			if scalar(keys(%ps_name_for_usv_feat{$usv})) == 1
 
-$usvs_for_featset{$featset}[]
+$featset_to_usvs{$featset}[]
 	$featset keys examples: LIt, BBt, LIt BBt
-
-Featset_add(%$$)
-	my %usvs_for_featset, $featset, $usv
-	if (not defined $usvs_for_featset{$featset})
-			$usvs_for_featset{$featset} = []
-	push $usvs_for_featset{$featset}, $usv
 
 feature elements
 for each feature from Feat table (ordering?)
@@ -288,24 +280,24 @@ for each feature from Feat table (ordering?)
 		if V or R style diac stacking feature
 			output lookup* or feat* cmds
 		if variant feature
-			look up @usv in %usvs_for_featset
+			look up @usv in %featset_to_usvs
 			for each $usv
-				output encode cmd with $usv, $ps_name from ps_name_for_usv_feat
+				output encode cmd with $usv, $ps_name from usv_feat_to_ps_name
 	close feature element
 		
 interactions elements - only works for up to three interacting features
-for each $featset key in usvs_for_featset
+for each $featset key in featset_to_usvs
 	skip keys with one setting (handled above)
 	%used_usv = {}
 self:
-	look up @usv in usvs_for_featset
+	look up @usv in featset_to_usvs
 	skip empty @usv
 	output test node with $featset key as select attrib
 	@feat = split $featset
 	for each $usv
 		if $used_usv($usv) next
 		for each $feat
-			build ps_name choices string from ps_name_for_usv_feat
+			build ps_name choices string from usv_feat_to_ps_name
 		output encode cmd with $usv, $ps_names choices 
 		$used_usv{$usv} = 1
 	if scalar @feat > 2
