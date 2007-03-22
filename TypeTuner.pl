@@ -376,7 +376,7 @@ sub Family_Version_update($\%$)
 	}
 	if ($opt_d) {print "Family_Version_update: feat_set_active = $feat_set_active\n";}
     
-    #modify font name (and version if many features are set) 
+    #modify font name
 	my ($family_nm_old, $family_nm_new, $version_str_old, $version_str_new);	
 	$family_nm_old = Name_get($font, $family_name_id);
 	if (length($feat_set_active) <= 6)
@@ -388,10 +388,12 @@ sub Family_Version_update($\%$)
 	{
 		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, 6) . '&';
 		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
-		$version_str_old = Name_get($font, $version_name_id);
-		$version_str_new = $version_str_old . ' ; '. $feat_set_active;
-		Name_mod($font, $version_name_ids, $version_str_old, $version_str_new)
 	}
+	
+	#modify version
+	$version_str_old = Name_get($font, $version_name_id);
+	$version_str_new = $version_str_old . ' ; '. $feat_set_active;
+	Name_mod($font, $version_name_ids, $version_str_old, $version_str_new)
 }
 
 sub Encode($$$)
