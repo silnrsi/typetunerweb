@@ -943,7 +943,6 @@
    <glyph active="1" contour="T1" sort="1010.63" name="LtnSmAOgonek.SngStory.RetroHookStyle">
       <ps_name value="aogonek.SngStory.RetroHookStyle"/>
       <var_uid>U+0105</var_uid>
-      <feature category="1032"/>
       <composite draft="false">
          <comp_glyph PSName="LtnSmAOgonek.SngStory.RetroHookStyle">
             <base PSName="LtnSmA.SngStory">
@@ -4670,7 +4669,6 @@
    <glyph active="1" contour="T1" sort="1801.111" name="LtnSmI.Dotless.SlantItalic">
       <ps_name value="i.Dotless.SlantItalic"/>
       <var_uid>U+0069</var_uid>
-      <feature category="1053"/>
       <composite draft="false">
          <comp_glyph PSName="LtnSmI.Dotless.SlantItalic">
             <base PSName="LtnSmDotlessI.SlantItalic"/>
@@ -12603,12 +12601,10 @@
    <glyph active="1" contour="T1" sort="6120.32" name="CombInvBreve.UL">
       <ps_name value="uni0311.UL"/>
       <var_uid>U+0311</var_uid>
-      <feature category="1052"/>
    </glyph>
    <glyph active="1" contour="T1" sort="6120.33" name="CombInvBreve.LL">
       <ps_name value="uni0311.LL"/>
       <var_uid>U+0311</var_uid>
-      <feature category="1052"/>
    </glyph>
    <glyph active="0" contour="T1" sort="6120.4" name="CombInvBreve.UCHt">
       <ps_name value=".notRFS"/>
@@ -13188,17 +13184,14 @@
    <glyph active="1" contour="T1" sort="6400.31" name="CombDiaer.UU">
       <ps_name value="uni0308.UU"/>
       <var_uid>U+0308</var_uid>
-      <feature category="1052"/>
    </glyph>
    <glyph active="1" contour="T1" sort="6400.32" name="CombDiaer.LL">
       <ps_name value="uni0308.LL"/>
       <var_uid>U+0308</var_uid>
-      <feature category="1052"/>
    </glyph>
    <glyph active="1" contour="T1" sort="6400.33" name="CombDiaer.UL">
       <ps_name value="uni0308.UL"/>
       <var_uid>U+0308</var_uid>
-      <feature category="1052"/>
    </glyph>
    <glyph active="0" contour="T1" sort="6400.4" name="CombDiaer.UCHt">
       <ps_name value=".notRFS"/>
