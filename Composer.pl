@@ -19,6 +19,14 @@ our($opt_d); #set by &getopts:
 my $feat_all_base_fn = 'feat_all_test.xml';
 my $feat_all_elem = "all_features";
 
+#all the ids must be 4 digits
+my $graphite_only_feats = '1026 1030 1050 1051 1052';
+my $vietnamese_style_diacs_feat = '1029';
+my $romanian_style_diacs_feat = '1041';
+my $variant_feats = '1024 1025 1027 1028 1031 1032 1033 1034 1035 1036 1037';
+$variant_feats .= '1038 1039 1040 1042 1043 1044 1045 1046 1047 1048 1049';
+$variant_feats .= '1053 1054 1055 1056';
+
 #### subroutines ####
 
 my (%tags, $prev_feat_tag); #used only by below sub
@@ -76,14 +84,13 @@ sub Feats_get($\%)
 		{
 			($feat_nm, $set_nm) = $Feat_tbl->settingName($feat_id, $set_id);
 			
-			($feat_id, $set_id) = ("$feat_id", "$set_id");
 			if (not defined $feats->{$feat_id})
 			{# this could go in the outer loop
 			 #  but it is nice after the settingName call
 				$feat_tag = Tag_get($feat_nm, 2);
 				$feats->{$feat_id}{'name'} = $feat_nm;
 				$feats->{$feat_id}{'tag'} = $feat_tag;
-				$feats->{$feat_id}{'default'} = $set_id;
+				$feats->{$feat_id}{'default'} = $set_id; #assumes lowest id is default
 				if (not defined($feats->{' ids'}))
 					{$feats->{' ids'} = [];}
 				push(@{$feats->{' ids'}}, $feat_id);
@@ -172,7 +179,7 @@ sub Gsi_xml_parse($\%\%\%)
 # mapping from feature settings to list of USVs affected
 {
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
-	my ($xml_parser, $ps_name, $var_uid_capture, $var_uid, $feat_found);
+	my ($xml_parser, $ps_name, $feat_found, $var_uid_capture, $var_uid);
 
 	$xml_parser = XML::Parser::Expat->new();
 	$xml_parser->setHandlers('Start' => sub {
@@ -189,7 +196,8 @@ sub Gsi_xml_parse($\%\%\%)
 		}
 		elsif ($tag eq 'feature')
 		{
-			if (not defined($var_uid)) {die("not USV for feature: $attrs{'category'}")};
+			if (not defined($ps_name)) {die("no PS name for feature: $attrs{'category'}\n")};
+			if (not defined($var_uid)) {die("no USV for feature: $attrs{'category'}\n")};
 			my $usv = substr($var_uid, 2);
 			
 			my $feat = $attrs{'category'};
@@ -226,7 +234,7 @@ sub Gsi_xml_parse($\%\%\%)
 		{}
 	}, 'End' => sub {
 		my ($xml_parser, $tag) = @_;
-		if ($tag eq 'ps_name')
+		if ($tag eq 'glyph')
 		{
 			if (!$feat_found && defined($var_uid))
 			{ #use 'unk' featset to store info on variant glyphs w/o features
@@ -237,10 +245,14 @@ sub Gsi_xml_parse($\%\%\%)
 			} 
 			$ps_name = undef;
 		}
+		elsif ($tag eq 'ps_name')
+		{}
 		elsif ($tag eq 'var_uid')
 		{
 			$var_uid_capture = 0;
 		}
+		elsif ($tag eq 'feature')
+		{}
 		else
 		{}
 	}, 'Char' => sub {
@@ -262,6 +274,99 @@ sub Features_output($\%\%\%)
 #output the <feature>s elements
 {
 	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name) = @_;
+	my $fh = $feat_all_fh;
+    my ($feat_id, $set_id);
+    
+	foreach $feat_id (@{$feats->{' ids'}})
+	{
+		my $feat = $feats->{$feat_id};
+		my ($feat_nm, $feat_tag) = ($feat->{'name'}, $feat->{'tag'});
+		my $feat_def_id = $feat->{'default'};
+		my $feat_def_nm = $feat->{'settings'}{$feat_def_id}{'name'};
+		#start feature element
+		print $fh "\t<feature name=\"$feat_nm\" value=\"$feat_def_nm\" tag=\"$feat_tag\">\n";
+		
+		foreach $set_id (@{$feat->{'settings'}{' ids'}})
+		{
+			my $set = $feat->{'settings'}{$set_id};
+			my ($set_nm, $set_tag) = ($set->{'name'}, $set->{'tag'});
+			#start value element
+			print $fh "\t\t<value name=\"$set_nm\" tag=\"$set_tag\">\n";
+			
+			#cmd elements
+			if ($set_id eq $feat_def_id)
+			{#default feature and setting
+				print $fh "\t\t\t<cmd name=\"null\" args=\"null\"/>\n";
+				goto cmd_end;
+			}
+			
+			#gr_feat cmd
+			print $fh "\t\t\t<cmd=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
+			
+			if ($graphite_only_feats =~ /$feat_id/)
+			{
+				goto cmd_end;
+			}
+			elsif ($variant_feats =~ /$feat_id/)
+			{
+				my $featset = $feat_tag . $set_tag;
+				my @usvs = @{$featset_to_usvs->{$featset}};
+				my ($usv, $ps_name);
+				foreach $usv (@usvs)
+				{
+					$ps_name = $usv_feat_to_ps_name->{$usv}{$featset};	
+					print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $ps_name\"/>\n";
+                }
+                goto cmd_end;
+			}
+			elsif ($vietnamese_style_diacs_feat =~ /$feat_id/)
+			{
+				print $fh "\t\t\t<cmd=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
+				print $fh "\t\t\t<cmd=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese}\"/>\n";
+				goto cmd_end;
+			}
+			elsif ($romanian_style_diacs_feat =~ /$feat_id/)
+			{
+				print $fh "\t\t\t<cmd=\"lookup_add\" args=\"GSUB ccmp {rom_decomp}\"/>\n";
+				print $fh "\t\t\t<cmd=\"lookup_add\" args=\"GSUB ccmp {rom_precomp}\"/>\n";
+				goto cmd_end;
+			}
+			else
+			{
+				print $fh "\t\t\t<!-- setting not in GSI data -->\n";
+				print $fh "\t\t\t<cmd name=\"null\" args=\"null\"/>\n";
+				goto cmd_end
+			};
+			
+			cmd_end:
+			#end value element
+			print $fh "\t\t</value>\n";
+		}
+		
+		#end feature element
+		print $fh "\t</feature>\n";
+	}
+	
+#for each feature from Feat table (ordering?)
+#	output feature element incl default value & tag
+#	for each setting
+#		output value element incl tag
+#		if default setting
+#			output cmd null
+#			next
+#		output cmd gr_feat
+#		if graphite only feature
+#			next
+#		if tone feature
+#			unknown
+#		if V or R style diac stacking feature
+#			output lookup* or feat* cmds
+#		if variant feature
+#			look up @usv in %featset_to_usvs
+#			for each $usv
+#				output encode cmd with $usv, $ps_name from usv_feat_to_ps_name
+#	close feature element
+
 }
 
 sub Interactions_output($\%\%)
