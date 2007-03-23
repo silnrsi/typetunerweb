@@ -14,7 +14,7 @@ use Getopt::Std;
 
 #### global variables & constants ####
 
-our($opt_d); #set by &getopts:
+our($opt_d, $opt_g); #set by &getopts:
 
 my $feat_all_base_fn = 'feat_all_test.xml';
 my $feat_all_elem = "all_features";
@@ -26,6 +26,10 @@ my $romanian_style_diacs_feat = '1041';
 my $variant_feats = '1024 1025 1027 1028 1031 1032 1033 1034 1035 1036 1037';
 $variant_feats .= '1038 1039 1040 1042 1043 1044 1045 1046 1047 1048 1049';
 $variant_feats .= '1053 1054 1055 1056';
+
+my $normal_line_gap = '2324 810';
+my $tight_line_gap = '2000 750';
+my $loose_line_gap = '2500 875';
 
 #### subroutines ####
 
@@ -179,11 +183,20 @@ sub Gsi_xml_parse($\%\%\%)
 # mapping from feature settings to list of USVs affected
 {
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
-	my ($xml_parser, $ps_name, $feat_found, $var_uid_capture, $var_uid);
-
-	$xml_parser = XML::Parser::Expat->new();
+	
+	my ($xml_parser, $active, $ps_name, $feat_found, $var_uid_capture, $var_uid);
+    	$xml_parser = XML::Parser::Expat->new();
 	$xml_parser->setHandlers('Start' => sub {
 		my ($xml_parser, $tag, %attrs) = @_;
+		if ($tag eq 'glyph')
+		{
+			if ($attrs{'active'} eq '0')
+				{$active = 0;}
+			else
+				{$active = 1;}
+		}
+		#filter out inactive glyphs
+		if (not $active) {return;}
 		if ($tag eq 'ps_name')
 		{
 			$ps_name = $attrs{'value'};
@@ -191,20 +204,19 @@ sub Gsi_xml_parse($\%\%\%)
 		}
 		elsif ($tag eq 'var_uid')
 		{
-			$var_uid = undef;
 			$var_uid_capture = 1;
 		}
 		elsif ($tag eq 'feature')
 		{
 			if (not defined($ps_name)) {die("no PS name for feature: $attrs{'category'}\n")};
-			if (not defined($var_uid)) {die("no USV for feature: $attrs{'category'}\n")};
+			if (not defined($var_uid)) {return}; #probably <feature> after <lig_uids>
 			my $usv = substr($var_uid, 2);
 			
 			my $feat = $attrs{'category'};
 			my $set;
 			if (defined ($attrs{'value'}))
 				{$set = $attrs{'value'};}
-			else
+			else #for binary valued features GSI indicates when they should be set 'on'
 				{$set = '1';}
 			my $featset = $feats->{$feat}{'tag'} . $feats->{$feat}{'settings'}{$set}{'tag'};
 			
@@ -244,6 +256,7 @@ sub Gsi_xml_parse($\%\%\%)
 				push(@{$usv_feat_to_ps_name->{$usv}{'unk'}}, $ps_name);
 			} 
 			$ps_name = undef;
+			$var_uid = undef;
 		}
 		elsif ($tag eq 'ps_name')
 		{}
@@ -258,10 +271,26 @@ sub Gsi_xml_parse($\%\%\%)
 	}, 'Char' => sub {
 		my ($xml_parser, $str) = @_;
 		if ($var_uid_capture)
-			{$var_uid .= $str;}
+			{if (not defined($var_uid))
+				{$var_uid = $str;}
+			else
+				{$var_uid .= $str;}
+			}
 	});
 
 	$xml_parser->parsefile($gsi_fn) or die "Can't read $gsi_fn";
+	
+	my $featset;
+	foreach $featset (keys %$featset_to_usvs)
+	{
+		my %usv;
+		foreach (@{$featset_to_usvs->{$featset}})
+		{
+			if (defined($usv{$_}))
+				{print "WARNING: USV $_ occurs more than once for featset $featset\n"};
+			$usv{$_} = 1;
+		}
+	}
 	
 	if ($opt_d)
 	{
@@ -272,6 +301,7 @@ sub Gsi_xml_parse($\%\%\%)
 
 sub Features_output($\%\%\%)
 #output the <feature>s elements
+#all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
 {
 	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name) = @_;
 	my $fh = $feat_all_fh;
@@ -301,14 +331,16 @@ sub Features_output($\%\%\%)
 			}
 			
 			#gr_feat cmd
-			print $fh "\t\t\t<cmd=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
+			print $fh "\t\t\t<cmd name=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
 			
-			if ($graphite_only_feats =~ /$feat_id/)
+			#TODO: may need special handling of tone features
+			#       currently handled as Graphite only feats
+			if ($graphite_only_feats =~ /$feat_id/ or $opt_g)
 			{
 				goto cmd_end;
 			}
 			elsif ($variant_feats =~ /$feat_id/)
-			{
+			{#write one cmd for each variant glyph associated with this feature setting
 				my $featset = $feat_tag . $set_tag;
 				my @usvs = @{$featset_to_usvs->{$featset}};
 				my ($usv, $ps_name);
@@ -320,21 +352,21 @@ sub Features_output($\%\%\%)
                 goto cmd_end;
 			}
 			elsif ($vietnamese_style_diacs_feat =~ /$feat_id/)
-			{
-				print $fh "\t\t\t<cmd=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
-				print $fh "\t\t\t<cmd=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese}\"/>\n";
+			{#hard-coded  #TODO: is this correct?
+				print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
+				print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese}\"/>\n";
 				goto cmd_end;
 			}
 			elsif ($romanian_style_diacs_feat =~ /$feat_id/)
-			{
-				print $fh "\t\t\t<cmd=\"lookup_add\" args=\"GSUB ccmp {rom_decomp}\"/>\n";
-				print $fh "\t\t\t<cmd=\"lookup_add\" args=\"GSUB ccmp {rom_precomp}\"/>\n";
+			{#hard-coded  #TODO: is this correct?
+				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB ccmp {rom_decomp}\"/>\n";
+				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB ccmp {rom_precomp}\"/>\n";
 				goto cmd_end;
 			}
 			else
 			{
 				print $fh "\t\t\t<!-- setting not in GSI data -->\n";
-				print $fh "\t\t\t<cmd name=\"null\" args=\"null\"/>\n";
+				print $fh "\t\t\t<cmd name name=\"null\" args=\"null\"/>\n";
 				goto cmd_end
 			};
 			
@@ -347,26 +379,21 @@ sub Features_output($\%\%\%)
 		print $fh "\t</feature>\n";
 	}
 	
-#for each feature from Feat table (ordering?)
-#	output feature element incl default value & tag
-#	for each setting
-#		output value element incl tag
-#		if default setting
-#			output cmd null
-#			next
-#		output cmd gr_feat
-#		if graphite only feature
-#			next
-#		if tone feature
-#			unknown
-#		if V or R style diac stacking feature
-#			output lookup* or feat* cmds
-#		if variant feature
-#			look up @usv in %featset_to_usvs
-#			for each $usv
-#				output encode cmd with $usv, $ps_name from usv_feat_to_ps_name
-#	close feature element
-
+	#output line gap feature
+	my $line_gap_tag = Tag_get('Line gap', 2);
+    print $fh <<END
+	<feature name="Line gap" value="Normal gap" tag="$line_gap_tag">
+		<value name="Normal gap" tag="n">
+			<cmd name="null" args="$normal_line_gap"/>
+		</value>
+		<value name="Tight gap" tag="t">
+			<cmd name="line_gap" args="$tight_line_gap"/>
+		</value>
+		<value name="Loose gap" tag="l">
+			<cmd name="line_gap" args="$loose_line_gap"/>
+		</value>
+	</feature>
+END
 }
 
 sub Interactions_output($\%\%)
@@ -406,7 +433,9 @@ sub Usage_print()
 	print <<END;
 Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
-	Composer <ttf> <xml>
+	Composer <switches> <ttf> <xml>
+	switches: -g Graphite only support
+	output is to feat_all.xml
 END
 	exit();
 };
@@ -419,7 +448,7 @@ sub cmd_line_exec() #for UltraEdit function list
 my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, $feat_all_fh);
 my ($font_fn, $gsi_fn, $feat_all_fn);
 
-getopts('d'); #sets $opt_d & removes the switch from @ARGV
+getopts('dg'); #sets $opt_d, $opt_g & removes the switch from @ARGV
 
 if (scalar @ARGV != 2)
 	{Usage_print;}
@@ -436,7 +465,11 @@ print $feat_all_fh "<!DOCTYPE all_features SYSTEM \"feat_all.dtd\">\n";
 print $feat_all_fh "<all_features version=\"1.0\">\n";
 
 Features_output($feat_all_fh, %feats, %featset_to_usvs, %usv_feat_to_ps_name);
-Interactions_output($feat_all_fh, %usv_feat_to_ps_name, %featset_to_usvs);
-Aliases_output($feat_all_fh); 
+if (not $opt_g)
+{
+	Interactions_output($feat_all_fh, %usv_feat_to_ps_name, %featset_to_usvs);
+	Aliases_output($feat_all_fh);
+}
 
 print $feat_all_fh "</all_features>\n";
+ 
