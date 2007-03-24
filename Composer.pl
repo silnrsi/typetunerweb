@@ -14,7 +14,7 @@ use Getopt::Std;
 
 #### global variables & constants ####
 
-our($opt_d, $opt_g); #set by &getopts:
+our($opt_d, $opt_g, $opt_t); #set by &getopts:
 
 my $feat_all_base_fn = 'feat_all_test.xml';
 my $feat_all_elem = "all_features";
@@ -354,7 +354,7 @@ sub Features_output($\%\%\%)
 			elsif ($vietnamese_style_diacs_feat =~ /$feat_id/)
 			{#hard-coded  #TODO: is this correct?
 				print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
-				print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese}\"/>\n";
+				print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
 				goto cmd_end;
 			}
 			elsif ($romanian_style_diacs_feat =~ /$feat_id/)
@@ -396,14 +396,98 @@ sub Features_output($\%\%\%)
 END
 }
 
+sub All_pairs_get(@)
+#input is array of featset elements (strings of one featset)
+#output is array of all pairs of featset elements (strings with space between featsets)
+{
+	my (@r, $a);
+	
+	$a = shift @_;
+	while (scalar @_)
+	{
+		foreach (@_)
+			{push(@r, "$a $_");}
+		$a = shift @_;
+	}
+	return @r;
+}
+
+#forward declaration so recursive call won't be flagged as an error
+sub Test_output($$\%\%\%);
+
+sub Test_output($$\%\%\%)
+#output the <cmd> elements inside of a <test> element
+#handles up to three features interacting
+#Featset_combos_get should have died if there are more than three interacting
+{
+	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name) = @_;
+	my(@usvs, $usv, @feats, $feat);
+	my $fh = $feat_all_fh;
+	
+	@usvs = @{$featset_to_usvs->{$featset}};
+	@feats = split(/\s/, $featset);
+	foreach $usv (@usvs)
+	{
+		if (defined($used_usvs->{$usv})) {next;}
+		
+		#create string with all relevant ps_names separated by spaces
+		my $choices = '';
+		foreach $feat (@feats)
+		{
+			my $ps_name = $usv_feat_to_ps_name->{$usv}{$feat};
+			$choices .= "$ps_name ";
+		}
+		if ((scalar @feats > 1) && defined($usv_feat_to_ps_name->{$usv}{'unk'}))
+		{
+			foreach (@{$usv_feat_to_ps_name->{$usv}{'unk'}})
+				{$choices .= "$_ ";}
+		}
+		chop($choices);
+		
+		if ($opt_t) #output legal args for testing TypeTuner
+			{my @c = split(/\s/, $choices); $choices = $c[0];}
+			
+		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
+		$used_usvs->{$usv} = 1;
+	}
+		
+	if (scalar @feats == 3)
+	{
+		my @feat_pairs = All_pairs_get(@feats);
+		my $featset;
+		foreach $featset (@feat_pairs)
+			{Test_output($feat_all_fh, $featset, %$used_usvs, 
+							%$featset_to_usvs, %$usv_feat_to_ps_name);}
+	}
+	if (scalar @feats == 2)
+	{
+		my $featset;
+		foreach $featset (@feats)
+			{Test_output($feat_all_fh, $featset, %$used_usvs, 
+							%$featset_to_usvs, %$usv_feat_to_ps_name);}
+	}
+}
+
 sub Interactions_output($\%\%)
 #output the <interactions> elements
 {
 	my ($feat_all_fh, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
+	my $fh = $feat_all_fh;
 	
 	print $feat_all_fh "\t<interactions>\n";
 
-
+	my $featset;
+    foreach $featset (sort keys %$featset_to_usvs)
+    {
+    	my @featsets = split(/\s/, $featset);
+    	if (scalar @featsets == 1) {next;} #handled with <feature> elements
+    	
+		my %used_usvs;
+		print $fh "\t\t<test select=\"$featset\">\n";
+    	Test_output($feat_all_fh, $featset, %used_usvs, 
+    				%$featset_to_usvs, %$usv_feat_to_ps_name);
+		print $fh "\t\t</test>\n";
+    }
 
 	print $feat_all_fh "\t</interactions>\n";
 }
@@ -448,7 +532,7 @@ sub cmd_line_exec() #for UltraEdit function list
 my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, $feat_all_fh);
 my ($font_fn, $gsi_fn, $feat_all_fn);
 
-getopts('dg'); #sets $opt_d, $opt_g & removes the switch from @ARGV
+getopts('dgt'); #sets $opt_d, $opt_g & removes the switch from @ARGV
 
 if (scalar @ARGV != 2)
 	{Usage_print;}
