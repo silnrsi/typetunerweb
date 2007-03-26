@@ -14,9 +14,12 @@ use Getopt::Std;
 
 #### global variables & constants ####
 
+#$opt_d - debug output
+#$opt_g - output graphite only cmds
+#$opt_t - output <interaction> encode cmds w/o choices for PS name for testing TypeTuner
 our($opt_d, $opt_g, $opt_t); #set by &getopts:
 
-my $feat_all_base_fn = 'feat_all_test.xml';
+my $feat_all_base_fn = 'feat_all_composer.xml';
 my $feat_all_elem = "all_features";
 
 #all the ids must be 4 digits
@@ -468,6 +471,21 @@ sub Test_output($$\%\%\%)
 	}
 }
 
+sub sort_tests($$)
+#compare to <interaction> test attribute strings
+#sort such that longer strings come first
+{
+	my ($a, $b) = @_;
+	my ($a_len, $b_len) = (length($a), length($b));
+	
+	if ($a_len > $b_len)
+		{return -1;}
+	elsif ($a_len < $b_len)
+		{return 1;}
+	else #$a_len == $b_len
+		{return ($a cmp $b);}
+}
+
 sub Interactions_output($\%\%)
 #output the <interactions> elements
 {
@@ -477,7 +495,7 @@ sub Interactions_output($\%\%)
 	print $feat_all_fh "\t<interactions>\n";
 
 	my $featset;
-    foreach $featset (sort keys %$featset_to_usvs)
+    foreach $featset (sort sort_tests keys %$featset_to_usvs)
     {
     	my @featsets = split(/\s/, $featset);
     	if (scalar @featsets == 1) {next;} #handled with <feature> elements
@@ -519,7 +537,7 @@ Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
 	Composer <switches> <ttf> <xml>
 	switches: -g Graphite only support
-	output is to feat_all.xml
+	output is to feat_all_composer.xml
 END
 	exit();
 };
@@ -532,7 +550,7 @@ sub cmd_line_exec() #for UltraEdit function list
 my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, $feat_all_fh);
 my ($font_fn, $gsi_fn, $feat_all_fn);
 
-getopts('dgt'); #sets $opt_d, $opt_g & removes the switch from @ARGV
+getopts('dgt'); #sets $opt?'s & removes the switch from @ARGV
 
 if (scalar @ARGV != 2)
 	{Usage_print;}
@@ -556,4 +574,3 @@ if (not $opt_g)
 }
 
 print $feat_all_fh "</all_features>\n";
- 
