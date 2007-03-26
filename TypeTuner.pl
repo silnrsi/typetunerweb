@@ -15,7 +15,8 @@ use Getopt::Std;
 
 #$opt_d - debug output
 #$opt_f - for add subcommand, don't check whether $feat_all_elem at start of file
-our($opt_d, $opt_f); #set by &getopts:
+#$opt_t - output feat_set.xml file with all settings 'on' for testing TypeTuner
+our($opt_d, $opt_f, $opt_t); #set by &getopts:
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
@@ -159,7 +160,13 @@ sub Feat_Set_write($\%)
 	foreach $feat_tag (@{$feats->{' tags'}})
 	{
 		$feat_nm = $feats->{$feat_tag}{'name'};
-		$feat_val = $feats->{$feat_tag}{'default'};
+		
+		if (not $opt_t)
+			{$feat_val = $feats->{$feat_tag}{'default'};}
+		else #quick way to set binary feature 'True' or pick an non-default alternate
+			{$val_tag = $feats->{$feat_tag}{'values'}{' tags'}[1];
+			$feat_val = $feats->{$feat_tag}{'values'}{$val_tag}{'name'};}
+			
 		print OUT_FILE "\t<feature name=\"$feat_nm\" value=\"$feat_val\">\n";
 		foreach $val_tag (@{$feats->{$feat_tag}{'values'}{' tags'}})
 		{
@@ -230,6 +237,21 @@ sub copy_cmds(\@\@\%)
 			{push(@{$commands}, $cmd);}}
 };
 
+sub sort_tests($$)
+#compare to <interaction> test attribute strings
+#sort such that longer strings come first
+{
+	my ($a, $b) = @_;
+	my ($a_len, $b_len) = (length($a), length($b));
+	
+	if ($a_len > $b_len)
+		{return -1;}
+	elsif ($a_len < $b_len)
+		{return 1;}
+	else #$a_len == $b_len
+		{return ($a cmp $b);}
+}
+
 sub Feat_Set_cmds(\%$\@)
 #generate a list of commands (cmd-args hashes) to process based on feature settings
 #any cmd_block will be expanded to a list of commands
@@ -242,12 +264,35 @@ sub Feat_Set_cmds(\%$\@)
 	$interactions = $feat_all->{'interactions'};
 	$cmd_blocks = $feat_all->{'cmd_blocks'};
 	
-	#test feature settings against interaction tests
-	my ($interact, $test_str, @tests, $test, $test_passed);
+	#create hash for working with sorted test attributes
+	my ($interact, %test_str_to_ix, $ix);
+	$ix = 0;
 	foreach $interact (@{$interactions})
+		{$test_str_to_ix{$interact->{'test'}} = $ix++;}
+
+	#test feature settings against interaction tests
+	#each successful test removes the feature setttings 
+	# from consideration by tests with fewer conditions
+	# but not from consideration by tests with the same number of conditions
+	# this assumes tests with the same number of conditions affect mutually exclusive USVs
+	# (if the USVs aren't mutually exclusive,
+	#  a test with a higher number of conditions should exist)
+	my ($test_str, @tests, $test, $test_passed);
+	my ($feat_set_next, $feat_set_ct);
+	foreach $test_str (sort sort_tests keys %test_str_to_ix)
 	{
-		$test_str = $interact->{'test'};
 		@tests = split(/\s+/, $test_str);
+		
+		if (not defined($feat_set_ct))
+		{#first test with highest number of conditions
+			$feat_set_ct = scalar @tests;
+			$feat_set_next = $feat_set;
+		}
+		if ($feat_set_ct > scalar @tests)
+		{#change in number of test conditions
+			$feat_set = $feat_set_next;
+			$feat_set_ct = scalar @tests;
+		}
 		$test_passed = 1;
 		foreach $test (@tests)
 		{ #test if all feat-value settings in an interaction test are set
@@ -259,26 +304,35 @@ sub Feat_Set_cmds(\%$\@)
 		}
 		if ($test_passed)
 		{ #add to list of commands to process
-			copy_cmds(@$commands, @{$interact->{'cmds'}}, %$cmd_blocks);
+			if ($opt_d) {print "test passed: $test_str\n";}
+			my $cmds = $interactions->[$test_str_to_ix{$test_str}]->{'cmds'};
+			copy_cmds(@$commands, @$cmds, %$cmd_blocks);
 
 			foreach $test (@tests)
 			{ #remove feature-value pairs that have been processed
-				$feat_set =~ s/$test//;
+				$feat_set_next =~ s/$test//;
 			}
+		}
+		else
+		{
+			if ($opt_d) {print "test failed: $test_str\n";}
 		}
 	}
 	
 	#process remaining feat-value setting based on feature value cmds
 	my (@feat_val, $feat, $val, $cmds);
-	@feat_val = split(/\s+/, $feat_set);
+	@feat_val = split(/\s+/, $feat_set_next); 
+	if ($opt_d) {print "feat-sets applied: ";}
 	foreach (@feat_val)
 	{
 		next if (not $_);
-		$_ =~ /([A-Z]+)([a-z]+)/;
+		if ($opt_d) {print "$_ ";}
+		$_ =~ /([A-Z]+)([a-z]+)/;#assumes feature is uc and setting is lc
 		($feat, $val) = ($1, $2);
 		$cmds = $features->{$feat}{'values'}{$val}{'cmds'};
 		copy_cmds(@$commands, @$cmds, %$cmd_blocks);
 	}
+	if ($opt_d) {print "\n\n";}
 };
 
 sub Cmds_exec ($\@\%)
@@ -309,6 +363,12 @@ sub Cmds_exec ($\@\%)
 		
 		if ($cmd eq 'null')
 		{}
+		elsif ($cmd eq 'gr_feat')
+		{
+			if (scalar @args != 2)
+				{die ("invalid args for gr_feat cmd: @args\n");}
+			Gr_feat($font, $args[0], $args[1]);
+		}
 		elsif ($cmd eq 'encode')
 		{
 			if (scalar @args != 2)
@@ -396,6 +456,11 @@ sub Family_Version_update($\%$)
 	Name_mod($font, $version_name_ids, $version_str_old, $version_str_new)
 }
 
+sub Gr_feat($$$)
+{
+	print "gr_feat not implemented\n"
+}
+
 sub Encode($$$)
 #modify the cmap subtables to encode the glyph indicated by ps_nm at usv_str
 {
@@ -433,7 +498,7 @@ sub Encode($$$)
 	if ($usv > $max_char)
 	{
 		$os2_tbl->{'usLastCharIndex'} = $usv;
-		if ($opt_d) {print "Encode: OS/2 table max char ajusted to $usv\n";}
+		if ($opt_d) {print "Encode: OS/2 table max char adjusted to $usv\n";}
 	}
 	
 	#todo: may need to handle Unicode range bits
@@ -737,7 +802,7 @@ sub cmd_line_exec() #for UltraEdit function list
 my ($font, %feat_all, $feat_set, %feat_tag, @commands);
 my ($feat_all_fn, $feat_set_fn, $font_fn, $font_out_fn);
 
-getopts('df'); #sets $opt_d & $opt_f and removes the switches from @ARGV
+getopts('dft'); #sets $opt_?'s and removes the switches from @ARGV
 
 if (scalar @ARGV == 0)
 	{Usage_print;}
