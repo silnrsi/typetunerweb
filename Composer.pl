@@ -2,7 +2,6 @@
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
 
-#TODO: handle variant glyphs without $feat but with var_uid & ps_name stored too?
 #TODO: handle double encoded glyphs (deprecated PUA)
 
 use strict;
@@ -23,12 +22,12 @@ my $feat_all_base_fn = 'feat_all_composer.xml';
 my $feat_all_elem = "all_features";
 
 #all the ids must be 4 digits
-my $graphite_only_feats = '1026 1030 1050 1051 1052';
+my $graphite_only_feats = '1026 1030 1050 1051 1052 1062';
 my $vietnamese_style_diacs_feat = '1029';
 my $romanian_style_diacs_feat = '1041';
 my $variant_feats = '1024 1025 1027 1028 1031 1032 1033 1034 1035 1036 1037';
 $variant_feats .= '1038 1039 1040 1042 1043 1044 1045 1046 1047 1048 1049';
-$variant_feats .= '1053 1054 1055 1056';
+$variant_feats .= '1053 1054 1055 1056 1057 1059 1060 1061';
 
 my $normal_line_gap = '2324 810';
 my $tight_line_gap = '2000 750';
@@ -47,9 +46,6 @@ sub Tag_get($$)
 	my ($str, $cnt) = @_;
 	my ($tmp);
 
-	#if ($str eq "True") {return 't';}
-	#if ($str eq "False") {return 'f';}
-	
 	$tmp = $str;
 	$tmp =~ s/\s//;
 	$tmp = substr($tmp, 0, $cnt);
@@ -63,6 +59,7 @@ sub Tag_get($$)
 	}
 	elsif ($cnt == 2)
 	{#feature tags
+		if ($tmp eq '9-') {$tmp = 'NI'} #kludge for '9-level pitches' feature
 		$tmp = uc($tmp);
 		while (defined($tags{$tmp}))
 			{substr($tmp, -1, 1, chr(ord(substr($tmp, -1, 1)) + 1));} #changes AA to AB
@@ -78,18 +75,18 @@ sub Feats_get($\%)
 #create the %feats structure based on the Feat table in the font
 {
 	my ($font_fn, $feats) = @_;
-	my ($font, $Feat_tbl);
+	my ($font, $GrFeat_tbl);
 
 	$font = Font::TTF::Font->open($font_fn) or die "Can't open font";
-	$Feat_tbl = $font->{'Feat'}->read;
+	$GrFeat_tbl = $font->{'Feat'}->read;
 	
 	my ($feat, $feat_id, $set_id, $feat_nm, $set_nm, $feat_tag, $set_tag);
-	foreach $feat (@{$Feat_tbl->{'features'}})
+	foreach $feat (@{$GrFeat_tbl->{'features'}})
 	{
 		$feat_id = $feat->{'feature'};
 		foreach $set_id (sort keys %{$feat->{'settings'}})
 		{
-			($feat_nm, $set_nm) = $Feat_tbl->settingName($feat_id, $set_id);
+			($feat_nm, $set_nm) = $GrFeat_tbl->settingName($feat_id, $set_id);
 			
 			if (not defined $feats->{$feat_id})
 			{# this could go in the outer loop
@@ -97,7 +94,8 @@ sub Feats_get($\%)
 				$feat_tag = Tag_get($feat_nm, 2);
 				$feats->{$feat_id}{'name'} = $feat_nm;
 				$feats->{$feat_id}{'tag'} = $feat_tag;
-				$feats->{$feat_id}{'default'} = $set_id; #assumes lowest id is default
+				$feats->{$feat_id}{'default'} = $feat->{'default'};
+				#$feats->{$feat_id}{'default'} = $set_id; #assumes lowest id is default
 				if (not defined($feats->{' ids'}))
 					{$feats->{' ids'} = [];}
 				push(@{$feats->{' ids'}}, $feat_id);
@@ -221,7 +219,11 @@ sub Gsi_xml_parse($\%\%\%)
 				{$set = $attrs{'value'};}
 			else #for binary valued features GSI indicates when they should be set 'on'
 				{$set = '1';}
-			my $featset = $feats->{$feat}{'tag'} . $feats->{$feat}{'settings'}{$set}{'tag'};
+			my $feat_tag = $feats->{$feat}{'tag'}; 
+			my $set_tag = $feats->{$feat}{'settings'}{$set}{'tag'};
+			if (!$feat_tag || !$set_tag)
+				{print "WARNING: feature or setting in GSI missing from font feat: $feat set: $set\n";}
+			my $featset = $feat_tag . $set_tag;
 			
 			if (not defined ($featset_to_usvs->{$featset}))
 				{$featset_to_usvs->{$featset} = [];}
@@ -346,6 +348,7 @@ sub Features_output($\%\%\%)
 			{#write one cmd for each variant glyph associated with this feature setting
 				my $featset = $feat_tag . $set_tag;
 				my @usvs = @{$featset_to_usvs->{$featset}};
+				if (not @usvs) {die("feature is not of variant type: $feat_id $featset\n");}
 				my ($usv, $ps_name);
 				foreach $usv (@usvs)
 				{
@@ -368,7 +371,8 @@ sub Features_output($\%\%\%)
 			}
 			else
 			{
-				print $fh "\t\t\t<!-- setting not in GSI data -->\n";
+				print "WARNING: type of feature unknown: $feat_id\n";
+				print $fh "\t\t\t<!-- type of feature unknown -->\n";
 				print $fh "\t\t\t<cmd name name=\"null\" args=\"null\"/>\n";
 				goto cmd_end
 			};
