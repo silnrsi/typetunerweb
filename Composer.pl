@@ -14,9 +14,10 @@ use Getopt::Std;
 #### global variables & constants ####
 
 #$opt_d - debug output
-#$opt_g - output graphite only cmds
+#$opt_g - output only graphite cmds
+#$opt_q - output no graphite cmds
 #$opt_t - output <interaction> encode cmds w/o choices for PS name for testing TypeTuner
-our($opt_d, $opt_g, $opt_t); #set by &getopts:
+our($opt_d, $opt_g, $opt_q, $opt_t); #set by &getopts:
 
 my $feat_all_base_fn = 'feat_all_composer.xml';
 my $feat_all_elem = "all_features";
@@ -86,6 +87,7 @@ sub Feats_get($\%)
 		$feat_id = $feat->{'feature'};
 		foreach $set_id (sort keys %{$feat->{'settings'}})
 		{
+			if ($feat_id == 1) {next;} #skip over weird last feature in Feat table
 			($feat_nm, $set_nm) = $GrFeat_tbl->settingName($feat_id, $set_id);
 			
 			if (not defined $feats->{$feat_id})
@@ -222,7 +224,7 @@ sub Gsi_xml_parse($\%\%\%)
 			my $feat_tag = $feats->{$feat}{'tag'}; 
 			my $set_tag = $feats->{$feat}{'settings'}{$set}{'tag'};
 			if (!$feat_tag || !$set_tag)
-				{print "WARNING: feature or setting in GSI missing from font feat: $feat set: $set\n";}
+				{die("feature or setting in GSI missing from font Feat table: $feat set: $set\n");}
 			my $featset = $feat_tag . $set_tag;
 			
 			if (not defined ($featset_to_usvs->{$featset}))
@@ -336,12 +338,15 @@ sub Features_output($\%\%\%)
 			}
 			
 			#gr_feat cmd
-			print $fh "\t\t\t<cmd name=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
-			
+			if (not $opt_q)
+				{print $fh "\t\t\t<cmd name=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";}
+				
 			#TODO: may need special handling of tone features
 			#       currently handled as Graphite only feats
 			if ($graphite_only_feats =~ /$feat_id/ or $opt_g)
 			{
+				if ($opt_q)
+					{print $fh "\t\t\t<cmd name=\"null\" args=\"null\"/>\n";}
 				goto cmd_end;
 			}
 			elsif ($variant_feats =~ /$feat_id/)
@@ -387,6 +392,7 @@ sub Features_output($\%\%\%)
 	}
 	
 	#output line gap feature
+	if ($opt_g) {return;}
 	my $line_gap_tag = Tag_get('Line gap', 2);
     print $fh <<END
 	<feature name="Line gap" value="Normal gap" tag="$line_gap_tag">
@@ -540,7 +546,13 @@ sub Usage_print()
 Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
 	Composer <switches> <ttf> <xml>
-	switches: -g Graphite only support
+	switches:
+		-g - output only graphite cmds
+		-q - output no graphite cmds
+		-d - debug output
+		-t - output encode cmds w/o choices for PS name 
+			(for testing TypeTuner)
+			
 	output is to feat_all_composer.xml
 END
 	exit();
@@ -554,7 +566,7 @@ sub cmd_line_exec() #for UltraEdit function list
 my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, $feat_all_fh);
 my ($font_fn, $gsi_fn, $feat_all_fn);
 
-getopts('dgt'); #sets $opt?'s & removes the switch from @ARGV
+getopts('dgqt'); #sets $opt?'s & removes the switch from @ARGV
 
 if (scalar @ARGV != 2)
 	{Usage_print;}
@@ -578,3 +590,5 @@ if (not $opt_g)
 }
 
 print $feat_all_fh "</all_features>\n";
+
+exit;
