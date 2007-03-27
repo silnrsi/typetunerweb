@@ -52,8 +52,8 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'feature')
 		{
 			$tag = $attrs{'tag'};
-			if (defined $feat_all->{'features'}{$tag} || $tag ne uc($tag) || $tag !~ /[A-Z]+/)
-				{die("feature tag is repeated or not upper case: $tag\n");}
+			if (defined $feat_all->{'features'}{$tag} || length($tag) != 2 || $tag !~ /[A-Z]+/)
+				{die("feature tags must be unique and consist of two uppercase letters: $tag\n");}
 			
 			$feat_all->{'features'}{$tag}{'name'} = $attrs{'name'};
 			$feat_all->{'features'}{$tag}{'default'} = $attrs{'value'};
@@ -69,8 +69,8 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'value')
 		{
 			$tag = $attrs{'tag'};
-			if (defined $current->{'values'}{$tag} || $tag ne lc($tag) || $tag !~ /[a-z]+/)
-				{die("for feature $current->{'name'}, value tag is repeated or not lower case: $tag\n");}
+			if (defined $current->{'values'}{$tag} || length($tag) != 1 || $tag !~ /[a-z]+/)
+				{die("for feature $current->{'name'}, value tags must be unique and consist of one lowercase letters: $tag\n");}
 			
 			$current->{'values'}{$tag}{'name'} = $attrs{'name'};
 			
@@ -185,7 +185,7 @@ sub Feat_Set_parse($\%\$)
 	my ($feat_set_fn, $feat_tag, $feat_set) = @_;
 	
 	my ($xml_parser, $tmp, $feature_tag, $value_tag, $feat_set_str);
-	$feat_set_str = "";
+	$feat_set_str = '';
 
 	$xml_parser = XML::Parser::Expat->new();
 	$xml_parser->setHandlers('Start' => sub {
@@ -216,6 +216,7 @@ sub Feat_Set_parse($\%\$)
 	});
 
 	$xml_parser->parsefile($feat_set_fn) or die "Can't read $feat_set_fn";
+	chop $feat_set_str; #remove final space
 	$$feat_set = $feat_set_str;
 }
 
@@ -250,6 +251,22 @@ sub sort_tests($$)
 		{return 1;}
 	else #$a_len == $b_len
 		{return ($a cmp $b);}
+}
+
+sub Feat_val_tags($)
+#extract feature and value tags from a concatenated string containing them together
+#returns the tags as a list
+#referencing $1 after the regex crashes in the Perl debugger
+#If this would work, I think the limits on feature & value tag length 
+# would be eliminated
+{
+	my ($fv) = @_;
+	
+	#print "Feat_val_tags fv: '$fv'\n";
+	if ($fv =~ /([A-Z]+)([a-z]+)/) #assumes feature is uc and setting is lc
+		{return ($1, $2);}
+	else
+		{die("feature-value pair is corrupt: $fv\n");}
 }
 
 sub Feat_Set_cmds(\%$\@)
@@ -327,8 +344,9 @@ sub Feat_Set_cmds(\%$\@)
 	{
 		next if (not $fv);
 		if ($opt_d) {print "$fv ";}
-		$fv =~ /([A-Z]+)([a-z]+)/; #assumes feature is uc and setting is lc
-		($feat, $val) = ($1, $2);
+		$feat = substr($fv, 0, 2);
+		$val = substr($fv, -1, 1);
+		#($feat, $val) = Feat_val_tags($fv);
 		$cmds = $features->{$feat}{'values'}{$val}{'cmds'};
 		copy_cmds(@$commands, @$cmds, %$cmd_blocks);
 	}
@@ -420,14 +438,15 @@ sub Family_Version_update($\%$)
 	#eliminate default feature value settings
 	my ($feats, @feat_val, $feat, $val, $feat_set_active);
 	$feats = $feat_all->{'features'};
-	$feat_set_active = "";
+	$feat_set_active = '';
 	
 	@feat_val = split(/\s+/, $feat_set);
 	foreach my $fv (@feat_val)
 	{
 		next if (not $fv);
-		$fv =~ /([A-Z]+)([a-z]+)/; #assumes feature is uc and setting is lc
-		($feat, $val) = ($1, $2);
+		$feat = substr($fv, 0, 2);
+		$val = substr($fv, -1, 1);
+		#($feat, $val) = Feat_val_tags($fv);
 		if ($feats->{$feat}{'default'} ne $feats->{$feat}{'values'}{$val}{'name'})
 		{
 			#$feat_set_active .= " " if $feat_set_active;
@@ -484,7 +503,6 @@ sub Gr_feat($$$)
 		{die("feature id not found in TTF: feat_id: $gr_feat_id set_id: $gr_set_id\n");}
 	if (not $set_found)
 		{die("set id not availabe for feature in TTF: feat_id: $gr_feat_id set_id: $gr_set_id\n");}
-	#$grfeat_tbl->print;
 }
 
 sub Encode($$$)
@@ -734,7 +752,7 @@ sub Name_mod($\@$$)
 					if ($name =~ s/$old_name/$new_name/)
 					{
 						$name_tbl->{'strings'}[$nid][$pid][$eid]{$lid} = $name;
-						if ($opt_d) {print "Mod_name: name = $name nid = $nid pid = $pid eid = $eid lid = $lid\n";}
+						if ($opt_d) {print "Name_mod: name = $name nid = $nid pid = $pid eid = $eid lid = $lid\n";}
 					}
 				}
 			}
@@ -995,6 +1013,8 @@ else
 {
 	Usage_print;
 }
+
+exit;
 
 #### Test code ####
 
