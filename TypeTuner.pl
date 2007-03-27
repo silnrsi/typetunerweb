@@ -52,7 +52,7 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'feature')
 		{
 			$tag = $attrs{'tag'};
-			if (defined $feat_all->{'features'}{$tag} || $tag ne uc($tag))
+			if (defined $feat_all->{'features'}{$tag} || $tag ne uc($tag) || $tag !~ /[A-Z]+/)
 				{die("feature tag is repeated or not upper case: $tag\n");}
 			
 			$feat_all->{'features'}{$tag}{'name'} = $attrs{'name'};
@@ -69,7 +69,7 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'value')
 		{
 			$tag = $attrs{'tag'};
-			if (defined $current->{'values'}{$tag} || $tag ne lc($tag))
+			if (defined $current->{'values'}{$tag} || $tag ne lc($tag) || $tag !~ /[a-z]+/)
 				{die("for feature $current->{'name'}, value tag is repeated or not lower case: $tag\n");}
 			
 			$current->{'values'}{$tag}{'name'} = $attrs{'name'};
@@ -323,11 +323,11 @@ sub Feat_Set_cmds(\%$\@)
 	my (@feat_val, $feat, $val, $cmds);
 	@feat_val = split(/\s+/, $feat_set_next); 
 	if ($opt_d) {print "feat-sets applied: ";}
-	foreach (@feat_val)
+	foreach my $fv (@feat_val)
 	{
-		next if (not $_);
-		if ($opt_d) {print "$_ ";}
-		$_ =~ /([A-Z]+)([a-z]+)/;#assumes feature is uc and setting is lc
+		next if (not $fv);
+		if ($opt_d) {print "$fv ";}
+		$fv =~ /([A-Z]+)([a-z]+)/; #assumes feature is uc and setting is lc
 		($feat, $val) = ($1, $2);
 		$cmds = $features->{$feat}{'values'}{$val}{'cmds'};
 		copy_cmds(@$commands, @$cmds, %$cmd_blocks);
@@ -423,15 +423,15 @@ sub Family_Version_update($\%$)
 	$feat_set_active = "";
 	
 	@feat_val = split(/\s+/, $feat_set);
-	foreach (@feat_val)
+	foreach my $fv (@feat_val)
 	{
-		next if (not $_);
-		$_ =~ /([A-Z]+)([a-z]+)/;
+		next if (not $fv);
+		$fv =~ /([A-Z]+)([a-z]+)/; #assumes feature is uc and setting is lc
 		($feat, $val) = ($1, $2);
 		if ($feats->{$feat}{'default'} ne $feats->{$feat}{'values'}{$val}{'name'})
 		{
 			#$feat_set_active .= " " if $feat_set_active;
-			$feat_set_active .= $_;
+			$feat_set_active .= $fv;
 		}
 	}
 	if ($opt_d) {print "Family_Version_update: feat_set_active = $feat_set_active\n";}
@@ -458,7 +458,33 @@ sub Family_Version_update($\%$)
 
 sub Gr_feat($$$)
 {
-	print "gr_feat not implemented\n"
+	my ($font, $gr_feat_id, $gr_set_id) = @_;
+	my ($grfeat_tbl, $feature, $feat_found, $set_found);
+	
+	$grfeat_tbl = $font->{'Feat'}->read;
+	#$grfeat_tbl->print;
+	
+	($feat_found, $set_found) = (0, 0);
+	foreach $feature (@{$grfeat_tbl->{'features'}})
+	{
+		if ($feature->{'feature'} == $gr_feat_id)
+		{
+			$feat_found = 1;
+			if (defined($feature->{'settings'}{$gr_set_id}))
+			{
+				if ($opt_d) {print "Gr_feat: feat_id: $gr_feat_id old_default: $feature->{'default'} new_default: $gr_set_id\n";}
+				$set_found = 1;
+				$feature->{'default'} = $gr_set_id;
+			}
+			last;
+		}
+	}
+
+	if (not $feat_found)
+		{die("feature id not found in TTF: feat_id: $gr_feat_id set_id: $gr_set_id\n");}
+	if (not $set_found)
+		{die("set id not availabe for feature in TTF: feat_id: $gr_feat_id set_id: $gr_set_id\n");}
+	#$grfeat_tbl->print;
 }
 
 sub Encode($$$)
