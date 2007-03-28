@@ -63,44 +63,54 @@ Reads the features from the TTF file into memory
 
 sub read
 {
-    my ($self) = @_;
-    my ($featureCount, $features);
+	my ($self) = @_;
+	my ($featureCount, $features);
 
-    return undef if $self->{' read'};
-    $self->SUPER::read_dat or return $self;
+	return $self if $self->{' read'};
+	$self->SUPER::read_dat or return $self;
 
-    ($self->{'version'}, $featureCount) = TTF_Unpack("fS", $self->{' dat'});
+	($self->{'version'}, $featureCount) = TTF_Unpack("fS", $self->{' dat'});
 
-    $features = [];
-    foreach (1 .. $featureCount) {
-        my ($feature, $nSettings, $settingTable, $featureFlags, $nameIndex, $reserved);
-        if ($self->{'version'} == 1)
-        {
-            ($feature, $nSettings, $settingTable, $featureFlags, $nameIndex)
-                = TTF_Unpack("SSLSS", substr($self->{' dat'}, $_ * 12, 12));
+	$features = [];
+	foreach (1 .. $featureCount) {
+		my ($feature, $nSettings, $settingTable, $featureFlags, $nameIndex, $reserved);
+		if ($self->{'version'} == 1)
+		{
+			($feature, $nSettings, $settingTable, $featureFlags, $nameIndex)
+				= TTF_Unpack("SSLSS", substr($self->{' dat'}, $_ * 12, 12));
 			#The version 1 Feat table ends with a feature (id 1) named NoName
 			#with zero settings but with an offset to the last entry in the setting
 			#array. This last setting has id 0 and an invalid name id. This last
 			#feature is changed to have one setting.
-            if ($_ == $featureCount && $nSettings == 0) {$nSettings = 1;}
-        }
-        else #version == 2
-            {($feature, $nSettings, $reserved, $settingTable, $featureFlags, $nameIndex)
-                = TTF_Unpack("LSSLSS", substr($self->{' dat'}, 12 + ($_ - 1) * 16, 16))};
-        push @$features,
-            {
-                'feature'    => $feature,
-                'name'        => $nameIndex,
-                'exclusive'    => (($featureFlags & 0x8000) != 0),
-                'default'    => ($featureFlags & 0x4000) ? $featureFlags & 0x00FF : 0, 
-                'settings'    => { TTF_Unpack("S*", substr($self->{' dat'}, $settingTable, $nSettings * 4)) }
-            };
-    }
-    $self->{'features'} = $features;
-    
-    delete $self->{' dat'}; # no longer needed, and may become obsolete
-    $self->{' read'} = 1;
-    $self;
+			if ($_ == $featureCount && $nSettings == 0) {$nSettings = 1;}
+		}
+		else #version == 2
+			{($feature, $nSettings, $reserved, $settingTable, $featureFlags, $nameIndex)
+				= TTF_Unpack("LSSLSS", substr($self->{' dat'}, 12 + ($_ - 1) * 16, 16))};
+		my $feature = 
+			{
+				'feature'	=> $feature,
+				'name'		=> $nameIndex,
+			};
+			
+		#interpret the featureFlags & store settings
+		$feature->{'exclusive'} = (($featureFlags & 0x8000) != 0);
+		
+		my @settings = TTF_Unpack("S*", substr($self->{' dat'}, $settingTable, $nSettings * 4));
+		if ($featureFlags & 0x4000)
+			{$feature->{'default'} = $featureFlags & 0x00FF;}
+		else
+			{$feature->{'default'} = @settings[0];}
+		$feature->{'settings'} = {@settings};
+		
+		push(@$features, $feature);
+	}
+	
+	$self->{'features'} = $features;
+	
+	delete $self->{' dat'}; # no longer needed, and may become obsolete
+	$self->{' read'} = 1;
+	$self;
 }
 
 =head2 $t->out($fh)
@@ -111,51 +121,52 @@ Writes the features to a TTF file
 
 sub out
 {
-    my ($self, $fh) = @_;
-    my ($features, $numFeatures, $settings, $featureFlags, $featuresData, $settingsData);
-    
-    return $self->SUPER::out($fh) unless $self->{' read'};
+	my ($self, $fh) = @_;
+	my ($features, $numFeatures, $settings, $featureFlags, $featuresData, $settingsData);
+	
+	return $self->SUPER::out($fh) unless $self->{' read'};
 
-    $features = $self->{'features'};
-    $numFeatures = @$features;
-    $featuresData, $settingsData = ('', '');
+	$features = $self->{'features'};
+	$numFeatures = @$features;
+	$featuresData, $settingsData = ('', '');
 
-    foreach (@$features) {
-        $settings = $_->{'settings'};
-        $featureFlags = ($_->{'exclusive'} ? 0x8000 : 0x0000) |
-                                ($_->{'default'} ? 0x4000 | ($_->{'default'} & 0x00FF) : 0x0000);
-        if ($self->{'version'} == 1)
-        {
-            $featuresData .= TTF_Pack("SSLSS",
-                                        $_->{'feature'},
-                                        scalar keys %$settings,
-                                        12 + 12 * $numFeatures + length $settingsData,
-                                        $featureFlags, 
-                                        $_->{'name'});
-        }
-        else #version == 2
-        {
-            $featuresData .= TTF_Pack("LSSLSS",
-                                        $_->{'feature'},
-                                        scalar keys %$settings,
-                                        0, 
-                                        12 + 16 * $numFeatures + length $settingsData,
-                                        $featureFlags, 
-                                        $_->{'name'});
-        }
+	foreach (@$features) {
+		$settings = $_->{'settings'};
+		$featureFlags = ($_->{'exclusive'} ? 0x8000 : 0x0000) |
+								($_->{'default'} != 0 ? 0x4000 | ($_->{'default'} & 0x00FF) 
+														: 0x0000);
+		if ($self->{'version'} == 1)
+		{
+			$featuresData .= TTF_Pack("SSLSS",
+										$_->{'feature'},
+										scalar keys %$settings,
+										12 + 12 * $numFeatures + length $settingsData,
+										$featureFlags, 
+										$_->{'name'});
+		}
+		else #version == 2
+		{
+			$featuresData .= TTF_Pack("LSSLSS",
+										$_->{'feature'},
+										scalar keys %$settings,
+										0, 
+										12 + 16 * $numFeatures + length $settingsData,
+										$featureFlags, 
+										$_->{'name'});
+		}
 		#The version 1 Feat table does not always list settings in
 		#numeric order. When the Feat table is written they are output
 		#in numeric order.
-        foreach (sort {$a <=> $b} keys %$settings) {
-            $settingsData .= TTF_Pack("SS", $_, $settings->{$_});
-        }
-    }
+		foreach (sort {$a <=> $b} keys %$settings) {
+			$settingsData .= TTF_Pack("SS", $_, $settings->{$_});
+		}
+	}
 
-    $fh->print(TTF_Pack("fSSL", $self->{'version'}, $numFeatures, 0, 0));
-    $fh->print($featuresData);
-    $fh->print($settingsData);
+	$fh->print(TTF_Pack("fSSL", $self->{'version'}, $numFeatures, 0, 0));
+	$fh->print($featuresData);
+	$fh->print($settingsData);
 
-    $self;
+	$self;
 }
 
 =head2 $t->print($fh)
@@ -166,52 +177,52 @@ Prints a human-readable representation of the table
 
 sub print
 {
-    my ($self, $fh) = @_;
-    my ($names, $features, $settings);
+	my ($self, $fh) = @_;
+	my ($names, $features, $settings);
 
-    $self->read;
+	$self->read;
 
-    $names = $self->{' PARENT'}->{'name'};
-    $names->read;
+	$names = $self->{' PARENT'}->{'name'};
+	$names->read;
 
-    $fh = 'STDOUT' unless defined $fh;
+	$fh = 'STDOUT' unless defined $fh;
 
-    $features = $self->{'features'};
-    foreach (@$features) {
-        $fh->printf("Feature %d, %s, default: %d name %d # '%s'\n",
-                    $_->{'feature'},
-                    ($_->{'exclusive'} ? "exclusive" : "additive"),
-                    $_->{'default'}, 
-                    $_->{'name'},
-                    $names->{'strings'}[$_->{'name'}][3][1]{1033});
-        $settings = $_->{'settings'};
-        foreach (sort { $a <=> $b } keys %$settings) {
-            $fh->printf("\tSetting %d, name %d # '%s'\n",
-                        $_, $settings->{$_}, $names->{'strings'}[$settings->{$_}][3][1]{1033});
-        }
-    }
-    
-    $self;
+	$features = $self->{'features'};
+	foreach (@$features) {
+		$fh->printf("Feature %d, %s, default: %d name %d # '%s'\n",
+					$_->{'feature'},
+					($_->{'exclusive'} ? "exclusive" : "additive"),
+					$_->{'default'}, 
+					$_->{'name'},
+					$names->{'strings'}[$_->{'name'}][3][1]{1033});
+		$settings = $_->{'settings'};
+		foreach (sort { $a <=> $b } keys %$settings) {
+			$fh->printf("\tSetting %d, name %d # '%s'\n",
+						$_, $settings->{$_}, $names->{'strings'}[$settings->{$_}][3][1]{1033});
+		}
+	}
+	
+	$self;
 }
 
 sub settingName
 {
-    my ($self, $feature, $setting) = @_;
+	my ($self, $feature, $setting) = @_;
 
-    $self->read;
+	$self->read;
 
-    my $names = $self->{' PARENT'}->{'name'};
-    $names->read;
-    
-    my $features = $self->{'features'};
-    my ($featureEntry) = grep { $_->{'feature'} == $feature } @$features;
-    my $featureName = $names->{'strings'}[$featureEntry->{'name'}][3][1]{1033};
-    my $settingName = $featureEntry->{'exclusive'}
-            ? $names->{'strings'}[$featureEntry->{'settings'}->{$setting}][3][1]{1033}
-            : $names->{'strings'}[$featureEntry->{'settings'}->{$setting & ~1}][3][1]{1033}
-                . (($setting & 1) == 0 ? " On" : " Off");
+	my $names = $self->{' PARENT'}->{'name'};
+	$names->read;
+	
+	my $features = $self->{'features'};
+	my ($featureEntry) = grep { $_->{'feature'} == $feature } @$features;
+	my $featureName = $names->{'strings'}[$featureEntry->{'name'}][3][1]{1033};
+	my $settingName = $featureEntry->{'exclusive'}
+			? $names->{'strings'}[$featureEntry->{'settings'}->{$setting}][3][1]{1033}
+			: $names->{'strings'}[$featureEntry->{'settings'}->{$setting & ~1}][3][1]{1033}
+				. (($setting & 1) == 0 ? " On" : " Off");
 
-    ($featureName, $settingName);
+	($featureName, $settingName);
 }
 
 1;
@@ -224,8 +235,9 @@ array. This last setting has id 0 and an invalid name id. This last
 feature is changed to have one setting.
 
 The version 1 Feat table does not always list settings in
-numeric order. When the Feat table is written they are output
-in numeric order.
+numeric order. Rather it puts the default setting at index 0. 
+When the Feat table is written, they are output in numeric order 
+with the flags indicating the default settings.
 
 =head1 AUTHOR
 
