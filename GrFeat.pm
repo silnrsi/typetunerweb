@@ -132,9 +132,12 @@ sub out
 
 	foreach (@$features) {
 		$settings = $_->{'settings'};
-		$featureFlags = ($_->{'exclusive'} ? 0x8000 : 0x0000) |
-								($_->{'default'} != 0 ? 0x4000 | ($_->{'default'} & 0x00FF) 
-														: 0x0000);
+		$featureFlags = ($_->{'exclusive'} ? 0x8000 : 0x0000);
+		
+#		output default setting first instead of using the featureFlags (as done below)
+#		$featureFlags = ($_->{'exclusive'} ? 0x8000 : 0x0000) |
+#								($_->{'default'} != 0 ? 0x4000 | ($_->{'default'} & 0x00FF) 
+#														: 0x0000);
 		if ($self->{'version'} == 1)
 		{
 			$featuresData .= TTF_Pack("SSLSS",
@@ -154,10 +157,13 @@ sub out
 										$featureFlags, 
 										$_->{'name'});
 		}
-		#The version 1 Feat table does not always list settings in
-		#numeric order. When the Feat table is written they are output
-		#in numeric order.
+		
+		#output default setting first
+		#the settings may not be in their original order
+		my $defaultSetting = $_->{'default'};
+		$settingsData .= TTF_Pack("SS", $defaultSetting, $settings->{$defaultSetting});
 		foreach (sort {$a <=> $b} keys %$settings) {
+			if ($_ == $defaultSetting) {next;} #skip default setting
 			$settingsData .= TTF_Pack("SS", $_, $settings->{$_});
 		}
 	}
@@ -233,11 +239,6 @@ The version 1 Feat table ends with a feature (id 1) named NoName
 with zero settings but with an offset to the last entry in the setting
 array. This last setting has id 0 and an invalid name id. This last
 feature is changed to have one setting.
-
-The version 1 Feat table does not always list settings in
-numeric order. Rather it puts the default setting at index 0. 
-When the Feat table is written, they are output in numeric order 
-with the flags indicating the default settings.
 
 =head1 AUTHOR
 
