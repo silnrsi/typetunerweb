@@ -163,11 +163,16 @@ sub Feat_Set_write($\%)
 		
 		if (not $opt_t)
 			{$feat_val = $feats->{$feat_tag}{'default'};}
-		else #quick way to set binary feature 'True' or pick an non-default alternate
-			{$val_tag = $feats->{$feat_tag}{'values'}{' tags'}[1];
-			$feat_val = $feats->{$feat_tag}{'values'}{$val_tag}{'name'};}
-			
+		else #get non-default setting for binary or multi-valued feat
+		{	foreach (@{$feats->{$feat_tag}{'values'}{' tags'}})
+			{
+				$feat_val = $feats->{$feat_tag}{'values'}{$_}{'name'};
+				if ($feat_val ne $feats->{$feat_tag}{'default'}) 
+					{last;}
+			}
+		}
 		print OUT_FILE "\t<feature name=\"$feat_nm\" value=\"$feat_val\">\n";
+		
 		foreach $val_tag (@{$feats->{$feat_tag}{'values'}{' tags'}})
 		{
 			$val_nm = $feats->{$feat_tag}{'values'}{$val_tag}{'name'};
@@ -762,7 +767,7 @@ sub Name_mod($\@$$)
 
 sub Table_extract($$$)
 #extract the Tune table from the $font to the specified file name
-#$feat_all_test insures that $feat_set_elem is at the start of the data to be extracted
+#$feat_set_test insures that $feat_set_elem is at the start of the data to be extracted
 {
 	my ($font, $fn, $feat_set_test) = @_;
 	
