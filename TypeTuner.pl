@@ -14,8 +14,8 @@ use Getopt::Std;
 #### global variables & constants ####
 
 #$opt_d - debug output
-#$opt_f - for add subcommand, don't check whether $feat_all_elem at start of file
-#$opt_t - output feat_set.xml file with all settings 'on' for testing TypeTuner
+#$opt_f - for add & extract subcommands, don't check whether proper element at start of file
+#$opt_t - output feat_set.xml file with all settings at non-default values for testing TypeTuner
 our($opt_d, $opt_f, $opt_t); #set by &getopts:
 
 my $family_name_id = 1; #source for family name to modify
