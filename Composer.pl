@@ -465,16 +465,27 @@ sub Test_output($$\%\%\%)
 			my $ps_name = $usv_feat_to_ps_name->{$usv}{$feat};
 			$choices .= "$ps_name ";
 		}
-		if ((scalar @feats > 1) && defined($usv_feat_to_ps_name->{$usv}{'unk'}))
-		{
-			foreach (@{$usv_feat_to_ps_name->{$usv}{'unk'}})
-				{$choices .= "$_ ";}
+		if (scalar @feats > 1)
+		{   
+			#offer variants without feature info in the GSI as choices
+			if (defined($usv_feat_to_ps_name->{$usv}{'unk'}))
+				{foreach (@{$usv_feat_to_ps_name->{$usv}{'unk'}})
+					{$choices .= "$_ ";}}
+			
+			#offer multi-valued variants as choices
+			foreach $feat (@feats)
+				{foreach (keys %{$usv_feat_to_ps_name->{$usv}})
+					{if (($_ ne $feat) && (substr($feat, 0, 2) eq substr($_, 0, 2)))
+						{$choices .= "$usv_feat_to_ps_name->{$usv}{$_} ";}}}
 		}
 		chop($choices);
 		
 		if ($opt_t) #output legal args for testing TypeTuner
 			{my @c = split(/\s/, $choices); $choices = $c[0];}
 			
+		my @c = split(/\s/, $choices);
+		if (scalar @c > 1)
+			{print $fh "\t\t\t<!-- edit below line -->\n";}
 		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
 		$used_usvs->{$usv} = 1;
 	}
