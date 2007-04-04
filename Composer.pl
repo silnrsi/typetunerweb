@@ -136,33 +136,21 @@ sub Feats_get($\%)
 
 sub Featset_combos_get($@)
 #return an array of strings where each string indicates feature interactions
-# handles multi-valued features which don't interact
-# TODO: properly handle a binary-valued feature interacting with a multi-valued feature
-#        currently combos are only calculated using the first multi-value found
+# handles multi-valued features whose settings should not interact
+# mv = multi-valued feature. bv = binary-valued feature
+# TODO: properly handle a bv setting interacting with mv settings
+#		the bv setting should interact with each mv setting
+#		but the mv settings should NOT interact with each other
+#		currently the bv & mv features don't interact so this case isn't handled
 {
 	my ($feat_add, @feats) = @_;
 	my (@feats_combo);
 	
-	#only allow one multi-valued featset to interact
+	#prevent the various settings for a mv feature from interacting
 	foreach (@feats)
 		{if (substr($feat_add, 0, 2) eq substr($_, 0, 2))
 			{return @feats_combo;}} #@feats_combo is empty
 	
-#	see todo above
-#	my ($multi_found, $bin_found) = (0, 0);
-#	foreach (@feats, $feat_add)
-#	{#this does not work, need better test to determine if a multi or binary value
-#		my $set = substr($_, -1, 1);
-#		if ($set ne 't' && $set ne 'f')
-#			{$multi_found = 1;}
-#		else
-#			{$bin_found = 1;}
-#	}
-#	if ($multi_found && $bin_found)
-#		{die "error: multi-valued an binary-valued features interact: $feat_add, @feats\n";}
-#	if ($multi_found)
-#		{@feats_combo = (undef);return @feats_combo;}
-
 	if (scalar @feats == 1)
 	{
 		push(@feats_combo, join(' ', sort($feats[0], $feat_add)));
