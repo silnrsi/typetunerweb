@@ -459,12 +459,6 @@ sub Test_output($$\%\%\%)
 			if (defined($usv_feat_to_ps_name->{$usv}{'unk'}))
 				{foreach (@{$usv_feat_to_ps_name->{$usv}{'unk'}})
 					{$choices .= "$_ ";}}
-			
-			#offer multi-valued variants as choices
-			foreach $feat (@feats)
-				{foreach (keys %{$usv_feat_to_ps_name->{$usv}})
-					{if (($_ ne $feat) && (substr($feat, 0, 2) eq substr($_, 0, 2)))
-						{$choices .= "$usv_feat_to_ps_name->{$usv}{$_} ";}}}
 		}
 		chop($choices);
 		
