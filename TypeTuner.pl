@@ -16,7 +16,8 @@ use Getopt::Std;
 #$opt_d - debug output
 #$opt_f - for add & extract subcommands, don't check whether proper element at start of file
 #$opt_t - output feat_set.xml file with all settings at non-default values for testing TypeTuner
-our($opt_d, $opt_f, $opt_t); #set by &getopts:
+our($opt_d, $opt_f, $opt_t, $opt_n, $opt_o); #set by &getopts:
+my $opt_str ='dftn:o:';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
@@ -24,7 +25,7 @@ my $family_name_ids = [1, 3, 4, 6, 16, 18, 20]; #name ids where family might occ
 my $version_name_ids = [3, 5];
 my $feat_all_elem = "all_features";
 my $feat_set_elem = "features_set";
-my $table_nm = "Tune";
+my $table_nm = "Silt";
 
 #### subroutines ####
 
@@ -301,6 +302,7 @@ sub Feat_Set_cmds(\%$\@)
 	#  a test with a higher number of conditions should exist)
 	my ($test_str, @tests, $test, $test_passed);
 	my ($feat_set_next, $feat_set_ct);
+	$feat_set_next = $feat_set; #initialize here in case no interactions section
 	foreach $test_str (sort sort_tests keys %test_str_to_ix)
 	{
 		@tests = split(/\s+/, $test_str);
@@ -308,7 +310,6 @@ sub Feat_Set_cmds(\%$\@)
 		if (not defined($feat_set_ct))
 		{#first test with highest number of conditions
 			$feat_set_ct = scalar @tests;
-			$feat_set_next = $feat_set;
 		}
 		if ($feat_set_ct > scalar @tests)
 		{#change in number of test conditions
@@ -435,10 +436,10 @@ sub Cmds_exec ($\@\%)
 	}
 };
 
-sub Family_Version_update($\%$)
-#update font family name based on feature settings
+sub Font_ids_update($\%$)
+#update various identifying information in the font based on feature settings
 {
-	my ($font, $feat_all, $feat_set) = @_;
+	my ($font, $feat_all, $feat_set, $time_cur) = @_;
 	
 	#eliminate default feature value settings
 	my ($feats, @feat_val, $feat, $val, $feat_set_active);
@@ -458,26 +459,33 @@ sub Family_Version_update($\%$)
 			$feat_set_active .= $fv;
 		}
 	}
-	if ($opt_d) {print "Family_Version_update: feat_set_active = $feat_set_active\n";}
+	if ($opt_d) {print "Font_ids_update: feat_set_active = $feat_set_active\n";}
     
     #modify font name
 	my ($family_nm_old, $family_nm_new, $version_str_old, $version_str_new);	
 	$family_nm_old = Name_get($font, $family_name_id);
-	if (length($feat_set_active) <= 6)
+	if (length($feat_set_active) <= 6 || $opt_n)
 	{
-		$family_nm_new = $family_nm_old . ' ' . $feat_set_active;
+		$family_nm_new = $family_nm_old . ' ' . ($opt_n ? $opt_n : $feat_set_active);
 		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
 	}
 	else
 	{
-		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, 6) . '&';
+		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, 6) . 'XT';
 		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
 	}
 	
 	#modify version
 	$version_str_old = Name_get($font, $version_name_id);
 	$version_str_new = $version_str_old . ' ; '. $feat_set_active;
-	Name_mod($font, $version_name_ids, $version_str_old, $version_str_new)
+	Name_mod($font, $version_name_ids, $version_str_old, $version_str_new);
+	
+	#modify modification date
+	$font->{'head'}->read;
+	if ($opt_d) {printf ("old date: %d  ", $font->{'head'}->getdate());}
+	$time_cur = time();
+	$font->{'head'}->setdate($time_cur);
+	if ($opt_d) {printf ("new date: %d\n", $time_cur);}
 }
 
 sub Gr_feat($$$)
@@ -766,7 +774,7 @@ sub Name_mod($\@$$)
 }
 
 sub Table_extract($$$)
-#extract the Tune table from the $font to the specified file name
+#extract our table from the $font to the specified file name
 #$feat_set_test insures that $feat_set_elem is at the start of the data to be extracted
 {
 	my ($font, $fn, $feat_set_test) = @_;
@@ -774,7 +782,7 @@ sub Table_extract($$$)
 	open FEAT, ">$fn";
 	binmode(FEAT);
 	if (not defined $font->{$table_nm})
-		{die("no Tune table in font\n");}
+		{die("no $table_nm table in font\n");}
 	else
 	{
 		$font->{$table_nm}->read;
@@ -787,7 +795,7 @@ sub Table_extract($$$)
 }
 
 sub Table_add($$$)
-#add the Tune table to the $font from the specified file
+#add our table to the $font from the specified file
 #$feat_all_test insures that $feat_all_elem is at the start of the file
 {
 	my ($font, $fn, $feat_all_test) = @_;
@@ -807,7 +815,7 @@ sub Table_add($$$)
 	#add our XML table $table_nm to the ttf
 	#the instance variables were taken from where Font.pm creates its Tables
 	$font->{$table_nm} = Font::TTF::Table->new(PARENT  => $font,
-		                                    NAME    => "Tune",
+		                                    NAME    => "$table_nm",
 		                                    INFILE  => 0,
 		                                    OFFSET  => 0,
 		                                    LENGTH  => 0,
@@ -823,22 +831,22 @@ usage:
 	TypeTuner <ttf> <xml> (calls createset)
 	TypeTuner <xml> <ttf> (calls applyset)
 	
-	or TypeTuner <subcommand> [files, ...]
+	or TypeTuner [<switches>] <command> [files, ...]
 	
-subcommands:
+commands:
 	createset font.ttf feat_set.xml 
 	createset feat_all.xml feat_set.xml
-	(create xml file to specify feature settings)
 	
 	applyset     feat_set.xml font.ttf
-	applyset_xml feat_all.xml feat_set.xml ttf
-	(apply xml file created above, after editing the file)
-	(creates a new font file with _tt added to the file name)
+	applyset_xml feat_all.xml feat_set.xml font.ttf
 	
-	extract font.ttf feat_set.xml (write our table to xml file)
-	add     feat_all.xml font.ttf (add xml file to font as our table)
-	delete  font.ttf (remove our table from font)
-	(add and delete create a new font file with _tt added to the file name)
+	extract font.ttf feat_set.xml
+	add     feat_all.xml font.ttf
+	delete  font.ttf
+
+switches:
+	-n	specify font name suffix
+	-o	specify output font.ttf file name
 END
 	exit();
 };
@@ -851,7 +859,7 @@ sub cmd_line_exec() #for UltraEdit function list
 my ($font, %feat_all, $feat_set, %feat_tag, @commands);
 my ($feat_all_fn, $feat_set_fn, $font_fn, $font_out_fn);
 
-getopts('dft'); #sets $opt_?'s and removes the switches from @ARGV
+getopts($opt_str); #sets $opt_?'s and removes the switches from @ARGV
 
 if (scalar @ARGV == 0)
 	{Usage_print;}
@@ -942,7 +950,7 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 	if ($opt_d) {print "commands: \n"; foreach (@commands) {print "$_->{'cmd'}: $_->{'args'}\n"}; print "\n";}
 	$font = Font::TTF::Font->open($font_fn) or die "Can't open font";
 	Cmds_exec($font, @commands, %feat_all);
-	Family_Version_update($font, %feat_all, $feat_set);
+	Font_ids_update($font, %feat_all, $feat_set);
 	
 	#delete feat_all and embed feat_set file in font
 	if (defined $font->{$table_nm})
@@ -951,7 +959,7 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 	}
 	Table_add($font, $feat_set_fn, 0);
 	
-	$font_out_fn = substr($font_fn, 0, -4) . '_tt.ttf';
+	$font_out_fn = $opt_o ? $opt_o : substr($font_fn, 0, -4) . '_tt.ttf';
 	$font->out($font_out_fn);
 	$font->release;
 	
@@ -974,7 +982,7 @@ elsif ($cmd eq 'add')
 		{$feat_all_test = 0;}
 	Table_add($font, $feat_all_fn, $feat_all_test);	
 
-	$font_out_fn = substr($font_fn, 0, -4) . '_tt.ttf';
+	$font_out_fn = $opt_o ? $opt_o : substr($font_fn, 0, -4) . '_tt.ttf';
 	$font->out($font_out_fn);
 	$font->release;
 }
@@ -1010,7 +1018,7 @@ elsif ($cmd eq 'delete')
 	else 
 		{delete $font->{$table_nm};}
 		
-	$font_out_fn = substr($font_fn, 0, -4) . '_tt.ttf';
+	$font_out_fn = $opt_o ? $opt_o : substr($font_fn, 0, -4) . '_tt.ttf';
 	$font->out($font_out_fn);
 	$font->release;
 }
@@ -1037,7 +1045,7 @@ exit;
 #Feat_Set_cmds(%feat_all, $feat_set, @commands);
 #print "commands: \n"; foreach (@commands) {print "$_->{'cmd'}: $_->{'args'}\n"}; print "\n";
 #Cmds_exec($font, @commands, %feat_all);
-#Family_Version_update($font, %feat_all, $feat_set);
+#Font_ids_update($font, %feat_all, $feat_set);
 
 #Encode($font, "0105", "aogonek.RetroHookStyle");
 
