@@ -395,16 +395,16 @@ sub Features_output($\%\%\%)
 	#output line gap feature
 	unless ($opt_g)
 	{#be careful of tabs in section below for proper output
-	my $line_gap_tag = Tag_get('Line gap', 2);
+	my $line_gap_tag = Tag_get('Line spacing', 2);
     print $fh <<END
-	<feature name="Line gap" value="Normal gap" tag="$line_gap_tag">
-		<value name="Normal gap" tag="n">
+	<feature name="Line spacing" value="Normal" tag="$line_gap_tag">
+		<value name="Normal" tag="n">
 			<cmd name="null" args="$normal_line_gap"/>
 		</value>
-		<value name="Tight gap" tag="t">
+		<value name="Tight" tag="t">
 			<cmd name="line_gap" args="$tight_line_gap"/>
 		</value>
-		<value name="Loose gap" tag="l">
+		<value name="Loose" tag="l">
 			<cmd name="line_gap" args="$loose_line_gap"/>
 		</value>
 	</feature>
