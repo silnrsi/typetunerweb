@@ -2,8 +2,6 @@
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
 
-#TODO: handle double encoded glyphs (deprecated PUA)
-
 use strict;
 use warnings;
 
@@ -293,17 +291,42 @@ sub Gsi_xml_parse($\%\%\%)
 	
 	if ($opt_d)
 	{
+		print "usvs with variant glyphs: ";
 		foreach (sort keys %$usv_feat_to_ps_name) {print "$_ "}; print "\n";
+		print "featsets with variant glyphs: ";
 		foreach (sort keys %$featset_to_usvs) {print "($_)"}; print "\n";
 	}
 }
 
-sub Features_output($\%\%\%)
+sub Dblenc_get($\%)
+#parse the DblEnc.txt file which indicates deprecated PUA chars and their official USVs
+{
+	my ($dblenc_fn, $dblenc_usv) = @_;
+	
+	open FH, "<$dblenc_fn" or die("Could not open $dblenc_fn for reading\n");
+	while (<FH>)
+	{
+		chomp;
+		my @fields = split(/,/, $_);
+		if (scalar @fields != 3) {die("file $dblenc_fn has corrupt line: $_\n");}
+		my ($primary_usv, $deprecated_usv) = map {substr($_, 2)} ($fields[2], $fields[1]);
+		$dblenc_usv->{$primary_usv} = $deprecated_usv;
+	}
+	close FH;
+	
+	if ($opt_d)
+	{
+		print "double encoded usvs: ";
+		foreach (sort values %$dblenc_usv) {print "$_ ";}; print "\n";
+	}
+}
+
+sub Features_output($\%\%\%\%)
 #output the <feature>s elements
 #all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
 #TODO: may need special handling of tone features. Currently handled as Graphite only feats
 {
-	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name) = @_;
+	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my $fh = $feat_all_fh;
     my ($feat_id, $set_id);
     
@@ -350,15 +373,18 @@ sub Features_output($\%\%\%)
 			}
 			
 			if ($vietnamese_style_diacs_feat =~ /$feat_id/ and not $opt_g)
-			{#hard-coded  #TODO: is this correct?
-				print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
-				print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
+			{#hard-coded
+				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
+				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_precomp}\"/>\n";
+				#see comment on VIt and ROt in Interactions_output()
+				#print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
+				#print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
 				$flag = 1;
 			}
 			if ($romanian_style_diacs_feat =~ /$feat_id/ and not $opt_g)
-			{#hard-coded  #TODO: is this correct?
-				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB ccmp {rom_decomp}\"/>\n";
-				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB ccmp {rom_precomp}\"/>\n";
+			{#hard-coded
+				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_decomp}\"/>\n";
+				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_precomp}\"/>\n";
 				$flag = 1;
 			}
 			
@@ -372,6 +398,8 @@ sub Features_output($\%\%\%)
 				{
 					$ps_name = $usv_feat_to_ps_name->{$usv}{$featset};	
 					print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $ps_name\"/>\n";
+					if (defined $dblenc_usv->{$usv})
+						{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $ps_name\"/>\n";}
                 }
                 $flag = 1;
 			}
@@ -429,14 +457,14 @@ sub All_pairs_get(@)
 }
 
 #forward declaration so recursive call won't be flagged as an error
-sub Test_output($$\%\%\%);
+sub Test_output($$\%\%\%\%);
 
-sub Test_output($$\%\%\%)
+sub Test_output($$\%\%\%\%)
 #output the <cmd> elements inside of a <test> element
 #handles up to three features interacting
 #Featset_combos_get should have died if there are more than three interacting
 {
-	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name) = @_;
+	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my(@usvs, $usv, @feats, $feat);
 	my $fh = $feat_all_fh;
 	
@@ -467,8 +495,10 @@ sub Test_output($$\%\%\%)
 			
 		my @c = split(/\s/, $choices);
 		if (scalar @c > 1)
-			{print $fh "\t\t\t<!-- edit below line -->\n";}
+			{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
 		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
+		if (defined $dblenc_usv->{$usv})
+			{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
 		$used_usvs->{$usv} = 1;
 	}
 		
@@ -478,14 +508,14 @@ sub Test_output($$\%\%\%)
 		my $featset;
 		foreach $featset (@feat_pairs)
 			{Test_output($feat_all_fh, $featset, %$used_usvs, 
-							%$featset_to_usvs, %$usv_feat_to_ps_name);}
+							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
 	}
 	if (scalar @feats == 2)
 	{
 		my $featset;
 		foreach $featset (@feats)
 			{Test_output($feat_all_fh, $featset, %$used_usvs, 
-							%$featset_to_usvs, %$usv_feat_to_ps_name);}
+							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
 	}
 }
 
@@ -525,10 +555,10 @@ sub Feats_to_ids($$\%)
 	die("Ids for feature and setting couldn't be found: $feat_tag $set_tag\n");
 }
 
-sub Interactions_output($\%\%\%)
+sub Interactions_output($\%\%\%\%)
 #output the <interactions> elements
 {
-	my ($feat_all_fh, $featset_to_usvs, $usv_feat_to_ps_name, $feats) = @_;
+	my ($feat_all_fh, $featset_to_usvs, $usv_feat_to_ps_name, $feats, $dblenc_usv) = @_;
 	my $fh = $feat_all_fh;
 	
 	#start interactions element
@@ -557,21 +587,33 @@ sub Interactions_output($\%\%\%)
 			}
 		}
 		
+		#I think that VIt and ROt should be handled the same way
+		#Using feat_del & feat_add for both VIt and ROt has problems 
+		# if both VIt and ROt are on since the second one processed can't delete ccmp_latin
+		#Using a test select="VIt ROt" to solve this problem would create two features with 
+		# the same OT name (ccmp) and redundant lookups
+		#Using the lookup_add approach doesn't require testing for both VIt and ROt
+		# and avoids the above problem
+		
 		if ($featset =~ /VIt/ and not $opt_g)
-		{#hard-coded  #TODO: is this correct?
-			print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
-			print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
+		{#hard-coded
+			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
+			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_precomp}\"/>\n";
+			
+			#see above comment
+			#print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
+			#print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
 		}
 		if ($featset =~ /ROt/ and not $opt_g)
-		{#hard-coded  #TODO: is this correct?
-			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB ccmp {rom_decomp}\"/>\n";
-			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB ccmp {rom_precomp}\"/>\n";
+		{#hard-coded
+			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_decomp}\"/>\n";
+			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_precomp}\"/>\n";
 		}
 		
 		#encode cmds for all affected usvs
 		my %used_usvs;
     	Test_output($feat_all_fh, $featset, %used_usvs, 
-    				%$featset_to_usvs, %$usv_feat_to_ps_name) unless $opt_g;
+    				%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv) unless $opt_g;
 		
 		#end test element
 		print $fh "\t\t</test>\n";
@@ -589,6 +631,7 @@ sub Aliases_output($)
 	print $feat_all_fh <<END;
 	<aliases>
 		<alias name="IPA" value="IPA "/>
+		<alias name="VIT" value="VIT "/>
 		<alias name="ROM" value="ROM "/>
 		<alias name="ccmp_latin" value="ccmp"/>
 		<alias name="ccmp_romanian" value="ccmp _0"/>
@@ -606,7 +649,7 @@ sub Usage_print()
 	print <<END;
 Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
-	Composer <switches> <ttf> <xml>
+	Composer <switches> <font.ttf> <gsi.xml> <dblenc.txt>
 	switches:
 		-g - output no OpenType cmds (Graphite only)
 		-q - output no Graphite cmds (OpenType only)
@@ -624,18 +667,19 @@ END
 sub cmd_line_exec() #for UltraEdit function list
 {}
 
-my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, $feat_all_fh);
-my ($font_fn, $gsi_fn, $feat_all_fn);
+my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, %dblenc_usv, $feat_all_fh);
+my ($font_fn, $gsi_fn, $dblenc_fn, $feat_all_fn);
 
 getopts('dgqt'); #sets $opt?'s & removes the switch from @ARGV
 
-if (scalar @ARGV != 2)
+if (scalar @ARGV != 3)
 	{Usage_print;}
 
-($font_fn, $gsi_fn) = ($ARGV[0], $ARGV[1]);
+($font_fn, $gsi_fn, $dblenc_fn) = ($ARGV[0], $ARGV[1], $ARGV[2]);
 
 Feats_get($font_fn, %feats);
 Gsi_xml_parse($gsi_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
+Dblenc_get($dblenc_fn, %dblenc_usv);
 
 $feat_all_fn = $feat_all_base_fn; #todo adjust based on path to $font_fn
 open $feat_all_fh, ">$feat_all_fn" or die("Could not open $feat_all_fn for writing\n");
@@ -643,8 +687,8 @@ print $feat_all_fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 print $feat_all_fh "<!DOCTYPE all_features SYSTEM \"feat_all.dtd\">\n";
 print $feat_all_fh "<all_features version=\"1.0\">\n";
 
-Features_output($feat_all_fh, %feats, %featset_to_usvs, %usv_feat_to_ps_name);
-Interactions_output($feat_all_fh, %featset_to_usvs, %usv_feat_to_ps_name, %feats);
+Features_output($feat_all_fh, %feats, %featset_to_usvs, %usv_feat_to_ps_name, %dblenc_usv);
+Interactions_output($feat_all_fh, %featset_to_usvs, %usv_feat_to_ps_name, %feats, %dblenc_usv);
 unless ($opt_g)
 {
 	Aliases_output($feat_all_fh);
