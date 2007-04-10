@@ -1,7 +1,6 @@
 # Copyright (c) SIL International, 2007. All rights reserved.
 
 #todo: consider affects of OS/2.update?
-#todo: functions for setting font modification date
 #todo: don't die on every error, try to keep going
 
 use strict;
@@ -10,12 +9,16 @@ use warnings;
 use Font::TTF::Font;
 use XML::Parser::Expat;
 use Getopt::Std;
+use File::Temp qw(tempfile);
+use Compress::Zlib;
 
 #### global variables & constants ####
 
 #$opt_d - debug output
 #$opt_f - for add & extract subcommands, don't check whether proper element at start of file
 #$opt_t - output feat_set.xml file with all settings at non-default values for testing TypeTuner
+#$opt_n - string to use a suffix at end of font name instead of featset string
+#$opt_o - name for output font file instead of generating by appending _tt
 our($opt_d, $opt_f, $opt_t, $opt_n, $opt_o); #set by &getopts:
 my $opt_str ='dftn:o:';
 
@@ -786,10 +789,11 @@ sub Table_extract($$$)
 	else
 	{
 		$font->{$table_nm}->read;
+    	my $tmp = Compress::Zlib::memGunzip($font->{$table_nm}{' dat'});
 		if ($feat_set_test)
-			{if (not $font->{$table_nm}->{' dat'} =~ /$feat_set_elem/)
+			{if (not $tmp =~ /$feat_set_elem/)
 				{die("table $table_nm does not contain $feat_set_elem\n");}}
-		print FEAT $font->{$table_nm}{' dat'};
+    	print FEAT $tmp;
 		close FEAT;
 	}
 }
@@ -807,11 +811,15 @@ sub Table_add($$$)
 	$tmp = read(FEAT, $feat_xml, 1000000) or die "Can't read XML file\n";
 	if ($tmp == 1000000)
 		{die("XML file is too big\n");}
+	
 	#die if $feat_all_fn does not start with <all_features>, override test with -f switch
 	if ($feat_all_test)
 		{if (not $feat_xml =~ /$feat_all_elem/)
 			{die("XML file does not contain $feat_all_elem\n");}}
 	
+	#compress the XML before putting in the font table
+    $tmp = Compress::Zlib::memGzip($feat_xml);
+    
 	#add our XML table $table_nm to the ttf
 	#the instance variables were taken from where Font.pm creates its Tables
 	$font->{$table_nm} = Font::TTF::Table->new(PARENT  => $font,
@@ -820,7 +828,7 @@ sub Table_add($$$)
 		                                    OFFSET  => 0,
 		                                    LENGTH  => 0,
 		                                    CSUM    => 0);  
-    $font->{$table_nm}{' dat'} = $feat_xml;
+    $font->{$table_nm}{' dat'} = $tmp;
 }
 
 sub Usage_print()
@@ -893,7 +901,7 @@ if ($cmd eq 'createset')
 		{Usage_print;}
 		
 	if ($opt_d) {print "creating feat_set XML file from font\n";}		
-	my ($fn, $ext, $flag);
+	my ($fn, $ext, $flag, $fh);
 	$fn = $ARGV[1];
 	$ext = lc(substr($ARGV[1], -3, 3));
 	$flag = 0;
@@ -903,7 +911,10 @@ if ($cmd eq 'createset')
 		$font = Font::TTF::Font->open($fn) or die "Can't open font";
 		
 		$flag = 1;
-		$feat_all_fn = substr($fn, 0, -4) . "_feat_all.xml"; #TODO: create a proper temp file
+		($fh, $feat_all_fn) = tempfile();
+		if ($opt_d) {print "feat_all_fn: $feat_all_fn\n"}
+		$fh->close;
+		#$feat_all_fn = substr($fn, 0, -4) . "_feat_all.xml";
 		Table_extract($font, $feat_all_fn, 0);
 	}
 	elsif ($ext eq 'xml')
@@ -931,12 +942,16 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 	if ($cmd eq 'applyset')
 	{
 		($feat_set_fn, $font_fn) = ($ARGV[1], $ARGV[2]);
+		my ($fh);
 		
 		#extract XML from font into a temp file
 		$font = Font::TTF::Font->open($font_fn) or die "Can't open font";
 		
 		$flag = 1;
-		$feat_all_fn = substr($font_fn, 0, -4) . "_feat_all.xml"; #TODO: create a proper temp file
+		($fh, $feat_all_fn) = tempfile();
+		if ($opt_d) {print "feat_all_fn: $feat_all_fn\n"}
+		$fh->close;
+		#$feat_all_fn = substr($font_fn, 0, -4) . "_feat_all.xml";
 		Table_extract($font, $feat_all_fn, 0);
 	} else #applyset_xml
 	{
