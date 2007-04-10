@@ -837,8 +837,8 @@ sub Usage_print()
 	print <<END;
 Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
-	TypeTuner -x <xml> <ttf> (creates settings xml file from ttf)
-	TypeTuner <xml> <ttf> (applies settings xml file to ttf)
+	TypeTuner -x <xml> <ttf> (create settings xml file from ttf)
+	TypeTuner <xml> <ttf> (apply settings xml file to ttf)
 	
 	or TypeTuner [<switches>] <command> [files, ...]
 	

@@ -649,7 +649,7 @@ sub Usage_print()
 	print <<END;
 Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
-	Composer <switches> <font.ttf> <gsi.xml> <dblenc.txt>
+	RFComposer <switches> <font.ttf> <gsi.xml> <dblenc.txt>
 	switches:
 		-g - output no OpenType cmds (Graphite only)
 		-q - output no Graphite cmds (OpenType only)
