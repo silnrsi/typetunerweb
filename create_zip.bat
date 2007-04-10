@@ -1,8 +1,9 @@
 del TypeTuner\TypeTuner.zip
 copy TypeTuner.exe TypeTuner
-copy Composer.exe TypeTuner
+copy RFComposer.exe TypeTuner
 copy eggs.ttf TypeTuner
 copy gsi_eggs.xml TypeTuner
+copy dblenc_eggs.txt TypeTuner
 copy test_tt_w_comp.bat TypeTuner
 copy feat_all.dtd TypeTuner
 copy feat_set.dtd TypeTuner
