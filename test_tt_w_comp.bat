@@ -5,14 +5,14 @@ rem tune a font maximally
 cls
 if "%1"=="" goto usage
 if "%1"=="pl" set TT=perl typetuner.pl -d
-if "%1"=="pl" set CO=perl composer.pl -d
+if "%1"=="pl" set CO=perl rfcomposer.pl -d
 if "%1"=="exe" set TT=typetuner.exe -d
-if "%1"=="exe" set CO=composer.exe -d
+if "%1"=="exe" set CO=rfcomposer.exe -d
 if "%1"=="clean" goto clean
 
 if not exist eggs.ttf copy DoulosSILR_4100.ttf eggs.ttf
 
-%CO% -t eggs.ttf gsi_eggs.xml
+%CO% -t eggs.ttf gsi_eggs.xml dblenc_eggs.txt
 pause
 %TT% -t createset feat_all_composer.xml feat_set_composer.xml
 pause
