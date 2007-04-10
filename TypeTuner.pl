@@ -19,8 +19,9 @@ use Compress::Zlib;
 #$opt_t - output feat_set.xml file with all settings at non-default values for testing TypeTuner
 #$opt_n - string to use a suffix at end of font name instead of featset string
 #$opt_o - name for output font file instead of generating by appending _tt
-our($opt_d, $opt_f, $opt_t, $opt_n, $opt_o); #set by &getopts:
-my $opt_str ='dftn:o:';
+#$opt_x - for simplified command line, call createset
+our($opt_d, $opt_f, $opt_t, $opt_n, $opt_o, $opt_x); #set by &getopts:
+my $opt_str ='dftn:o:x';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
@@ -836,8 +837,8 @@ sub Usage_print()
 	print <<END;
 Copyright (c) SIL International, 2007. All rights reserved.
 usage: 
-	TypeTuner <ttf> <xml> (calls createset)
-	TypeTuner <xml> <ttf> (calls applyset)
+	TypeTuner -x <xml> <ttf> (creates settings xml file from ttf)
+	TypeTuner <xml> <ttf> (applies settings xml file to ttf)
 	
 	or TypeTuner [<switches>] <command> [files, ...]
 	
@@ -875,23 +876,25 @@ if (scalar @ARGV == 0)
 my ($cmd);
 $cmd = $ARGV[0];
 if (not $cmd =~ /createset|applyset|applyset_xml|delete|extract|add/)
-{ #if no subcommands are given, determine action by file types
+{ #no subcommands were given, use simplified command line
 	if (scalar @ARGV == 2)
 	{
 		my ($ext1, $ext2);
-		($ext1, $ext2) = (lc(substr($ARGV[0],-3,3)), lc(substr($ARGV[1],-3,3)));   
-		if ($ext1 eq 'xml' && $ext2 eq 'ttf')
-		{
-			$cmd = 'applyset';
-			unshift (@ARGV, 'applyset')
-		}
-		elsif ($ext1 eq 'ttf' && $ext2 eq 'xml')
-		{
+		($ext1, $ext2) = map {lc(substr($_,-3,3))} ($ARGV[0], $ARGV[1]);
+		if ($ext1 ne 'xml' || $ext2 ne 'ttf')
+			{Usage_print;}
+		
+		if ($opt_x)
+		{ #createset
 			$cmd = 'createset';
-			unshift (@ARGV, 'createset')
+			($ARGV[0], $ARGV[1]) = ($ARGV[1], $ARGV[0]); #swap args
+			unshift (@ARGV, 'createset'); #shift args to correct positions for this cmd
 		}
 		else
-			{Usage_print;}
+		{ #applyset
+			$cmd = 'applyset';
+			unshift (@ARGV, 'applyset');
+		}
 	}
 }
 
@@ -911,9 +914,8 @@ if ($cmd eq 'createset')
 		$font = Font::TTF::Font->open($fn) or die "Can't open font";
 		
 		$flag = 1;
-		($fh, $feat_all_fn) = tempfile();
+		($fh, $feat_all_fn) = tempfile(); $fh->close;
 		if ($opt_d) {print "feat_all_fn: $feat_all_fn\n"}
-		$fh->close;
 		#$feat_all_fn = substr($fn, 0, -4) . "_feat_all.xml";
 		Table_extract($font, $feat_all_fn, 0);
 	}
@@ -948,9 +950,8 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 		$font = Font::TTF::Font->open($font_fn) or die "Can't open font";
 		
 		$flag = 1;
-		($fh, $feat_all_fn) = tempfile();
+		($fh, $feat_all_fn) = tempfile(); $fh->close;
 		if ($opt_d) {print "feat_all_fn: $feat_all_fn\n"}
-		$fh->close;
 		#$feat_all_fn = substr($font_fn, 0, -4) . "_feat_all.xml";
 		Table_extract($font, $feat_all_fn, 0);
 	} else #applyset_xml
