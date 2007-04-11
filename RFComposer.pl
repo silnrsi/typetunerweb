@@ -200,7 +200,15 @@ sub Gsi_xml_parse($\%\%\%)
 		elsif ($tag eq 'feature')
 		{
 			if (not defined($ps_name)) {die("no PS name for feature: $attrs{'category'}\n")};
-			if (not defined($var_uid)) {return}; #probably <feature> after <lig_uids>
+			if (not defined($var_uid)) 
+			{#should be: 1) variant for a ligature, 2) default glyph for a multivalued feature,
+			 # 3) variant that is encoded
+			 # 3) should be fixed up by Special_glyphs_handle()
+			 # 2) is OK unless multi-valued features start interacting with binary-valued ones
+			 # 1) there's no way to handle this by re-encoding the cmap
+				if ($opt_d) {print "no var_uid for ps_name: $ps_name feat: $attrs{'category'}\n";}
+				return;
+			}; 
 			my $usv = substr($var_uid, 2);
 			
 			my $feat = $attrs{'category'};
@@ -298,6 +306,26 @@ sub Gsi_xml_parse($\%\%\%)
 	}
 }
 
+sub Special_glyphs_handle(\%\%\%)
+#add variant glyph info which isn't indicated in the GSI data to various hashes 
+{
+	my ($feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
+	
+	#add uni01B7.RevSigmaStyle as a variant for U+01B7 for feature Capital Ezh alternates (1042)
+    # this is a variant glyph that is also encoded in the PUA (F217)
+    # so there is no <var_uid> in the GSI data for it
+    # the below code doesn't handle the case where 01B7 has more than one variant, so die if that occurs
+    if (defined $usv_feat_to_ps_name->{'01B7'}) {die "status of 01B7 has changed\n";}
+	my $feat_tag = $feats->{'1042'}{'tag'};
+	my $set_id = $feats->{'1042'}{'settings'}{' ids'}[1];
+	my $set_tag = $feats->{'1042'}{'settings'}{$set_id}{'tag'};
+	my $featset = $feat_tag . $set_tag;
+	if (not defined $featset_to_usvs->{$featset})
+		{$featset_to_usvs->{$featset} = [];}
+	push(@{$featset_to_usvs->{$featset}}, '01B7');
+	$usv_feat_to_ps_name->{'01B7'}{$featset} = 'uni01B7.RevSigmaStyle';
+}
+
 sub Dblenc_get($\%)
 #parse the DblEnc.txt file which indicates deprecated PUA chars and their official USVs
 {
@@ -324,7 +352,6 @@ sub Dblenc_get($\%)
 sub Features_output($\%\%\%\%)
 #output the <feature>s elements
 #all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
-#TODO: may need special handling of tone features. Currently handled as Graphite only feats
 {
 	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my $fh = $feat_all_fh;
@@ -426,6 +453,7 @@ sub Features_output($\%\%\%\%)
 	my $line_gap_tag = Tag_get('Line spacing', 2);
     print $fh <<END
 	<feature name="Line spacing" value="Normal" tag="$line_gap_tag">
+		<!-- edit the below lines to provide the correct line metrics -->
 		<value name="Normal" tag="n">
 			<cmd name="null" args="$normal_line_gap"/>
 		</value>
@@ -679,6 +707,7 @@ if (scalar @ARGV != 3)
 
 Feats_get($font_fn, %feats);
 Gsi_xml_parse($gsi_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
+Special_glyphs_handle(%feats, %usv_feat_to_ps_name, %featset_to_usvs);
 Dblenc_get($dblenc_fn, %dblenc_usv);
 
 $feat_all_fn = $feat_all_base_fn; #todo adjust based on path to $font_fn
