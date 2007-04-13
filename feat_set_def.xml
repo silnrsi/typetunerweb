@@ -22,9 +22,9 @@
 		<value name="False"/>
 		<value name="True"/>
 	</feature>
-	<feature name="Line gap" value="Normal gap">
-		<value name="Normal gap"/>
-		<value name="Tight gap"/>
-		<value name="Loose gap"/>
+	<feature name="Line spacing" value="Normal">
+		<value name="Normal"/>
+		<value name="Tight"/>
+		<value name="Loose"/>
 	</feature>
 </features_set>

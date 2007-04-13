@@ -49,14 +49,14 @@
 			<cmd name="feat_add" args="GSUB latn DEFAULT {ccmp_romanian} 0"/>
 		</value>
 	</feature>
-	<feature name="Line gap" value="Normal gap" tag="LG">
-		<value name="Normal gap" tag="n">
+	<feature name="Line spacing" value="Normal" tag="LG">
+		<value name="Normal" tag="n">
 			<cmd name="null" args="2324 810"/>
 		</value>
-		<value name="Tight gap" tag="t">
-			<cmd name="line_gap" args="2000 750"/>
+		<value name="Tight" tag="t">
+			<cmd name="line_metrics" args="1900 750 100 2000 750 2000 749 20"/>
 		</value>
-		<value name="Loose gap" tag="l">
+		<value name="Loose" tag="l">
 			<cmd name="line_gap" args="2500 875"/>
 		</value>
 	</feature>
