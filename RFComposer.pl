@@ -29,10 +29,6 @@ my $variant_feats = '1024 1025 1027 1029 1028 1031 1032 1033 1034 1035 1036 1037
 $variant_feats .= '1038 1039 1040 1041 1042 1043 1044 1045 1046 1047 1048 1049';
 $variant_feats .= '1053 1054 1055 1056 1057 1059 1060 1061';
 
-my $normal_line_gap = '2324 810';
-my $tight_line_gap = '2000 750';
-my $loose_line_gap = '2500 875';
-
 #### subroutines ####
 
 my (%tags, $prev_feat_tag); #used only by below sub
@@ -447,24 +443,76 @@ sub Features_output($\%\%\%\%)
 		print $fh "\t</feature>\n";
 	}
 	
-	#output line gap feature
+	#output line spacing feature
 	unless ($opt_g)
-	{#be careful of tabs in section below for proper output
-	my $line_gap_tag = Tag_get('Line spacing', 2);
-    print $fh <<END
+		{
+		my $line_gap_tag = Tag_get('Line spacing', 2);
+		if (not $opt_t)
+		{ #be careful of tabs in section below for proper output
+    		print $fh <<END
 	<feature name="Line spacing" value="Normal" tag="$line_gap_tag">
 		<!-- edit the below lines to provide the correct line metrics -->
+		<!-- Doulos -->
 		<value name="Normal" tag="n">
-			<cmd name="null" args="$normal_line_gap"/>
+			<cmd name="null" args="2324 810"/>
 		</value>
 		<value name="Tight" tag="t">
-			<cmd name="line_gap" args="$tight_line_gap"/>
+			<cmd name="line_metrics" args="1420 442 307 1825 443 1825 443 87"/>
 		</value>
 		<value name="Loose" tag="l">
-			<cmd name="line_gap" args="$loose_line_gap"/>
+			<cmd name="line_gap" args="2800 1100"/>
+		</value>
+		<!-- Charis -->
+		<value name="Normal" tag="n">
+			<cmd name="null" args="2450 900"/>
+		</value>
+		<value name="Tight" tag="t">
+			<cmd name="line_gap" args="1950 500"/>
+		</value>
+		<value name="Loose" tag="l">
+			<cmd name="line_gap" args="2900 1200"/>
+		</value>
+		<!-- Gentium -->
+		<value name="Normal" tag="n">
+			<cmd name="null" args="2050 900"/>
+		</value>
+		<value name="Tight" tag="t">
+			<cmd name="line_gap" args="1750 550"/>
+		</value>
+		<value name="Loose" tag="l">
+			<cmd name="line_gap" args="2450 1200"/>
+		</value>
+		<!-- Andika -->
+		<value name="Normal" tag="n">
+			<cmd name="null" args="2500 800"/>
+		</value>
+		<value name="Tight" tag="t">
+			<cmd name="line_gap" args="2100 550"/>
+		</value>
+		<value name="Loose" tag="l">
+			<cmd name="line_gap" args="2900 1100"/>
 		</value>
 	</feature>
 END
+		}
+		else
+		{ #be careful of tabs in section below for proper output
+   			print $fh <<END
+	<feature name="Line spacing" value="Normal" tag="$line_gap_tag">
+		<!-- edit the below lines to provide the correct line metrics -->
+		<!-- Doulos -->
+		<value name="Normal" tag="n">
+			<cmd name="null" args="2324 810"/>
+		</value>
+		<value name="Tight" tag="t">
+			<cmd name="line_metrics" args="1420 442 307 1825 443 1825 443 87"/>
+		</value>
+		<value name="Loose" tag="l">
+			<cmd name="line_gap" args="2800 1100"/>
+		</value>
+	</feature>
+END
+		}
 	}
 }
 
@@ -710,7 +758,7 @@ Gsi_xml_parse($gsi_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
 Special_glyphs_handle(%feats, %usv_feat_to_ps_name, %featset_to_usvs);
 Dblenc_get($dblenc_fn, %dblenc_usv);
 
-$feat_all_fn = $feat_all_base_fn; #todo adjust based on path to $font_fn
+$feat_all_fn = $feat_all_base_fn;
 open $feat_all_fh, ">$feat_all_fn" or die("Could not open $feat_all_fn for writing\n");
 print $feat_all_fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 print $feat_all_fh "<!DOCTYPE all_features SYSTEM \"feat_all.dtd\">\n";
