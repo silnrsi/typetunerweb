@@ -1,6 +1,5 @@
 # Copyright (c) SIL International, 2007. All rights reserved.
 
-#todo: consider affects of OS/2.update?
 #todo: don't die on every error, try to keep going
 
 use strict;
@@ -433,6 +432,14 @@ sub Cmds_exec ($\@\%)
 				{die ("invalid args for line_gap cmd: @args\n");}
 			Line_gap_mod($font, $args[0], $args[1]);
 		}
+		elsif ($cmd eq 'line_metrics')
+		{
+			if (scalar @args != 8)
+				{die ("invalid args for line_metric cmd: @args\n");}
+			Line_metrics_mod($font, $args[0], $args[1], $args[2], 
+								$args[3], $args[4], 
+								$args[5], $args[6], $args[7]);
+		}
 		else
 		{
 			print "WARNING - unrecognized cmd: $cmd\n";
@@ -493,6 +500,8 @@ sub Font_ids_update($\%$)
 }
 
 sub Gr_feat($$$)
+#modify the Feat table so that the specified setting becomes the default
+# for the given feature
 {
 	my ($font, $gr_feat_id, $gr_set_id) = @_;
 	my ($grfeat_tbl, $feature, $feat_found, $set_found);
@@ -733,6 +742,47 @@ sub Line_gap_mod($$$)
 	$tbl = $font->{'hhea'}->read;
 	$tbl->{'Ascender'} = $asc;
 	$tbl->{'Descender'} = $dsc * -1;
+}
+
+sub Line_metrics_mod($$$$$$$$$)
+#set all the line metrics in the O2/2 and hhea table individually
+#descents should all normally be positive
+{
+	my ($font, $TypoAsc, $TypoDsc, $TypoGap, $WinAsc, $WinDsc, 
+			$hheaAsc, $hheaDsc, $hheaGap) = @_;
+	
+	my ($tbl);
+	$tbl = $font->{'OS/2'}->read;
+	if ($opt_d)
+	{
+		print "Line_metrics_mod orig: ";
+		print "TypoAsc = $tbl->{'sTypoAscender'} TypoDsc = $tbl->{'sTypoDescender'} TypoGap = $tbl->{'sTypoLineGap'} ";
+		print "WinAsc = $tbl->{'usWinAscent'} WinDsc = $tbl->{'usWinDescent'} ";
+	}
+	$tbl->{'sTypoAscender'} = $TypoAsc;
+	$tbl->{'sTypoDescender'} = $TypoDsc * -1;
+	$tbl->{'sTypoLineGap'} = $TypoGap;
+	$tbl->{'usWinAscent'} = $WinAsc;
+	$tbl->{'usWinDescent'} = $WinDsc;
+
+	$tbl = $font->{'hhea'}->read;
+	if ($opt_d)
+	{
+		print "hheaAsc = $tbl->{'Ascender'} hheaDsc = $tbl->{'Descender'} hheaGap = $tbl->{'LineGap'}\n";
+	}
+	$tbl->{'Ascender'} = $hheaAsc;
+	$tbl->{'Descender'} = $hheaDsc * -1;
+	$tbl->{'LineGap'} = $hheaGap;
+	
+	if ($opt_d)
+	{
+		$tbl = $font->{'OS/2'};
+		print "Line_metrics_mod chng: ";
+		print "TypoAsc = $tbl->{'sTypoAscender'} TypoDsc = $tbl->{'sTypoDescender'} TypoGap = $tbl->{'sTypoLineGap'} ";
+		print "WinAsc = $tbl->{'usWinAscent'} WinDsc = $tbl->{'usWinDescent'} ";
+		$tbl = $font->{'hhea'};
+		print "hheaAsc = $tbl->{'Ascender'} hheaDsc = $tbl->{'Descender'} hheaGap = $tbl->{'LineGap'}\n";
+	}
 }
 
 sub Name_get($$)
