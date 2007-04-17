@@ -1,4 +1,6 @@
 # Copyright (c) SIL International, 2007. All rights reserved.
+# RFComposer is licensed as part of the SIL Language Freeware collection
+#  see http://www.sil.org/computing/catalog/freeware.html
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
 
