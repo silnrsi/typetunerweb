@@ -1,4 +1,6 @@
 # Copyright (c) SIL International, 2007. All rights reserved.
+# TypeTuner is licensed as part of the SIL Language Freeware collection
+#  see http://www.sil.org/computing/catalog/freeware.html
 
 #todo: don't die on every error, try to keep going
 
@@ -968,6 +970,7 @@ if ($cmd eq 'createset')
 		if ($opt_d) {print "feat_all_fn: $feat_all_fn\n"}
 		#$feat_all_fn = substr($fn, 0, -4) . "_feat_all.xml";
 		Table_extract($font, $feat_all_fn, 0);
+		$font->release;
 	}
 	elsif ($ext eq 'xml')
 	{
@@ -1004,6 +1007,7 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 		if ($opt_d) {print "feat_all_fn: $feat_all_fn\n"}
 		#$feat_all_fn = substr($font_fn, 0, -4) . "_feat_all.xml";
 		Table_extract($font, $feat_all_fn, 0);
+		$font->release;
 	} else #applyset_xml
 	{
 		($feat_all_fn, $feat_set_fn, $font_fn) = ($ARGV[1], $ARGV[2], $ARGV[3]);
@@ -1067,6 +1071,7 @@ elsif ($cmd eq 'extract')
 	else
 		{$feat_set_test = 0;}
 	Table_extract($font, $feat_fn, $feat_set_test);
+	$font->release;
 }
 elsif ($cmd eq 'delete')
 { #delete feat_all or feat_set XML from a font
