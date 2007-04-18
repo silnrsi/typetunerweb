@@ -1,4 +1,4 @@
-# Copyright (c) SIL International, 2007. All rights reserved.
+# © SIL International 2007. All rights reserved.
 # RFComposer is licensed as part of the SIL Language Freeware collection
 #  see http://www.sil.org/computing/catalog/freeware.html
 
@@ -725,7 +725,7 @@ END
 sub Usage_print()
 {
 	print <<END;
-Copyright (c) SIL International, 2007. All rights reserved.
+Copyright © SIL International 2007. All rights reserved.
 usage: 
 	RFComposer <switches> <font.ttf> <gsi.xml> <dblenc.txt>
 	switches:
