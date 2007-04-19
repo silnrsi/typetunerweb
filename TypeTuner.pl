@@ -1,6 +1,5 @@
 # © SIL International 2007. All rights reserved.
-# TypeTuner is licensed as part of the SIL Language Freeware collection
-#  see http://www.sil.org/computing/catalog/freeware.html
+# Please do not redistribute.
 
 #todo: don't die on every error, try to keep going
 
@@ -887,7 +886,7 @@ sub Table_add($$$)
 sub Usage_print()
 {
 	print <<END;
-Copyright © SIL International 2007. All rights reserved.
+(c) SIL International 2007. All rights reserved.
 usage: 
 	TypeTuner -x <xml> <ttf> (create settings xml file from ttf)
 	TypeTuner <xml> <ttf> (apply settings xml file to ttf)
