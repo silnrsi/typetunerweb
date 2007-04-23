@@ -23,11 +23,11 @@ my $feat_all_elem = "all_features";
 
 #all the ids must be 4 digits
 #these lists can overlap. eg vietnamese stacking needs both variant glyphs & OT struct mods
-my $graphite_only_feats = '1026 1030 1050 1051 1052 1062';
+my $graphite_only_feats = '1026 1050 1051 1052 1062';
 my $vietnamese_style_diacs_feat = '1029';
 my $romanian_style_diacs_feat = '1041';
-my $variant_feats = '1024 1025 1027 1029 1028 1031 1032 1033 1034 1035 1036 1037';
-$variant_feats .= '1038 1039 1040 1041 1042 1043 1044 1045 1046 1047 1048 1049';
+my $variant_feats = '1024 1025 1027 1029 1028 1030 1031 1032 1033 1034 1035 1036';
+$variant_feats .= '1037 1038 1039 1040 1041 1042 1043 1044 1045 1046 1047 1048 1049';
 $variant_feats .= '1053 1054 1055 1056 1057 1059 1060 1061';
 
 #### subroutines ####
