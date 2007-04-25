@@ -467,7 +467,7 @@ sub Font_ids_update($\%$)
 		#($feat, $val) = Feat_val_tags($fv);
 		if ($feats->{$feat}{'default'} ne $feats->{$feat}{'values'}{$val}{'name'})
 		{
-			#$feat_set_active .= " " if $feat_set_active;
+			$feat_set_active .= " " if $feat_set_active;
 			$feat_set_active .= $fv;
 		}
 	}
@@ -483,7 +483,7 @@ sub Font_ids_update($\%$)
 	}
 	else
 	{
-		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, 6) . 'XT';
+		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, 6) . ' XT';
 		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
 	}
 	
