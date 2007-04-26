@@ -17,11 +17,12 @@ use Compress::Zlib;
 #$opt_d - debug output
 #$opt_f - for add & extract subcommands, don't check whether proper element at start of file
 #$opt_t - output feat_set.xml file with all settings at non-default values for testing TypeTuner
+#$opt_m - maximum length of featset suffix for font name
 #$opt_n - string to use a suffix at end of font name instead of featset string
 #$opt_o - name for output font file instead of generating by appending _tt
 #$opt_x - for simplified command line, call createset
-our($opt_d, $opt_f, $opt_t, $opt_n, $opt_o, $opt_x); #set by &getopts:
-my $opt_str = 'dftn:o:x';
+our($opt_d, $opt_f, $opt_t, $opt_m, $opt_n, $opt_o, $opt_x); #set by &getopts:
+my $opt_str = 'dftm:n:o:x';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
@@ -30,7 +31,7 @@ my $version_name_ids = [3, 5];
 my $feat_all_elem = "all_features";
 my $feat_set_elem = "features_set";
 my $table_nm = "Silt";
-my $font_nm_max_len = 256;
+my $font_nm_max_len = 80; #can be overidden below by $opt_m
 
 #### subroutines ####
 
@@ -474,6 +475,8 @@ sub Font_ids_update($\%$\%)
     #modify font name
 	my ($family_nm_old, $family_nm_new, $version_str_old, $version_str_new);	
 	$family_nm_old = Name_get($font, $family_name_id);
+	$font_nm_max_len = $opt_m ? $opt_m : $font_nm_max_len;
+
 	if (length($feat_set_active) <= $font_nm_max_len || $opt_n)
 	{
 		$family_nm_new = $family_nm_old . ' ' . ($opt_n ? $opt_n : $feat_set_active);
@@ -903,6 +906,7 @@ commands:
 	delete  font.ttf
 
 switches:
+	-m	specify maximum length of generated font name suffix
 	-n	specify font name suffix
 	-o	specify output font.ttf file name
 END
