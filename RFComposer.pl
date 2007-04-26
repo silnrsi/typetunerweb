@@ -16,7 +16,10 @@ use Getopt::Std;
 #$opt_g - output only graphite cmds
 #$opt_q - output no graphite cmds
 #$opt_t - output <interaction> encode cmds w/o choices for PS name for testing TypeTuner
-our($opt_d, $opt_g, $opt_q, $opt_t); #set by &getopts:
+#$opt_l - list features and settings to a file to help create %nm_to_tag map
+our($opt_d, $opt_g, $opt_q, $opt_t, $opt_l); #set by &getopts:
+my $opt_str = 'dgqtl';
+my $featset_list_fn = 'featset_list.txt';
 
 my $feat_all_base_fn = 'feat_all_composer.xml';
 my $feat_all_elem = "all_features";
@@ -29,6 +32,116 @@ my $romanian_style_diacs_feat = '1041';
 my $variant_feats = '1024 1025 1027 1029 1028 1030 1031 1032 1033 1034 1035 1036';
 $variant_feats .= '1037 1038 1039 1040 1041 1042 1043 1044 1045 1046 1047 1048 1049';
 $variant_feats .= '1053 1054 1055 1056 1057 1059 1060 1061';
+
+#generated using the -l switch 
+# then copying & pasting the file produced into this file
+my %nm_to_tag = (
+	'Tone numbers' => 'TO',
+	'False' => 'f',
+	'True' => 't',
+	'Hide tone contour staves' => 'HI',
+	'False' => 'f',
+	'True' => 't',
+	'9-level pitches' => 'NI',
+	'Ligated' => 'l',
+	'Show tramlines' => 's',
+	'Non-ligated' => 'n',
+	'Show tramlines, non-ligated' => 't',
+	'Vietnamese-style diacritics' => 'VI',
+	'False' => 'f',
+	'True' => 't',
+	'Romanian-style diacritics' => 'RO',
+	'False' => 'f',
+	'True' => 't',
+	'Chinantec tones' => 'CH',
+	'False' => 'f',
+	'True' => 't',
+	'Bridging diacritics' => 'BR',
+	'False' => 'f',
+	'True' => 't',
+	'Barred-bowl forms' => 'BA',
+	'False' => 'f',
+	'True' => 't',
+	'Literacy alternates' => 'LI',
+	'False' => 'f',
+	'True' => 't',
+	'Slant italic specials' => 'SL',
+	'False' => 'f',
+	'True' => 't',
+	'Uppercase Eng alternates' => 'UP',
+	'Large eng with descender' => 'l',
+	'Large eng on baseline' => 'm',
+	'Capital N with tail' => 'c',
+	'Large eng with short stem' => 'n',
+	'Rams horn alternates' => 'RA',
+	'Small bowl' => 's',
+	'Large bowl' => 'l',
+	'Small gamma' => 't',
+	'Ogonek alternate' => 'OG',
+	'Curved' => 'c',
+	'Straight' => 's',
+	'Capital H-stroke alternate' => 'CA',
+	'Horizontal stroke' => 'h',
+	'Vertical stroke' => 'v',
+	'J stroke hook alternate' => 'JS',
+	'No serif' => 'n',
+	'Top serif' => 't',
+	'Capital N-left-hook alternate' => 'CB',
+	'Uppercase style' => 'u',
+	'Lowercase style' => 'l',
+	'Open-O alternate' => 'OP',
+	'Bottom serif' => 'b',
+	'Top serif' => 't',
+	'Small p-hook alternate' => 'SM',
+	'Left hook' => 'l',
+	'Right hook' => 'r',
+	'Capital R-tail alternate' => 'CC',
+	'Uppercase style' => 'u',
+	'Lowercase style' => 'l',
+	'Capital T-hook alternate' => 'CD',
+	'Left hook' => 'l',
+	'Right hook' => 'r',
+	'Small v-hook alternate' => 'SN',
+	'Curved' => 'c',
+	'Straight' => 's',
+	'Capital Y-hook alternate' => 'CE',
+	'Left hook' => 'l',
+	'Right hook' => 'r',
+	'Small ezh-curl alternate' => 'SO',
+	'Small bowl' => 's',
+	'Large bowl' => 'l',
+	'Capital Ezh alternates' => 'CF',
+	'Normal' => 'n',
+	'Reversed sigma' => 'r',
+	'OU alternates' => 'OU',
+	'Closed' => 'c',
+	'Open' => 'o',
+	'Cyrillic E alternates' => 'CY',
+	'False' => 'f',
+	'True' => 't',
+	'Modifier apostrophe alternates' => 'MO',
+	'Small' => 's',
+	'Large' => 'l',
+	'Modifier colon alternate' => 'MP',
+	'Tight' => 't',
+	'Wide' => 'w',
+	'Combining breve Cyrillic form' => 'CO',
+	'False' => 'f',
+	'True' => 't',
+	'Cyrillic shha alternate' => 'CZ',
+	'False' => 'f',
+	'True' => 't',
+	'Empty set alternates' => 'EM',
+	'Circle' => 'c',
+	'Zero' => 'z',
+	'Show invisible characters' => 'SH',
+	'False' => 'f',
+	'True' => 't',
+	'Diacritic selection' => 'DI',
+	'False' => 'f',
+	'True' => 't',
+	'Line spacing' => 'LJ',
+);
 
 #### subroutines ####
 
@@ -68,6 +181,17 @@ sub Tag_get($$)
 	return $tmp;
 }
 
+sub Tag_lookup($\%)
+#lookup name in name-to-tag map and return tag
+#generate a new tag if name isn't in map
+{
+	my ($name, $nm_to_tag) = @_;
+	if (defined $nm_to_tag->{$name})
+		{return $nm_to_tag->{$name};}
+	else
+		{print "new name so generating tag: $name\n"; return Tag_get($name, 2);}
+}
+
 sub Feats_get($\%)
 #create the %feats structure based on the Feat table in the font
 {
@@ -90,7 +214,8 @@ sub Feats_get($\%)
 			if (not defined $feats->{$feat_id})
 			{# this could go in the outer loop
 			 #  but it is nice after the settingName call
-				$feat_tag = Tag_get($feat_nm, 2);
+				#$feat_tag = Tag_get($feat_nm, 2);
+				$feat_tag = Tag_lookup($feat_nm, %nm_to_tag);
 				$feats->{$feat_id}{'name'} = $feat_nm;
 				$feats->{$feat_id}{'tag'} = $feat_tag;
 				$feats->{$feat_id}{'default'} = $feat->{'default'};
@@ -100,7 +225,8 @@ sub Feats_get($\%)
 				push(@{$feats->{' ids'}}, $feat_id);
 			}
 			
-			$set_tag = Tag_get($set_nm, 1);
+			#$set_tag = Tag_get($set_nm, 1);
+			$set_tag = Tag_lookup($set_nm, %nm_to_tag);
 			$feats->{$feat_id}{'settings'}{$set_id}{'name'} = $set_nm;
 			$feats->{$feat_id}{'settings'}{$set_id}{'tag'} = $set_tag;
 			if (not defined($feats->{$feat_id}{'settings'}{' ids'}))
@@ -220,7 +346,7 @@ sub Gsi_xml_parse($\%\%\%)
 			my $set_tag = $feats->{$feat}{'settings'}{$set}{'tag'};
 			if (!$feat_tag || !$set_tag)
 				{die("feature or setting in GSI missing from font Feat table: $feat set: $set\n");}
-			my $featset = $feat_tag . $set_tag;
+			my $featset = "$feat_tag-$set_tag";
 			
 			if (not defined ($featset_to_usvs->{$featset}))
 				{$featset_to_usvs->{$featset} = [];}
@@ -316,7 +442,7 @@ sub Special_glyphs_handle(\%\%\%)
 	my $feat_tag = $feats->{'1042'}{'tag'};
 	my $set_id = $feats->{'1042'}{'settings'}{' ids'}[1];
 	my $set_tag = $feats->{'1042'}{'settings'}{$set_id}{'tag'};
-	my $featset = $feat_tag . $set_tag;
+	my $featset = "$feat_tag-$set_tag";
 	if (not defined $featset_to_usvs->{$featset})
 		{$featset_to_usvs->{$featset} = [];}
 	push(@{$featset_to_usvs->{$featset}}, '01B7');
@@ -414,7 +540,7 @@ sub Features_output($\%\%\%\%)
 			
 			if ($variant_feats =~ /$feat_id/ and not $opt_g)
 			{#write one cmd for each variant glyph associated with this feature setting
-				my $featset = $feat_tag . $set_tag;
+				my $featset = "$feat_tag-$set_tag";
 				my @usvs = @{$featset_to_usvs->{$featset}};
 				if (not @usvs) {die("feature is not of variant type: $feat_id $featset\n");}
 				my ($usv, $ps_name);
@@ -447,7 +573,7 @@ sub Features_output($\%\%\%\%)
 	#output line spacing feature
 	unless ($opt_g)
 		{
-		my $line_gap_tag = Tag_get('Line spacing', 2);
+		my $line_gap_tag = Tag_lookup('Line spacing', %nm_to_tag);
 		if (not $opt_t)
 		{ #be careful of tabs in section below for proper output
     		print $fh <<END
@@ -658,7 +784,7 @@ sub Interactions_output($\%\%\%\%)
 		{
 			foreach my $feat (@featsets)
 			{#gr_feat cmds
-				my ($feat_tag, $set_tag) = ($feat =~ /([A-Z]+)([a-z]+)/);
+				my ($feat_tag, $set_tag) = ($feat =~ /(.*)-(.*)/);
 				my ($feat_id, $set_id) = Feats_to_ids($feat_tag, $set_tag, %$feats);
 				print $fh "\t\t\t<cmd name=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
 			}
@@ -672,7 +798,7 @@ sub Interactions_output($\%\%\%\%)
 		#Using the lookup_add approach doesn't require testing for both VIt and ROt
 		# and avoids the above problem
 		
-		if ($featset =~ /VIt/ and not $opt_g)
+		if ($featset =~ /VI-t/ and not $opt_g)
 		{#hard-coded
 			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
 			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_precomp}\"/>\n";
@@ -681,7 +807,7 @@ sub Interactions_output($\%\%\%\%)
 			#print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
 			#print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
 		}
-		if ($featset =~ /ROt/ and not $opt_g)
+		if ($featset =~ /RO-t/ and not $opt_g)
 		{#hard-coded
 			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_decomp}\"/>\n";
 			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_precomp}\"/>\n";
@@ -747,7 +873,43 @@ sub cmd_line_exec() #for UltraEdit function list
 my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, %dblenc_usv, $feat_all_fh);
 my ($font_fn, $gsi_fn, $dblenc_fn, $feat_all_fn);
 
-getopts('dgqt'); #sets $opt?'s & removes the switch from @ARGV
+getopts($opt_str); #sets $opt?'s & removes the switch from @ARGV
+
+#build a file containing a hash of feature & setting info
+# to paste into this program for specifying tags
+if ($opt_l)
+{
+	my ($font_fn) = ($ARGV[0]);
+
+	Feats_get($font_fn, %feats);
+	
+	open FILE, ">$featset_list_fn";
+	print FILE 'my %nm_to_tag = (';
+	print FILE "\n";
+	
+	my %tags;
+	foreach my $feat_id (@{$feats{' ids'}})
+	{
+		my $feat_t = $feats{$feat_id};
+		my ($tag, $name, $default) = ($feat_t->{'tag'}, $feat_t->{'name'}, 
+		                              $feat_t->{'default'});
+		print FILE "\t'$name' => '$tag',\n";
+		foreach my $set_id (@{$feats{$feat_id}{'settings'}{' ids'}})
+		{
+			my $set_t = $feat_t->{'settings'}{$set_id};
+			($tag, $name) = ($set_t->{'tag'}, $set_t->{'name'});
+			print FILE "\t'$name' => '$tag',\n";
+		}
+	}
+	
+	
+	#my $line_gap_tag = Tag_get('Line spacing', 2);
+	my $line_gap_tag = Tag_lookup('Line spacing', %nm_to_tag);
+	print FILE "\t'Line spacing' => '$line_gap_tag',\n";
+	
+	print FILE ");\n";
+	exit;	
+}
 
 if (scalar @ARGV != 3)
 	{Usage_print;}
