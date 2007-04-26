@@ -61,11 +61,11 @@
 		</value>
 	</feature>
 	<interactions>
-		<test select="LAt BBt">
+		<test select="LA-t BB-t">
 			<cmds name="LitAltsNI"/>
 			<cmd name="encode" args="01E5 uni01E5.BarBowl.SngBowl"/>
 		</test>
-		<test select="VDt RDt">
+		<test select="VD-t RD-t">
 			<cmd name="lookup_add" args="GSUB ccmp {viet_decomp}"/>
 			<cmd name="lookup_add" args="GSUB ccmp {viet_precomp}"/>
 			<cmd name="lookup_add" args="GSUB ccmp {rom_decomp}"/>
