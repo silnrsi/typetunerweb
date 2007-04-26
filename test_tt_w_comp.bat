@@ -16,7 +16,7 @@ if not exist eggs.ttf copy DoulosSILR_4100.ttf eggs.ttf
 pause
 %TT% -t createset feat_all_composer.xml feat_set_composer.xml
 pause
-%TT% applyset_xml feat_all_composer.xml feat_set_composer.xml eggs.ttf
+%TT% -m 20 applyset_xml feat_all_composer.xml feat_set_composer.xml eggs.ttf
 goto end
 
 :clean
