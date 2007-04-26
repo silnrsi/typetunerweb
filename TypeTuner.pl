@@ -21,7 +21,7 @@ use Compress::Zlib;
 #$opt_o - name for output font file instead of generating by appending _tt
 #$opt_x - for simplified command line, call createset
 our($opt_d, $opt_f, $opt_t, $opt_n, $opt_o, $opt_x); #set by &getopts:
-my $opt_str ='dftn:o:x';
+my $opt_str = 'dftn:o:x';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
@@ -30,6 +30,7 @@ my $version_name_ids = [3, 5];
 my $feat_all_elem = "all_features";
 my $feat_set_elem = "features_set";
 my $table_nm = "Silt";
+my $font_nm_max_len = 256;
 
 #### subroutines ####
 
@@ -57,8 +58,8 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'feature')
 		{
 			$tag = $attrs{'tag'};
-			if (defined $feat_all->{'features'}{$tag} || length($tag) != 2 || $tag !~ /[A-Z]+/)
-				{die("feature tags must be unique and consist of two uppercase letters: $tag\n");}
+			if (defined $feat_all->{'features'}{$tag} || $tag =~ /-/)
+				{die("feature tags must be unique and can't contain hyphen(s): $tag\n");}
 			
 			$feat_all->{'features'}{$tag}{'name'} = $attrs{'name'};
 			$feat_all->{'features'}{$tag}{'default'} = $attrs{'value'};
@@ -74,8 +75,8 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'value')
 		{
 			$tag = $attrs{'tag'};
-			if (defined $current->{'values'}{$tag} || length($tag) != 1 || $tag !~ /[a-z]+/)
-				{die("for feature $current->{'name'}, value tags must be unique and consist of one lowercase letters: $tag\n");}
+			if (defined $current->{'values'}{$tag} || $tag =~ /-/)
+				{die("for feature $current->{'name'}, value tags must be unique and can't contain hyphen(s): $tag\n");}
 			
 			$current->{'values'}{$tag}{'name'} = $attrs{'name'};
 			
@@ -206,7 +207,7 @@ sub Feat_Set_parse($\%\$)
 			$feature_tag = $feat_tag->{$tmp} or die("feature name: $tmp is invalid\n");
 			$tmp = $attrs{'value'};
 			$value_tag = $feat_tag->{$tmp} or die("feature value: $tmp is invalid\n");
-			$feat_set_str .= $feature_tag . $value_tag . ' ';
+			$feat_set_str .= "$feature_tag-$value_tag ";
 		}
 		elsif ($elem eq $feat_all_elem)
 		{
@@ -266,14 +267,11 @@ sub sort_tests($$)
 sub Feat_val_tags($)
 #extract feature and value tags from a concatenated string containing them together
 #returns the tags as a list
-#referencing $1 after the regex crashes in the Perl debugger
-#If this would work, I think the limits on feature & value tag length 
-# would be eliminated
 {
 	my ($fv) = @_;
 	
 	#print "Feat_val_tags fv: '$fv'\n";
-	if ($fv =~ /([A-Z]+)([a-z]+)/) #assumes feature is uc and setting is lc
+	if ($fv =~ /(.*)-(.*)/)
 		{return ($1, $2);}
 	else
 		{die("feature-value pair is corrupt: $fv\n");}
@@ -354,9 +352,7 @@ sub Feat_Set_cmds(\%$\@)
 	{
 		next if (not $fv);
 		if ($opt_d) {print "$fv ";}
-		$feat = substr($fv, 0, 2);
-		$val = substr($fv, -1, 1);
-		#($feat, $val) = Feat_val_tags($fv);
+		($feat, $val) = Feat_val_tags($fv);
 		$cmds = $features->{$feat}{'values'}{$val}{'cmds'};
 		copy_cmds(@$commands, @$cmds, %$cmd_blocks);
 	}
@@ -448,27 +444,29 @@ sub Cmds_exec ($\@\%)
 	}
 };
 
-sub Font_ids_update($\%$)
+sub Font_ids_update($\%$\%)
 #update various identifying information in the font based on feature settings
 {
-	my ($font, $feat_all, $feat_set, $time_cur) = @_;
+	my ($font, $feat_all, $feat_set, $feat_tag) = @_;
 	
-	#eliminate default feature value settings
-	my ($feats, @feat_val, $feat, $val, $feat_set_active);
+	#create user-readable feature-value tags
+	my ($feats, @feat_val, $feat, $val, $feat_set_active, $true_tag);
 	$feats = $feat_all->{'features'};
 	$feat_set_active = '';
 	
+	$true_tag = $feat_tag->{'True'}; #assumes there will be 'True' tag
 	@feat_val = split(/\s+/, $feat_set);
 	foreach my $fv (@feat_val)
 	{
 		next if (not $fv);
-		$feat = substr($fv, 0, 2);
-		$val = substr($fv, -1, 1);
-		#($feat, $val) = Feat_val_tags($fv);
+		($feat, $val) = Feat_val_tags($fv);
 		if ($feats->{$feat}{'default'} ne $feats->{$feat}{'values'}{$val}{'name'})
-		{
+		{#eliminate default feature value settings
 			$feat_set_active .= " " if $feat_set_active;
-			$feat_set_active .= $fv;
+			if ($val ne $true_tag)
+				{$feat_set_active .= $feat . $val;} #remove hyphen
+			else
+				{$feat_set_active .= $feat;} #don't display True value
 		}
 	}
 	if ($opt_d) {print "Font_ids_update: feat_set_active = $feat_set_active\n";}
@@ -476,14 +474,14 @@ sub Font_ids_update($\%$)
     #modify font name
 	my ($family_nm_old, $family_nm_new, $version_str_old, $version_str_new);	
 	$family_nm_old = Name_get($font, $family_name_id);
-	if (length($feat_set_active) <= 6 || $opt_n)
+	if (length($feat_set_active) <= $font_nm_max_len || $opt_n)
 	{
 		$family_nm_new = $family_nm_old . ' ' . ($opt_n ? $opt_n : $feat_set_active);
 		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
 	}
 	else
 	{
-		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, 6) . ' XT';
+		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, $font_nm_max_len) . ' XT';
 		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
 	}
 	
@@ -495,7 +493,7 @@ sub Font_ids_update($\%$)
 	#modify modification date
 	$font->{'head'}->read;
 	if ($opt_d) {printf ("old date: %d  ", $font->{'head'}->getdate());}
-	$time_cur = time();
+	my $time_cur = time();
 	$font->{'head'}->setdate($time_cur);
 	if ($opt_d) {printf ("new date: %d\n", $time_cur);}
 }
@@ -1019,7 +1017,7 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 	if ($opt_d) {print "commands: \n"; foreach (@commands) {print "$_->{'cmd'}: $_->{'args'}\n"}; print "\n";}
 	$font = Font::TTF::Font->open($font_fn) or die "Can't open font";
 	Cmds_exec($font, @commands, %feat_all);
-	Font_ids_update($font, %feat_all, $feat_set);
+	Font_ids_update($font, %feat_all, $feat_set, %feat_tag);
 	
 	#delete feat_all and embed feat_set file in font
 	if (defined $font->{$table_nm})
@@ -1115,7 +1113,7 @@ exit;
 #Feat_Set_cmds(%feat_all, $feat_set, @commands);
 #print "commands: \n"; foreach (@commands) {print "$_->{'cmd'}: $_->{'args'}\n"}; print "\n";
 #Cmds_exec($font, @commands, %feat_all);
-#Font_ids_update($font, %feat_all, $feat_set);
+#Font_ids_update($font, %feat_all, $feat_set, %feat_tag);
 
 #Encode($font, "0105", "aogonek.RetroHookStyle");
 
