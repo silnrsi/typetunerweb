@@ -906,8 +906,8 @@ commands:
 	delete  font.ttf
 
 switches:
-	-m	specify maximum length of generated font name suffix
-	-n	specify font name suffix
+	-m	specify maximum length of font name suffix (default: $font_nm_max_len)
+	-n	specify font name suffix instead of using generated one
 	-o	specify output font.ttf file name
 END
 	exit();
