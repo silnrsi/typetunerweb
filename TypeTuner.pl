@@ -26,12 +26,12 @@ my $opt_str = 'dftm:n:o:x';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
-my $family_name_ids = [1, 3, 4, 6, 16, 18, 20]; #name ids where family might occur
-my $version_name_ids = [3, 5];
+my $family_name_ids = [1, 3, 4, 6, 16, 17, 18]; #name ids where family might occur
+my $version_name_ids = [5];
 my $feat_all_elem = "all_features";
 my $feat_set_elem = "features_set";
 my $table_nm = "Silt";
-my $font_nm_max_len = 80; #can be overidden below by $opt_m
+my $font_nm_len_limit = 31; #maximum length of font name according to TrueType spec
 
 #### subroutines ####
 
@@ -475,19 +475,36 @@ sub Font_ids_update($\%$\%)
     #modify font name
 	my ($family_nm_old, $family_nm_new, $version_str_old, $version_str_new);	
 	$family_nm_old = Name_get($font, $family_name_id);
-	$font_nm_max_len = $opt_m ? $opt_m : $font_nm_max_len;
-
-	if (length($feat_set_active) <= $font_nm_max_len || $opt_n)
-	{
-		$family_nm_new = $family_nm_old . ' ' . ($opt_n ? $opt_n : $feat_set_active);
-		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
+	
+	if (length($family_nm_old) >= $font_nm_len_limit)
+	{ #handle bizarre case where the original font family name is too long
+		$family_nm_new = $family_nm_old . ' XT';
 	}
 	else
 	{
-		$family_nm_new = $family_nm_old . ' ' . substr($feat_set_active, 0, $font_nm_max_len) . ' XT';
-		Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
+		my $font_nm_max_len = $font_nm_len_limit - length($family_nm_old) - 1; #-1 for space
+		$font_nm_max_len = $opt_m ? $opt_m : $font_nm_max_len;
+	
+		if (length($feat_set_active) <= $font_nm_max_len || $opt_n)
+		{
+			$family_nm_new = $family_nm_old . ' ' . ($opt_n ? $opt_n : $feat_set_active);
+		}
+		else
+		{
+			$family_nm_new = $family_nm_old . ' ' . 
+								substr($feat_set_active, 0, $font_nm_max_len - 3) . ' XT';
+		}
 	}
 	
+	Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
+	if (length($family_nm_new) > $font_nm_len_limit)
+		{print "WARNING - the font name ($family_nm_new) is longer than allowed by the TrueType spec ($font_nm_len_limit).\n";}
+	
+	#handle name id 6: PS name, which shouldn't contain spaces
+	$family_nm_old =~ s/ //g;
+	$family_nm_new =~ s/ //g;
+	Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
+		
 	#modify version
 	$version_str_old = Name_get($font, $version_name_id);
 	$version_str_new = $version_str_old . ' ; '. $feat_set_active;
@@ -906,7 +923,7 @@ commands:
 	delete  font.ttf
 
 switches:
-	-m	specify maximum length of font name suffix (default: $font_nm_max_len)
+	-m	specify maximum length of generated font name suffix
 	-n	specify font name suffix instead of using generated one
 	-o	specify output font.ttf file name
 END
