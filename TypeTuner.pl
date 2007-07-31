@@ -20,9 +20,10 @@ use Compress::Zlib;
 #$opt_m - maximum length of featset suffix for font name
 #$opt_n - string to use a suffix at end of font name instead of featset string
 #$opt_o - name for output font file instead of generating by appending _tt
+#$opt_v - new version number (bypasses adding featset suffix to the version)
 #$opt_x - for simplified command line, call createset
-our($opt_d, $opt_f, $opt_t, $opt_m, $opt_n, $opt_o, $opt_x); #set by &getopts:
-my $opt_str = 'dftm:n:o:x';
+our($opt_d, $opt_f, $opt_t, $opt_m, $opt_n, $opt_o, $opt_v, $opt_x); #set by &getopts:
+my $opt_str = 'dftm:n:o:v:x';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
@@ -458,7 +459,7 @@ sub Font_ids_update($\%$\%)
 	$true_tag = $feat_tag->{'True'}; #assumes there will be 'True' tag
 	@feat_val = split(/\s+/, $feat_set);
 	foreach my $fv (@feat_val)
-	{
+	{ #feat_set_active can be empty string if all settings are at defaults
 		next if (not $fv);
 		($feat, $val) = Feat_val_tags($fv);
 		if ($feats->{$feat}{'default'} ne $feats->{$feat}{'values'}{$val}{'name'})
@@ -470,7 +471,7 @@ sub Font_ids_update($\%$\%)
 				{$feat_set_active .= $feat;} #don't display True value
 		}
 	}
-	if ($opt_d) {print "Font_ids_update: feat_set_active = $feat_set_active\n";}
+	if ($opt_d) {print "Font_ids_update: feat_set_active = \'$feat_set_active\'\n";}
     
     #modify font name
 	my ($family_nm_old, $family_nm_new, $version_str_old, $version_str_new);	
@@ -482,17 +483,19 @@ sub Font_ids_update($\%$\%)
 	}
 	else
 	{
-		my $font_nm_max_len = $font_nm_len_limit - length($family_nm_old) - 1; #-1 for space
-		$font_nm_max_len = $opt_m ? $opt_m : $font_nm_max_len;
+		my $font_nm_suffix_len = $font_nm_len_limit - length($family_nm_old) - 1; #-1 for space
+		$font_nm_suffix_len = $opt_m ? $opt_m : $font_nm_suffix_len;
 	
-		if (length($feat_set_active) <= $font_nm_max_len || $opt_n)
+		if (length($feat_set_active) <= $font_nm_suffix_len || $opt_n)
 		{
-			$family_nm_new = $family_nm_old . ' ' . ($opt_n ? $opt_n : $feat_set_active);
+			$family_nm_new = $family_nm_old . 
+								($feat_set_active || $opt_n ? ' ' : '') . 
+								($opt_n ? $opt_n : $feat_set_active);
 		}
 		else
 		{
 			$family_nm_new = $family_nm_old . ' ' . 
-								substr($feat_set_active, 0, $font_nm_max_len - 3) . ' XT';
+								substr($feat_set_active, 0, $font_nm_suffix_len - 3) . ' XT';
 		}
 	}
 	
@@ -507,7 +510,23 @@ sub Font_ids_update($\%$\%)
 		
 	#modify version
 	$version_str_old = Name_get($font, $version_name_id);
-	$version_str_new = $version_str_old . ' ; '. $feat_set_active;
+	if (not $opt_v)
+	{
+		$version_str_new = $version_str_old . ($feat_set_active ? ' ; ' : '') . 
+								$feat_set_active;
+	}
+	else
+	{
+		if ($version_str_old =~ '(.*Version\s+)(\d+\.\d+)(.*)')
+		{
+			$version_str_new = $1 . $opt_v . $3;
+		}
+		else
+		{
+			print "WARNING - the version string ($version_str_old) is invalid and won't be changed.\n";
+			$version_str_new = $version_str_old;
+		}
+	}
 	Name_mod($font, $version_name_ids, $version_str_old, $version_str_new);
 	
 	#modify modification date
