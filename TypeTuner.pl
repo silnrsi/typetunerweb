@@ -27,7 +27,7 @@ my $opt_str = 'dftm:n:o:v:x';
 
 my $family_name_id = 1; #source for family name to modify
 my $version_name_id = 5;
-my $family_name_ids = [1, 3, 4, 6, 16, 17, 18]; #name ids where family might occur
+my $family_name_ids = [1, 3, 4, 6, 16, 18]; #name ids where family might occur
 my $version_name_ids = [5];
 my $feat_all_elem = "all_features";
 my $feat_set_elem = "features_set";
