@@ -192,10 +192,10 @@ sub Feat_Set_write($\%)
 	print OUT_FILE "</features_set>\n";
 }
 
-sub Feat_Set_parse($\%\$)
+sub Feat_Set_parse($\%\$\%)
 #parse the $feat_set_fn to create the $feat_set string
 {
-	my ($feat_set_fn, $feat_tag, $feat_set) = @_;
+	my ($feat_set_fn, $feat_tag, $feat_set, $line_metrics) = @_;
 	
 	my ($xml_parser, $tmp, $feature_tag, $value_tag, $feat_set_str);
 	$feat_set_str = '';
@@ -214,6 +214,12 @@ sub Feat_Set_parse($\%\$)
 		elsif ($elem eq $feat_all_elem)
 		{
 			die("$feat_all_elem XML file provided instead of $feat_set_elem XML file\n");
+		}
+		elsif ($elem eq 'imported_line_metrics')
+		{
+			$line_metrics->{'font'} = $attrs{'font'};
+			$line_metrics->{'em-sqr'} = $attrs{'em-sqr'};
+			$line_metrics->{'metrics'} = $attrs{'metrics'};
 		}
 		else
 		{}
@@ -361,7 +367,7 @@ sub Feat_Set_cmds(\%$\@)
 	if ($opt_d) {print "\n\n";}
 };
 
-sub Cmds_exec ($\@\%)
+sub Cmds_exec ($\@\%\%)
 #execute commands (cmd-args hash) in commands array against the font
 #the args string is split into one string for each arg
 # Perl handles the conversion from string to number automatically 
@@ -369,7 +375,7 @@ sub Cmds_exec ($\@\%)
 #args can be surrounded by braces, which means they are looked up in aliases
 #args that contain spaces MUST be handled using an alias
 {
-	my ($font, $commands, $feat_all) = @_;
+	my ($font, $commands, $feat_all, $line_metrics) = @_;
 	my ($command, $cmd, $args, @args, $arg);
 	
 	foreach $command (@$commands)
@@ -438,6 +444,12 @@ sub Cmds_exec ($\@\%)
 			Line_metrics_mod($font, $args[0], $args[1], $args[2], 
 								$args[3], $args[4], 
 								$args[5], $args[6], $args[7]);
+		}
+		elsif ($cmd eq 'line_metrics_scaled')
+		{
+			if ($args[0] ne 'null')
+				{die ("invalid args for line_metrics_scaled cmd: @args\n");}
+			Line_metrics_scaled_mod($font, $line_metrics);
 		}
 		else
 		{
@@ -823,6 +835,42 @@ sub Line_metrics_mod($$$$$$$$$)
 	}
 }
 
+sub Line_metrics_scaled_mod($$)
+#set all the line metrics in the O2/2 and hhea table individually
+#descents should all normally be positive
+#the line metrics are scaled based the em-sqr they are specified with 
+# and the em-sqr of the target font
+{
+	my ($font, $line_metrics) = @_;
+	my (@metrics, $em_sqr, $scale, $TypoAsc, $TypoDsc, $TypoGap, $WinAsc, $WinDsc, 
+			$hheaAsc, $hheaDsc, $hheaGap);
+
+	#test %line_metrics (possibly no imported_line_metrics element in feat_set.xml)
+	if (not defined $line_metrics->{'font'} or not defined $line_metrics->{'em-sqr'}
+		or not defined $line_metrics->{'metrics'})
+		{die("imported_line_metrics element missing or invalid in Settings file\n")};
+	@metrics = split(/\s+/, $line_metrics->{'metrics'});
+	if (scalar @metrics != 8)
+		{die("imported_line_metrics element contains wrong number of metrics\n")};
+		
+	$em_sqr = $line_metrics->{'em-sqr'};
+	($TypoAsc, $TypoDsc, $TypoGap, $WinAsc, $WinDsc, 
+		$hheaAsc, $hheaDsc, $hheaGap) = @metrics;
+
+	#find scaling factor for line metrics based on $line_metrics->em-sqr and $font's em-sqr
+	my ($head_tbl) = $font->{'head'}->read;
+	$scale = $head_tbl->{'unitsPerEm'} / $em_sqr;
+	if ($opt_d) {print "Line_metrics_scaled_mod: scale = $scale\n"};
+
+	#apply scaling factor to line metrics
+	foreach (\$TypoAsc, \$TypoDsc, \$TypoGap, \$WinAsc, \$WinDsc, 
+		\$hheaAsc, \$hheaDsc, \$hheaGap) {$$_ *= $scale;}
+		
+	if ($opt_d) {print "Line_metrics_scaled_mod calling Line_metrics_mod\n"};
+	Line_metrics_mod($font, $TypoAsc, $TypoDsc, $TypoGap, $WinAsc, $WinDsc, 
+		$hheaAsc, $hheaDsc, $hheaGap);
+}
+
 sub Name_get($$)
 #returns the name for a given name id
 {	
@@ -954,7 +1002,7 @@ END
 sub cmd_line_exec() #for UltraEdit function list
 {}
 
-my ($font, %feat_all, $feat_set, %feat_tag, @commands);
+my ($font, %feat_all, $feat_set, %feat_tag, @commands, %line_metrics);
 my ($feat_all_fn, $feat_set_fn, $font_fn, $font_out_fn);
 
 getopts($opt_str); #sets $opt_?'s and removes the switches from @ARGV
@@ -1051,12 +1099,14 @@ elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 	}
 	
 	Feat_All_parse($feat_all_fn, %feat_all, %feat_tag);
-	Feat_Set_parse($feat_set_fn, %feat_tag, $feat_set);
+	Feat_Set_parse($feat_set_fn, %feat_tag, $feat_set, %line_metrics);
 	if ($opt_d) {print "feat_set = $feat_set\n";}
+	if ($opt_d and defined $line_metrics{'metrics'}) 
+		{print "line_metrics = \'$line_metrics{'font'}\' $line_metrics{'em-sqr'} $line_metrics{'metrics'}\n";}
 	Feat_Set_cmds(%feat_all, $feat_set, @commands);
 	if ($opt_d) {print "commands: \n"; foreach (@commands) {print "$_->{'cmd'}: $_->{'args'}\n"}; print "\n";}
 	$font = Font::TTF::Font->open($font_fn) or die "Can't open font";
-	Cmds_exec($font, @commands, %feat_all);
+	Cmds_exec($font, @commands, %feat_all, %line_metrics);
 	Font_ids_update($font, %feat_all, $feat_set, %feat_tag);
 	
 	#delete feat_all and embed feat_set file in font

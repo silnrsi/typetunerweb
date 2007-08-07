@@ -59,6 +59,9 @@
 		<value name="Loose" tag="l">
 			<cmd name="line_gap" args="2500 875"/>
 		</value>
+		<value name="Imported" tag="i">
+			<cmd name="line_metrics_scaled" args="null"/>
+		</value>
 	</feature>
 	<interactions>
 		<test select="LA-t BB-t">
