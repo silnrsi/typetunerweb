@@ -15,8 +15,10 @@ if exist feat.xml del feat.xml
 %TT% createset zork_tt.ttf feat.xml
 fc feat_set_def.xml feat.xml
 pause
+%TT% -o feat_set_metrics.xml setmetrics SILDoulosTest.ttf feat_set.xml
+pause
 if exist zork_tt_tt.ttf del zork_tt_tt.ttf
-%TT% applyset feat_set.xml zork_tt.ttf
+%TT% applyset feat_set_metrics.xml zork_tt.ttf
 pause
 if exist zork_tt_tt_1.ttf del zork_tt_tt_1.ttf
 ren zork_tt_tt.ttf zork_tt_tt_1.ttf
@@ -45,6 +47,7 @@ if exist zork_tt_tt_2.ttf del zork_tt_tt_2.ttf
 if exist foo.ttf del foo.ttf
 if exist foo_tt.ttf del foo_tt.ttf
 if exist feat.xml del feat.xml
+if exist feat_set_metrics.xml del feat_set_metrics.xml
 goto end
 
 :usage

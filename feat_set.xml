@@ -22,9 +22,10 @@
 		<value name="False"/>
 		<value name="True"/>
 	</feature>
-	<feature name="Line spacing" value="Tight">
+	<feature name="Line spacing" value="Normal">
 		<value name="Normal"/>
 		<value name="Tight"/>
 		<value name="Loose"/>
+		<value name="Imported"/>
 	</feature>
 </features_set>

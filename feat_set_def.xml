@@ -26,5 +26,6 @@
 		<value name="Normal"/>
 		<value name="Tight"/>
 		<value name="Loose"/>
+		<value name="Imported"/>
 	</feature>
 </features_set>
