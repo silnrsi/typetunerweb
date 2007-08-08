@@ -849,10 +849,10 @@ sub Line_metrics_scaled_mod($$)
 	#test %line_metrics (possibly no imported_line_metrics element in feat_set.xml)
 	if (not defined $line_metrics->{'font'} or not defined $line_metrics->{'em-sqr'}
 		or not defined $line_metrics->{'metrics'})
-		{die("imported_line_metrics element missing or invalid in Settings file\n")};
-	@metrics = split(/\s+/, $line_metrics->{'metrics'});
+		{die("imported_line_metrics element missing or invalid in Settings file\n *use the setmetrics command*\n")};
+	@metrics = split(/\s+/, $line_metrics->{'metrics'});                         
 	if (scalar @metrics != 8)
-		{die("imported_line_metrics element contains wrong number of metrics\n")};
+		{die("imported_line_metrics element contains wrong number of metrics\n *use the setmetrics command*\n")};
 		
 	$em_sqr = $line_metrics->{'em-sqr'};
 	($TypoAsc, $TypoDsc, $TypoGap, $WinAsc, $WinDsc, 
