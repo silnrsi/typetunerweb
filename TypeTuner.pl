@@ -20,12 +20,13 @@ use Compress::Zlib;
 #$opt_m - maximum length of featset suffix for font name
 #$opt_n - string to use a suffix at end of font name instead of featset string
 #$opt_o - name for output font file instead of generating by appending _tt
-#$opt_v - new version number (bypasses adding featset suffix to the version)
+#$opt_v - version number (bypasses adding featset suffix to the version)
 #$opt_x - for simplified command line, call createset
 our($opt_d, $opt_f, $opt_t, $opt_m, $opt_n, $opt_o, $opt_v, $opt_x); #set by &getopts:
 my $opt_str = 'dftm:n:o:v:x';
 
-my $family_name_id = 1; #source for family name to modify
+my $family_name_id = 1; #source for family name to modify 
+my $full_font_name_id = 4; #full font name for setmetrics command
 my $version_name_id = 5;
 my $family_name_ids = [1, 3, 4, 6, 16, 18]; #name ids where family might occur
 my $version_name_ids = [5];
@@ -193,7 +194,7 @@ sub Feat_Set_write($\%)
 }
 
 sub Feat_Set_parse($\%\$\%)
-#parse the $feat_set_fn to create the $feat_set string
+#parse the $feat_set_fn to create the $feat_set string and the %line_metrics hash
 {
 	my ($feat_set_fn, $feat_tag, $feat_set, $line_metrics) = @_;
 	
@@ -982,6 +983,8 @@ commands:
 	createset font.ttf feat_set.xml 
 	createset feat_all.xml feat_set.xml
 	
+	setmetrics font.ttf feat_set.xml
+	
 	applyset     feat_set.xml font.ttf
 	applyset_xml feat_all.xml feat_set.xml font.ttf
 	
@@ -1070,6 +1073,89 @@ if ($cmd eq 'createset')
 	
 	if ($flag)
 		{unlink($feat_all_fn);}
+}
+elsif ($cmd eq 'setmetrics')
+{ #import line metrics from a legacy font into the feat_set.xml file
+	if (scalar @ARGV != 3)
+		{Usage_print;}
+	if ($opt_d) {print "setting line metrics in feat_set XML file from font\n";}		
+	
+	($font_fn, $feat_set_fn) = ($ARGV[1], $ARGV[2]);
+	my($line_metric_str, $font_nm, $em_sqr, $tbl);
+	
+	$font = Font::TTF::Font->open($font_fn) or die "Can't open font\n";
+	
+    $font_nm = Name_get($font, $full_font_name_id);
+    
+    $tbl = $font->{'head'}->read;
+    $em_sqr = $tbl->{'unitsPerEm'};
+    
+	$tbl = $font->{'OS/2'}->read;
+	$line_metric_str = "\t<imported_line_metrics font=\"$font_nm\" em-sqr=\"$em_sqr\" ";
+	$line_metric_str .= "metrics=\"$tbl->{'sTypoAscender'} " . $tbl->{'sTypoDescender'} * -1;
+	$line_metric_str .= " $tbl->{'sTypoLineGap'} ";
+	$line_metric_str .= "$tbl->{'usWinAscent'} $tbl->{'usWinDescent'} ";
+	$tbl = $font->{'hhea'}->read;
+	$line_metric_str .= "$tbl->{'Ascender'} " . $tbl->{'Descender'} * -1 . " $tbl->{'LineGap'}\"/>\n";
+
+	if ($opt_d) {print "line_metric_str = $line_metric_str";}  #already contains \n
+	
+	open FILE, "+<$feat_set_fn" or die("Could not open $feat_set_fn\n");
+	my @feat_data;
+	while (not eof) {push(@feat_data, <FILE>)};
+
+	my ($line_spacing_found, $imported_found, $imported_line_metrics_found) = (0, 0, 0);	
+	foreach my $i (0 .. (scalar @feat_data + 1)) # + 1 because two elements could be added to array
+	{
+		last if (not defined $feat_data[$i]); # exit early if two elements aren't added to array
+		
+		#set the "Line spacing" feature to the "Imported" setting
+		if ($feat_data[$i] =~ s/(^.*<feature name="Line spacing" value=")(.*)(">.*$)/$1Imported$3/)
+		{
+			if ($opt_d) {print "Line spacing changed to Imported\n";}
+			$line_spacing_found = 1;
+		}
+			
+		#add the "Imported" settings if needed
+		if ($line_spacing_found)
+		{
+			if ($feat_data[$i] =~ /<value name="Imported"\/>/)
+				{$imported_found = 1;}
+			if ($feat_data[$i] =~ /<\/feature>/)
+			{
+				if (not $imported_found)
+				{
+					splice(@feat_data, $i, 0, "\t\t<value name=\"Imported\"/>\n");
+					if ($opt_d) {print "Imported setting added\n";}
+				}
+				$line_spacing_found = 0;
+			}
+		}		
+		
+		#replace the imported_line_metrics element
+		if ($feat_data[$i] =~ /<imported_line_metrics/)
+		{
+			$feat_data[$i] = $line_metric_str;
+			$imported_line_metrics_found = 1;
+			if ($opt_d) {print "Imported_line_metrics element replaced\n";}	
+		}
+		
+		#add the imported_line_metrics element if needed
+		if ($feat_data[$i] =~ /<\/features_set>/ && not $imported_line_metrics_found) 
+		{
+			splice(@feat_data, $i, 0, $line_metric_str);
+			$imported_line_metrics_found = 1;
+			if ($opt_d) {print "Imported_line_metrics element added\n";}
+		}
+	}
+    
+    if ($opt_o)
+    	{close FILE; open FILE, ">$opt_o" or die("Could not open $opt_o\n");}
+    else
+    	{seek(FILE, 0, 0);}
+    	
+	foreach (@feat_data) {print FILE $_};
+	close FILE;
 }
 elsif ($cmd eq 'applyset' || $cmd eq 'applyset_xml')
 { #apply feat_set to font based on feat_all either embedded in font or in separate XML file
