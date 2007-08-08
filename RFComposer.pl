@@ -102,6 +102,7 @@ my %nm_to_tag = (
 	'Diacritic selection' => 'DiacSlct',
 	'Line spacing' => 'LnSpc',
 	'Loose' => 'Ls',
+	'Imported' => 'Im',
 );
 
 #### subroutines ####
@@ -542,6 +543,7 @@ sub Features_output($\%\%\%\%)
 		my $tight_tag = Tag_lookup('Tight', %nm_to_tag);
 		my $normal_tag = Tag_lookup('Normal', %nm_to_tag);
 		my $loose_tag = Tag_lookup('Loose', %nm_to_tag);
+		my $imported_tag = Tag_lookup('Imported', %nm_to_tag);
 		if (not $opt_t)
 		{ #be careful of tabs in section below for proper output
 			print $fh <<END
@@ -587,6 +589,9 @@ sub Features_output($\%\%\%\%)
 		<value name="Loose" tag="$loose_tag">
 			<cmd name="line_gap" args="2900 1100"/>
 		</value>
+		<value name="Imported" tag="$imported_tag">
+			<cmd name="line_metrics_scaled" args="null"/>
+		</value>
 	</feature>
 END
 		}
@@ -603,6 +608,9 @@ END
 		</value>
 		<value name="Loose" tag="$loose_tag">
 			<cmd name="line_gap" args="2800 1100"/>
+		</value>
+		<value name="Imported" tag="$imported_tag">
+			<cmd name="line_metrics_scaled" args="null"/>
 		</value>
 	</feature>
 END
@@ -877,7 +885,7 @@ if ($opt_l)
 	#my $line_gap_tag = Tag_get('Line spacing', 2);
 	#print FILE "\t'Line spacing' => '$line_gap_tag',\n";
 	
-	foreach my $s ('Line spacing', 'Tight', 'Normal', 'Loose')
+	foreach my $s ('Line spacing', 'Tight', 'Normal', 'Loose', 'Imported')
 	{
 		if (not defined $tags{$s})
 		{
