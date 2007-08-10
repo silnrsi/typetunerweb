@@ -983,7 +983,7 @@ commands:
 	createset font.ttf feat_set.xml 
 	createset feat_all.xml feat_set.xml
 	
-	setmetrics font.ttf feat_set.xml
+	setmetrics font_old.ttf feat_set.xml
 	
 	applyset     feat_set.xml font.ttf
 	applyset_xml feat_all.xml feat_set.xml font.ttf
