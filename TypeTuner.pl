@@ -10,7 +10,8 @@ if (scalar @ARGV != 0)
 use Gtk2 '-init';
 use Gtk2::GladeXML;
 
-$gladexml = Gtk2::GladeXML->new('typetuner.glade');
+$gladefn = 'typetuner.glade';
+$gladexml = Gtk2::GladeXML->new($gladefn) || die "Can't open $gladefn";
 $gladexml->signal_autoconnect_from_package('main');
 $closebtn = $gladexml->get_widget('Close'); 
 Gtk2->main();
