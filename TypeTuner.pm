@@ -348,7 +348,7 @@ sub Feat_Set_cmds(\%$\@)
 		}
 		if ($test_passed)
 		{ #add to list of commands to process
-			if ($opt_d) {print "test passed: $test_str\n";}
+			if ($opt_d) {print "interaction matched: $test_str\n";}
 			my $cmds = $interactions->[$test_str_to_ix{$test_str}]->{'cmds'};
 			copy_cmds(@$commands, @$cmds, %$cmd_blocks);
 
@@ -359,7 +359,7 @@ sub Feat_Set_cmds(\%$\@)
 		}
 		else
 		{
-			if ($opt_d) {print "test failed: $test_str\n";}
+			if ($opt_d) {print "interaction not matched: $test_str\n";}
 		}
 	}
 	
@@ -859,10 +859,10 @@ sub Line_metrics_scaled_mod($$)
 	#test %line_metrics (possibly no imported_line_metrics element in feat_set.xml)
 	if (not defined $line_metrics->{'font'} or not defined $line_metrics->{'em-sqr'}
 		or not defined $line_metrics->{'metrics'})
-		{die("imported_line_metrics element missing or invalid in Settings file\n *use the setmetrics command*\n")};
+		{die("ERROR - imported_line_metrics element missing or invalid in Settings file\n *use the setmetrics command*\n")};
 	@metrics = split(/\s+/, $line_metrics->{'metrics'});                         
 	if (scalar @metrics != 8)
-		{die("imported_line_metrics element contains wrong number of metrics\n *use the setmetrics command*\n")};
+		{die("ERROR - imported_line_metrics element contains wrong number of metrics\n *use the setmetrics command*\n")};
 		
 	$em_sqr = $line_metrics->{'em-sqr'};
 	($TypoAsc, $TypoDsc, $TypoGap, $WinAsc, $WinDsc, 
@@ -983,15 +983,21 @@ sub Usage_print()
 {
 	print <<END;
 (c) SIL International 2007. All rights reserved.
+see http://scripts.sil.org/TypeTuner
+
 usage: 
 	TypeTuner -x <xml> <ttf> (create settings xml file from ttf)
 	TypeTuner <xml> <ttf> (apply settings xml file to ttf)
 	
 	or TypeTuner [<switches>] <command> [files, ...]
 	
+switches:
+	-m	specify maximum length of generated font name suffix
+	-n	specify font name suffix instead of using generated one
+	-o	specify output font.ttf file name
+
 commands:
-	createset font.ttf feat_set.xml 
-	createset feat_all.xml feat_set.xml
+	createset <font.ttf | feat_all.xml> feat_set.xml 
 	
 	setmetrics font_old.ttf feat_set.xml
 	
@@ -1001,11 +1007,6 @@ commands:
 	extract font.ttf feat_set.xml
 	add     feat_all.xml font.ttf
 	delete  font.ttf
-
-switches:
-	-m	specify maximum length of generated font name suffix
-	-n	specify font name suffix instead of using generated one
-	-o	specify output font.ttf file name
 END
 	exit();
 };
@@ -1286,6 +1287,8 @@ sub cmd_line_exec(@)
 	{
 		Usage_print;
 	}
+	
+	if ($opt_d) {print "All operations completed\n";}
 }
 
 1;
