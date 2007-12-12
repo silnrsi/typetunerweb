@@ -37,7 +37,8 @@ my %nm_to_tag = (
 	'False' => 'F',
 	'True' => 'T',
 	'Hide tone contour staves' => 'TnStvsHd',
-	'9-level pitches' => '9lvl',
+#	'9-level pitches' => '9lvl', #don't use digits since digits invalid in PS font name
+	'9-level pitches' => 'NineLvl',
 	'Ligated' => 'Lgt',
 	'Show tramlines' => 'TrmLn',
 	'Non-ligated' => 'NoLgt',
@@ -835,7 +836,7 @@ usage:
 		-g - output no OpenType cmds (Graphite only)
 		-q - output no Graphite cmds (OpenType only)
 		-d - debug output
-		-t - output encode cmds w/o choices for PS name 
+		-t - output a file that needs no editing 
 			(for testing TypeTuner)
 			
 	output is to feat_all_composer.xml
