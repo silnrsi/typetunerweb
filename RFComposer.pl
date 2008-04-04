@@ -100,6 +100,18 @@ my %nm_to_tag = (
 	'Circle' => 'Crcl',
 	'Zero' => 'Zro',
 	'Show invisible characters' => 'ShwInv',
+	'Digit Zero with slash' => 'DI',
+	'Digit One without base' => 'DJ',
+	'Digit Four with open top' => 'DK',
+	'Digit Six and Nine alternates' => 'DL',
+	'Digit Seven with bar' => 'DM',
+	'Small i-tail alternate' => 'SM',
+	'Small j-serif alternate' => 'SN',
+	'Small l-tail alternate' => 'SO',
+	'Capital Q alternate' => 'CA',
+	'Small q-tail alternate' => 'SP',
+	'Small t-tail alternate' => 'SQ',
+	'Small y-tail alternate' => 'SR',
 	'Diacritic selection' => 'DiacSlct',
 	'Line spacing' => 'LnSpc',
 	'Loose' => 'Ls',
@@ -113,8 +125,6 @@ sub Tag_get($$)
 #get a tag for a given string
 #second arg indicates a feature (2) or a setting (1)
 #assumes feature tags are created before setting tags
-#TODO: implement this using a table lookup (probably using <DATA>)
-#       to get more sensible tags. probably won't need second arg
 {
 	my ($str, $cnt) = @_;
 	my ($tmp);
@@ -743,6 +753,12 @@ sub Interactions_output($\%\%\%\%)
 	#start interactions element
 	print $feat_all_fh "\t<interactions>\n";
 
+	my $viet_featset = "None";
+	if (defined $feats->{vietnamese_style_diacs_feat})
+		{$viet_featset = "$feats->{'1029'}{'tag'}-$feats->{'1029'}{'settings'}{'1'}{'tag'}"};
+	my $rmnian_featset = "None";
+	if (defined $feats->{romanian_style_diacs_feat})
+		{$rmnian_featset = "$feats->{'1041'}{'tag'}-$feats->{'1041'}{'settings'}{'1'}{'tag'}"};
 	my $featset;
 	foreach $featset (sort sort_tests keys %$featset_to_usvs)
 	{
@@ -775,7 +791,6 @@ sub Interactions_output($\%\%\%\%)
 		#Using the lookup_add approach doesn't require testing for both VIt and ROt
 		# and avoids the above problem
 		
-		my $viet_featset = "$feats->{'1029'}{'tag'}-$feats->{'1029'}{'settings'}{'1'}{'tag'}";
 		if ($featset =~ /$viet_featset/ and not $opt_g)
 		{#hard-coded
 			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
@@ -785,7 +800,6 @@ sub Interactions_output($\%\%\%\%)
 			#print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
 			#print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
 		}
-		my $rmnian_featset = "$feats->{'1041'}{'tag'}-$feats->{'1041'}{'settings'}{'1'}{'tag'}";
 		if ($featset =~ /$rmnian_featset/ and not $opt_g)
 		{#hard-coded
 			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_decomp}\"/>\n";
