@@ -1,4 +1,4 @@
-# © SIL International 2007. All rights reserved.
+# © SIL International 2007-2008. All rights reserved.
 # Please do not redistribute.
 
 #todo: don't die on every error, try to keep going
@@ -982,7 +982,7 @@ sub Table_add($$$)
 sub Usage_print()
 {
 	print <<END;
-(c) SIL International 2007. All rights reserved.
+(c) SIL International 2007-2008. All rights reserved.
 see http://scripts.sil.org/TypeTuner
 
 usage: 
@@ -1290,5 +1290,7 @@ sub cmd_line_exec(@)
 	
 	if ($opt_d) {print "All operations completed\n";}
 }
+
+cmd_line_exec(@ARGV);
 
 1;
