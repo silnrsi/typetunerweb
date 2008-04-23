@@ -100,18 +100,18 @@ my %nm_to_tag = (
 	'Circle' => 'Crcl',
 	'Zero' => 'Zro',
 	'Show invisible characters' => 'ShwInv',
-	'Digit Zero with slash' => 'DI',
-	'Digit One without base' => 'DJ',
-	'Digit Four with open top' => 'DK',
-	'Digit Six and Nine alternates' => 'DL',
-	'Digit Seven with bar' => 'DM',
-	'Small i-tail alternate' => 'SM',
-	'Small j-serif alternate' => 'SN',
-	'Small l-tail alternate' => 'SO',
-	'Capital Q alternate' => 'CA',
-	'Small q-tail alternate' => 'SP',
-	'Small t-tail alternate' => 'SQ',
-	'Small y-tail alternate' => 'SR',
+	'Digit Zero with slash' => 'Dig0',
+	'Digit One without base' => 'Dig1',
+	'Digit Four with open top' => 'Dig4',
+	'Digit Six and Nine alternates' => 'Dig69',
+	'Digit Seven with bar' => 'Dig7',
+	'Small i-tail alternate' => 'SmITail',
+	'Small j-serif alternate' => 'SmJSerif',
+	'Small l-tail alternate' => 'SmLTail',
+	'Capital Q alternate' => 'CapQ',
+	'Small q-tail alternate' => 'SmQTail',
+	'Small t-tail alternate' => 'SmTTail',
+	'Small y-tail alternate' => 'SmYTail',
 	'Diacritic selection' => 'DiacSlct',
 	'Line spacing' => 'LnSpc',
 	'Loose' => 'Ls',
@@ -274,6 +274,17 @@ sub Gsi_xml_parse($\%\%\%)
 #parse the GSI xml file to create the structures describing
 # mapping to PS name for given USV and feature setting and
 # mapping from feature settings to list of USVs affected
+#
+# This code gets confused if two glyphs have the same USV and feature setting
+# which can happen if a Glyph requires TWO features to activate it
+# since only one of those features can be indicated in the GSI file
+# and there can be another glyph that is truly activated by that one feature.
+# feat_set_to_usv will list the USV twice (causing a warning below)
+# but usv_feat_to_ps_name can only hold one PS name,
+# so two identical cmd elements will be created.
+# Also, since one of the two features couldn't be indicated in the GSI,
+# that Glyph won't be listed as a possible choice in some Interactions.
+# The result is usable with some editing. (Found working on Andika Basic.)
 {
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
