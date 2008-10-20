@@ -30,6 +30,8 @@ my $romanian_style_diacs_feat = '1041';
 
 #generated using the -l switch 
 # then copying & pasting the file produced into this file.
+# *** Be sure to compare this list to the generated one so as to not lose some tags
+#     ie if working on Doulos don't lose the Andika ones.
 # used calls to &Tag_get to create initially then commented them out
 # and now use &Tag_lookup calls to maintain
 my %nm_to_tag = (
@@ -37,7 +39,6 @@ my %nm_to_tag = (
 	'False' => 'F',
 	'True' => 'T',
 	'Hide tone contour staves' => 'TnStvsHd',
-#	'9-level pitches' => '9lvl', #don't use digits since digits invalid in PS font name
 	'9-level pitches' => 'NineLvl',
 	'Ligated' => 'Lgt',
 	'Show tramlines' => 'TrmLn',
@@ -62,10 +63,11 @@ my %nm_to_tag = (
 	'Ogonek alternate' => 'Ognk',
 	'Curved' => 'Crv',
 	'Straight' => 'Strt',
+	'Capital B-hook alternate' => 'LrgBHk',
 	'Capital H-stroke alternate' => 'LgHStrk',
 	'Horizontal stroke' => 'Hrz',
 	'Vertical stroke' => 'Vrt',
-	'J stroke hook alternate' => 'JStrkHk',
+	'J-stroke hook alternate' => 'JStrk',
 	'No serif' => 'NoSrf',
 	'Top serif' => 'TopSrf',
 	'Capital N-left-hook alternate' => 'LgNLftHk',
@@ -78,7 +80,10 @@ my %nm_to_tag = (
 	'Right hook' => 'RtHk',
 	'Capital R-tail alternate' => 'LgRTl',
 	'Capital T-hook alternate' => 'LgTHk',
-	'Small v-hook alternate' => 'SmVHk',
+	'V-hook alternates' => 'VHk',
+	'Curved' => 'Crvd', 
+	'Straight left' => 'StrtLftLowHk',
+	'Straight left high hook' => 'StrtLftHk',
 	'Capital Y-hook alternate' => 'LgYHk',
 	'Small ezh-curl alternate' => 'SmEzhCrl',
 	'Capital Ezh alternates' => 'LgEzh',
@@ -87,18 +92,26 @@ my %nm_to_tag = (
 	'OU alternates' => 'Ou',
 	'Closed' => 'Clsd',
 	'Open' => 'Opn',
-	'Cyrillic E alternates' => 'CyrE',
+	'Mongolian-style Cyrillic E' => 'CyrE',
 	'Modifier apostrophe alternates' => 'ModAp',
 	'Small' => 'Sm',
 	'Large' => 'Lg',
 	'Modifier colon alternate' => 'ModCol',
 	'Tight' => 'Tght',
 	'Wide' => 'Wd',
+	'Non-European caron alternates' => 'Caron',
 	'Combining breve Cyrillic form' => 'CmbBrvCyr',
 	'Cyrillic shha alternate' => 'CyShha',
 	'Empty set alternates' => 'EmpSet',
 	'Circle' => 'Crcl',
 	'Zero' => 'Zro',
+	'Small Caps' => 'SmCp',
+	'Show deprecated PUA' => 'DepPUA',
+	'None' => 'none',
+	'Through Unicode 4.0' => '40',
+	'Through Unicode 4.1' => '41',
+	'Through Unicode 5.0' => '50',
+	'Through Unicode 5.1' => '51',
 	'Show invisible characters' => 'ShwInv',
 	'Digit Zero with slash' => 'Dig0',
 	'Digit One without base' => 'Dig1',
@@ -234,41 +247,118 @@ sub Feats_get($\%)
 	}
 }
 
+sub Combos_get(@)
+{
+	my (@element) = (@_);
+	my ($u, $v, $w, $i, @combo, $combo_ix); 
+	
+	$u = [];
+	$i = 0;
+	foreach (@element) {push(@{$u}, {'@' => [$_], 'ix' => $i++})};
+	push (@combo, $u);
+	$combo_ix = 1;
+	
+	while ($combo_ix < scalar @element)
+	{
+		$u = $combo[$combo_ix - 1];
+		$w = [];
+		foreach (@{$u})
+		{
+			for ($i = $_->{'ix'} + 1; $i < scalar @element; $i++)
+			{
+				$v = {'@' => [@{$_->{'@'}}], 'ix' => $_->{'ix'}};   
+				push(@{$v->{'@'}}, $element[$i]);
+				$v->{'ix'} = $i;
+				push(@{$w}, $v);
+			}
+		}
+		push(@combo, $w);
+		$combo_ix++;
+	}
+	
+	my (@x);
+	foreach $i (@combo) { foreach (@{$i}) {push(@x, $_->{'@'})} };
+	return @x;
+}
+
+sub Combos_filtered_get(@)
+{
+	my (@combo, @a, $valid, $ct, $i, $feat_i, $j, $feat_j, @filtered);
+	
+	@combo = Combos_get(@_);
+	
+	foreach (@combo)
+	{
+		@a = @{$_};
+		$valid = 1;	
+		$ct = scalar @a;
+		for ($i = 0; ($i < $ct) && $valid; $i++)
+		{
+			$feat_i = $a[$i];
+			$feat_i =~ s/(.*)-.*/$1/;
+			for ($j = $i + 1; ($j < $ct) && $valid; $j++)
+			{
+				$feat_j = $a[$j];
+				$feat_j =~ s/(.*)-.*/$1/;
+				if ($feat_i eq $feat_j)
+				{
+					$valid = 0;
+				}
+			}
+		}
+		if ($valid)
+			{push(@filtered, $_);}
+	}
+	return @filtered;
+}
+
 sub Featset_combos_get($@)
-#return an array of strings where each string indicates feature interactions
-# handles multi-valued features whose settings should not interact
-# mv = multi-valued feature. bv = binary-valued feature
-# TODO: properly handle a bv setting interacting with mv settings
-#		the bv setting should interact with each mv setting
-#		but the mv settings should NOT interact with each other
-#		currently the bv & mv features don't interact so this case isn't handled
 {
 	my ($feat_add, @feats) = @_;
-	my (@feats_combo);
-	
-	#prevent the various settings for a mv feature from interacting
-	foreach (@feats)
-		{if (substr($feat_add, 0, 2) eq substr($_, 0, 2))
-			{return @feats_combo;}} #@feats_combo is empty
-	
-	if (scalar @feats == 1)
-	{
-		push(@feats_combo, join(' ', sort($feats[0], $feat_add)));
-	}
-	elsif (scalar @feats == 2)
-	{
-		push (@feats_combo, join(' ', sort($feats[0], $feat_add)));
-		push (@feats_combo, join(' ', sort($feats[1], $feat_add)));
-		#push (@feats_combo, join(' ', sort($feats[0], $feats[1]))); should already be handled
-		push (@feats_combo, join(' ', sort($feats[0], $feats[1], $feat_add)));
-	}
-	else
-	{
-		die("too many features interacting: $feat_add, @feats\n");
-	}
-	
+	my (@combo, @feats_combo, $c, $feat);
+
+	@combo = Combos_filtered_get((@feats, $feat_add));
+	foreach $c (@combo)
+		{if ((scalar @{$c} != 1) && (@{$c}[-1] eq $feat_add))
+			{push(@feats_combo, join(' ', sort(@{$c})));}}
 	return @feats_combo;
 }
+
+#sub Featset_combos_get($@)
+##return an array of strings where each string indicates feature interactions
+## handles multi-valued features whose settings should not interact
+## mv = multi-valued feature. bv = binary-valued feature
+## TODO: properly handle a bv setting interacting with mv settings
+##		the bv setting should interact with each mv setting
+##		but the mv settings should NOT interact with each other
+##		currently the bv & mv features don't interact so this case isn't handled
+#{
+#	my ($feat_add, @feats) = @_;
+#	my (@feats_combo);
+#	
+#	#prevent the various settings for a mv feature from interacting
+#	foreach (@feats)
+#		{if (substr($feat_add, 0, 2) eq substr($_, 0, 2))
+#			{return @feats_combo;}} #@feats_combo is empty
+#	
+#	if (scalar @feats == 1)
+#	{
+#		push(@feats_combo, join(' ', sort($feats[0], $feat_add)));
+#	}
+#	elsif (scalar @feats == 2)
+#	{
+#		push (@feats_combo, join(' ', sort($feats[0], $feat_add)));
+#		push (@feats_combo, join(' ', sort($feats[1], $feat_add)));
+#		#push (@feats_combo, join(' ', sort($feats[0], $feats[1]))); should already be handled
+#		push (@feats_combo, join(' ', sort($feats[0], $feats[1], $feat_add)));
+#	}
+#	else
+#	{
+#		die("too many features interacting: $feat_add, @feats\n");
+#	}
+#	
+#	return @feats_combo;
+#}
 
 sub Gsi_xml_parse($\%\%\%)
 #parse the GSI xml file to create the structures describing
@@ -285,6 +375,10 @@ sub Gsi_xml_parse($\%\%\%)
 # Also, since one of the two features couldn't be indicated in the GSI,
 # that Glyph won't be listed as a possible choice in some Interactions.
 # The result is usable with some editing. (Found working on Andika Basic.)
+#
+# Another scenario is variant glyphs (with the same encoding which are displayed
+# based on context) which are activated by the same feature.
+# (Found adding deprecated glyphs to Doulos.)
 {
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
@@ -702,21 +796,30 @@ sub Test_output($$\%\%\%\%)
 		$used_usvs->{$usv} = 1;
 	}
 		
-	if (scalar @feats == 3)
+	my @combo = Combos_get(@feats);
+	foreach (@combo)
 	{
-		my @feat_pairs = All_pairs_get(@feats);
-		my $featset;
-		foreach $featset (@feat_pairs)
-			{Test_output($feat_all_fh, $featset, %$used_usvs, 
-							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
+		my $featset_t = join(' ', @{$_});
+		if ($featset_t eq $featset) {next;}
+		Test_output($feat_all_fh, $featset_t, %$used_usvs, 
+						%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);
 	}
-	if (scalar @feats == 2)
-	{
-		my $featset;
-		foreach $featset (@feats)
-			{Test_output($feat_all_fh, $featset, %$used_usvs, 
-							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
-	}
+	
+#	if (scalar @feats == 3)
+#	{
+#		my @feat_pairs = All_pairs_get(@feats);
+#		my $featset;
+#		foreach $featset (@feat_pairs)
+#			{Test_output($feat_all_fh, $featset, %$used_usvs, 
+#							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
+#	}
+#	if (scalar @feats == 2)
+#	{
+#		my $featset;
+#		foreach $featset (@feats)
+#			{Test_output($feat_all_fh, $featset, %$used_usvs, 
+#							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
+#	}
 }
 
 sub sort_tests($$)
