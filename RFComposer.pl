@@ -594,6 +594,7 @@ sub Dblenc_get($\%)
 sub Features_output($\%\%\%\%)
 #output the <feature>s elements
 #all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
+# this code is similar to Test_output
 {
 	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my $fh = $feat_all_fh;
@@ -667,15 +668,15 @@ sub Features_output($\%\%\%\%)
 				{
 					my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$featset}};
 					my $choices = '';
-					foreach $ps_name (@ps_names)
-						{$choices .= "$ps_name ";}
-					chop($choices);
+#					foreach $ps_name (@ps_names)
+#						{$choices .= "$ps_name ";}
+#					chop($choices);
+					$choices = $ps_names[0];
 					
 					if ($opt_t) #output legal args for testing TypeTuner
 						{my @c = split(/\s/, $choices); $choices = $c[0];}
 						
-					my @c = split(/\s/, $choices);
-					if (scalar @c > 1)
+					if (index($choices, ' ') != -1)
 						{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
 						
 					print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
@@ -800,11 +801,10 @@ sub sort_tests($$)
 		{return ($a cmp $b);}
 }
 
-#forward declaration so recursive call won't be flagged as an error
-sub Test_output($$\%\%\%\%);
-
 sub Test_output($$\%\%\%\%)
-#output the <cmd> elements inside of a <test> element
+#output the <cmd> elements inside of a <test> element 
+# for one set of feature interactions
+# this code is similar to Features_output
 {
 	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my(@usvs, $usv, @feats, $feat);
@@ -837,8 +837,7 @@ sub Test_output($$\%\%\%\%)
 		if ($opt_t) #output legal args for testing TypeTuner
 			{my @c = split(/\s/, $choices); $choices = $c[0];}
 			
-		my @c = split(/\s/, $choices);
-		if (scalar @c > 1)
+		if (index($choices, ' ') != -1)
 			{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
 			
 		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
@@ -846,18 +845,26 @@ sub Test_output($$\%\%\%\%)
 			{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
 		$used_usvs->{$usv} = 1;
 	}
-		
-	my @combo = Combos_get(@feats);
-	foreach (@combo) {$_ = join(' ', @$_)};
+}
+
+sub Tests_output($$\%\%\%\%)
+#output all the the <cmd> elements inside of a <test> element
+# handling all combinations of feature interactions
+{
+	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
+
+	my @feats = split(/\s/, $featset);
+	my @combos = Combos_get(@feats);
+	foreach (@combos) {$_ = join(' ', @$_)};
 	#sort these so glyph choices can be given for interacting features
 	# before outputing encodings for a single feature
 	my $test; 
-	foreach $test (sort sort_tests @combo)
+	foreach $test (sort sort_tests @combos)
 	{
-		if ($test eq $featset) {next;}
 		Test_output($feat_all_fh, $test, %$used_usvs, 
 						%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);
 	}
+	
 }
 
 sub Feats_to_ids($$\%)
@@ -945,7 +952,7 @@ sub Interactions_output($\%\%\%\%)
 		
 		#encode cmds for all affected usvs
 		my %used_usvs;
-		Test_output($feat_all_fh, $featset, %used_usvs, 
+		Tests_output($feat_all_fh, $featset, %used_usvs, 
 					%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv) unless $opt_g;
 		
 		#end test element
