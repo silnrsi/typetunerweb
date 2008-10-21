@@ -248,57 +248,83 @@ sub Feats_get($\%)
 }
 
 sub Combos_get(@)
+#input is an array of elements
+#enumerate all combinations of the elements (with no repetition of an element in a combination)
+#return an array of references to arrays where each array enumerates a combination
+# eg [1,2,3] -> [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
+#the algorithm works by finding all single combos of the input array
+# then combining the first combo with each element of the input array skipping over the first
+# then combining the second combo with each element of the input skipping over the first & second
+# and repeating until all pair combos have been found
+#then the same thing is done to combine all pairs with elements of the input array to create triplets
+# the index of the last input element to be added to a combination is kept to avoid creating combos
+# that already exist
+#then the same thing is done with all pairs to generate triplets, and so on
 {
 	my (@element) = (@_);
-	my ($u, $v, $w, $i, @combo, $combo_ix); 
+	my ($u, $v, $w, $i, @combos, $combo_ix); 
 	
+	#each @combo element will be a ref to an array of refs to hashes
+	# the hashes will contain a ref to 1) an array that contains a combination 
+	# and 2) an ix that gives the index in the input array 
+	# that was most recently added to the combination
+	
+	#initialize the first @combo element 
 	$u = [];
 	$i = 0;
-	foreach (@element) {push(@{$u}, {'@' => [$_], 'ix' => $i++})};
-	push (@combo, $u);
+	foreach (@element) {push(@$u, {'@' => [$_], 'ix' => $i++})};
+	push (@combos, $u);
 	$combo_ix = 1;
 	
+	#create all combinations with no input element duplicated
 	while ($combo_ix < scalar @element)
 	{
-		$u = $combo[$combo_ix - 1];
+		$u = $combos[$combo_ix - 1];
 		$w = [];
-		foreach (@{$u})
+		my $h;
+		foreach $h (@$u)
 		{
-			for ($i = $_->{'ix'} + 1; $i < scalar @element; $i++)
+			for ($i = $h->{'ix'} + 1; $i < scalar @element; $i++)
 			{
-				$v = {'@' => [@{$_->{'@'}}], 'ix' => $_->{'ix'}};   
+				$v = {'@' => [@{$h->{'@'}}], 'ix' => $h->{'ix'}}; #don't really need ix
 				push(@{$v->{'@'}}, $element[$i]);
 				$v->{'ix'} = $i;
-				push(@{$w}, $v);
+				push(@$w, $v);
 			}
 		}
-		push(@combo, $w);
+		push(@combos, $w);
 		$combo_ix++;
 	}
 	
-	my (@x);
-	foreach $i (@combo) { foreach (@{$i}) {push(@x, $_->{'@'})} };
-	return @x;
+	#flatten out @combo to only contain refs to arrays
+	# (ie throw out the 'ix' element and the now unneeded hash)
+	$w = [];
+	foreach $u (@combos) { foreach (@$u) {push(@$w, $_->{'@'})} };
+	return @$w;
 }
 
 sub Combos_filtered_get(@)
+#input is an array of feature settings
+#enumerate all combinations of the settings
+#filter out combinations that have multiple settings of the same feature
+# (which are mutually exclusive)
+#return an array of references to arrays where each array enumerates feature settings interactions
 {
-	my (@combo, @a, $valid, $ct, $i, $feat_i, $j, $feat_j, @filtered);
+	my (@combos, $combo, @filtered);
 	
-	@combo = Combos_get(@_);
-	
-	foreach (@combo)
+	@combos = Combos_get(@_);
+	foreach (@combos)
 	{
-		@a = @{$_};
-		$valid = 1;	
-		$ct = scalar @a;
-		for ($i = 0; ($i < $ct) && $valid; $i++)
+		my @combo = @$_;
+		my $valid = 1;	
+		my $ct = scalar @combo;
+		for (my $i = 0; ($i < $ct) && $valid; $i++)
 		{
-			$feat_i = $a[$i];
+			my $feat_i = $combo[$i];
 			$feat_i =~ s/(.*)-.*/$1/;
-			for ($j = $i + 1; ($j < $ct) && $valid; $j++)
+			for (my $j = $i + 1; ($j < $ct) && $valid; $j++)
 			{
-				$feat_j = $a[$j];
+				my $feat_j = $combo[$j];
 				$feat_j =~ s/(.*)-.*/$1/;
 				if ($feat_i eq $feat_j)
 				{
@@ -313,14 +339,19 @@ sub Combos_filtered_get(@)
 }
 
 sub Featset_combos_get($@)
+#inputs are a new feature setting and an array of previous feature settings
+#enumerate all valid combinations of the new setting with the previous ones
+#return an array of references to arrays where each array enumerates a combination
 {
 	my ($feat_add, @feats) = @_;
-	my (@combo, @feats_combo, $c, $feat);
+	my (@combo, @feats_combo, $c);
 
 	@combo = Combos_filtered_get((@feats, $feat_add));
+	#skip over combinations containing one element or 
+	# which don't contain the feature being added
 	foreach $c (@combo)
-		{if ((scalar @{$c} != 1) && (@{$c}[-1] eq $feat_add))
-			{push(@feats_combo, join(' ', sort(@{$c})));}}
+		{if ((scalar @$c != 1) && (@$c[-1] eq $feat_add))
+			{push(@feats_combo, join(' ', sort(@$c)));}}
 	return @feats_combo;
 }
 
@@ -434,7 +465,8 @@ sub Gsi_xml_parse($\%\%\%)
 			
 			if (not defined ($featset_to_usvs->{$featset}))
 				{$featset_to_usvs->{$featset} = [];}
-			push(@{$featset_to_usvs->{$featset}}, $usv);
+			if (scalar (grep {$_ eq $usv} @{$featset_to_usvs->{$featset}}) == 0)
+				{push(@{$featset_to_usvs->{$featset}}, $usv);}
 			
 			#handle interacting features
 			my @prev_feats;
@@ -447,11 +479,14 @@ sub Gsi_xml_parse($\%\%\%)
 				{
 					if (not defined($featset_to_usvs->{$featset}))
 						{$featset_to_usvs->{$featset} = [];}
-					push(@{$featset_to_usvs->{$featset}}, $usv);
+					if (scalar (grep {$_ eq $usv} @{$featset_to_usvs->{$featset}}) == 0)
+						{push(@{$featset_to_usvs->{$featset}}, $usv);}
 				}
 			}
 			
-			$usv_feat_to_ps_name->{$usv}{$featset} = $ps_name;
+			if (not defined($usv_feat_to_ps_name->{$usv}{$featset}))
+				{$usv_feat_to_ps_name->{$usv}{$featset} = [];}
+			push(@{$usv_feat_to_ps_name->{$usv}{$featset}}, $ps_name);
 			$feat_found = 1;
 		}
 		else
@@ -492,17 +527,17 @@ sub Gsi_xml_parse($\%\%\%)
 
 	$xml_parser->parsefile($gsi_fn) or die "Can't read $gsi_fn";
 	
-	my $featset;
-	foreach $featset (keys %$featset_to_usvs)
-	{
-		my %usv;
-		foreach (@{$featset_to_usvs->{$featset}})
-		{
-			if (defined($usv{$_}))
-				{print "WARNING: USV $_ occurs more than once for featset $featset\n"};
-			$usv{$_} = 1;
-		}
-	}
+#	my $featset;
+#	foreach $featset (keys %$featset_to_usvs)
+#	{
+#		my %usv;
+#		foreach (@{$featset_to_usvs->{$featset}})
+#		{
+#			if (defined($usv{$_}))
+#				{print "WARNING: USV $_ occurs more than once for featset $featset\n"};
+#			$usv{$_} = 1;
+#		}
+#	}
 	
 	if ($opt_d)
 	{
@@ -530,7 +565,7 @@ sub Special_glyphs_handle(\%\%\%)
 	if (not defined $featset_to_usvs->{$featset})
 		{$featset_to_usvs->{$featset} = [];}
 	push(@{$featset_to_usvs->{$featset}}, '01B7');
-	$usv_feat_to_ps_name->{'01B7'}{$featset} = 'uni01B7.RevSigmaStyle';
+	$usv_feat_to_ps_name->{'01B7'}{$featset} = ['uni01B7.RevSigmaStyle'];
 }
 
 sub Dblenc_get($\%)
@@ -630,10 +665,22 @@ sub Features_output($\%\%\%\%)
 				my ($usv, $ps_name);
 				foreach $usv (@usvs)
 				{
-					$ps_name = $usv_feat_to_ps_name->{$usv}{$featset};	
-					print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $ps_name\"/>\n";
+					my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$featset}};
+					my $choices = '';
+					foreach $ps_name (@ps_names)
+						{$choices .= "$ps_name ";}
+					chop($choices);
+					
+					if ($opt_t) #output legal args for testing TypeTuner
+						{my @c = split(/\s/, $choices); $choices = $c[0];}
+						
+					my @c = split(/\s/, $choices);
+					if (scalar @c > 1)
+						{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
+						
+					print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
 					if (defined $dblenc_usv->{$usv})
-						{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $ps_name\"/>\n";}
+						{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
 				}
 				$flag = 1;
 			}
@@ -734,20 +781,23 @@ END
 	}
 }
 
-sub All_pairs_get(@)
-#input is array of featset elements (strings of one featset)
-#output is array of all pairs of featset elements (strings with space between featsets)
+sub sort_tests($$)
+#compare to <interaction> test attribute strings
+#sort such that strings with more featsets come first
 {
-	my (@r, $a);
+	#scalar split(/\s/, $a) causes many error msgs
+	my ($a, $b) = @_;
+	my @t = split(/\s/, $a);
+	my $a_ct = scalar @t;
+	@t = split(/\s/, $b);
+	my $b_ct = scalar @t;
 	
-	$a = shift @_;
-	while (scalar @_)
-	{
-		foreach (@_)
-			{push(@r, "$a $_");}
-		$a = shift @_;
-	}
-	return @r;
+	if ($a_ct > $b_ct)
+		{return -1;}
+	elsif ($a_ct < $b_ct)
+		{return 1;}
+	else #$a_ct == $b_ct
+		{return ($a cmp $b);}
 }
 
 #forward declaration so recursive call won't be flagged as an error
@@ -755,8 +805,6 @@ sub Test_output($$\%\%\%\%);
 
 sub Test_output($$\%\%\%\%)
 #output the <cmd> elements inside of a <test> element
-#handles up to three features interacting
-#Featset_combos_get should have died if there are more than three interacting
 {
 	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my(@usvs, $usv, @feats, $feat);
@@ -770,10 +818,12 @@ sub Test_output($$\%\%\%\%)
 		
 		#create string with all relevant ps_names separated by spaces
 		my $choices = '';
+		my $ps_name;
 		foreach $feat (@feats)
 		{
-			my $ps_name = $usv_feat_to_ps_name->{$usv}{$feat};
-			$choices .= "$ps_name ";
+			my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$feat}};
+			foreach $ps_name (@ps_names)
+				{$choices .= "$ps_name ";}
 		}
 		if (scalar @feats > 1)
 		{   
@@ -790,6 +840,7 @@ sub Test_output($$\%\%\%\%)
 		my @c = split(/\s/, $choices);
 		if (scalar @c > 1)
 			{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
+			
 		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
 		if (defined $dblenc_usv->{$usv})
 			{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
@@ -797,44 +848,16 @@ sub Test_output($$\%\%\%\%)
 	}
 		
 	my @combo = Combos_get(@feats);
-	foreach (@combo)
+	foreach (@combo) {$_ = join(' ', @$_)};
+	#sort these so glyph choices can be given for interacting features
+	# before outputing encodings for a single feature
+	my $test; 
+	foreach $test (sort sort_tests @combo)
 	{
-		my $featset_t = join(' ', @{$_});
-		if ($featset_t eq $featset) {next;}
-		Test_output($feat_all_fh, $featset_t, %$used_usvs, 
+		if ($test eq $featset) {next;}
+		Test_output($feat_all_fh, $test, %$used_usvs, 
 						%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);
 	}
-	
-#	if (scalar @feats == 3)
-#	{
-#		my @feat_pairs = All_pairs_get(@feats);
-#		my $featset;
-#		foreach $featset (@feat_pairs)
-#			{Test_output($feat_all_fh, $featset, %$used_usvs, 
-#							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
-#	}
-#	if (scalar @feats == 2)
-#	{
-#		my $featset;
-#		foreach $featset (@feats)
-#			{Test_output($feat_all_fh, $featset, %$used_usvs, 
-#							%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);}
-#	}
-}
-
-sub sort_tests($$)
-#compare to <interaction> test attribute strings
-#sort such that longer strings come first
-{
-	my ($a, $b) = @_;
-	my ($a_len, $b_len) = (length($a), length($b));
-	
-	if ($a_len > $b_len)
-		{return -1;}
-	elsif ($a_len < $b_len)
-		{return 1;}
-	else #$a_len == $b_len
-		{return ($a cmp $b);}
 }
 
 sub Feats_to_ids($$\%)
