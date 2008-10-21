@@ -2,6 +2,8 @@
 # Please do not redistribute.
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
+# I should have written this in Python. I could have parsed the features.gdh file myself
+# instead of using Font::TTF to get the info from the font.
 
 use strict;
 use warnings;
@@ -252,14 +254,14 @@ sub Combos_get(@)
 #enumerate all combinations of the elements (with no repetition of an element in a combination)
 #return an array of references to arrays where each array enumerates a combination
 # eg [1,2,3] -> [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
-#the algorithm works by finding all single combos of the input array
+#the algorithm works by creating single combos from the input array
 # then combining the first combo with each element of the input array skipping over the first
 # then combining the second combo with each element of the input skipping over the first & second
 # and repeating until all pair combos have been found
-#then the same thing is done to combine all pairs with elements of the input array to create triplets
-# the index of the last input element to be added to a combination is kept to avoid creating combos
+#then the same thing is done to combine all pair combos with elements of the input array to create triplets
+#the index of the last input element to be added to a combination is kept to avoid creating combos
 # that already exist
-#then the same thing is done with all pairs to generate triplets, and so on
+#then the same thing is done with all triplets to generate quads, and so on
 {
 	my (@element) = (@_);
 	my ($u, $v, $w, $i, @combos, $combo_ix); 
@@ -306,8 +308,8 @@ sub Combos_get(@)
 sub Combos_filtered_get(@)
 #input is an array of feature settings
 #enumerate all combinations of the settings
-#filter out combinations that have multiple settings of the same feature
-# (which are mutually exclusive)
+#filter out combinations that contain multiple settings of the same feature
+# (multi-valued feature settings are mutually exclusive)
 #return an array of references to arrays where each array enumerates feature settings interactions
 {
 	my (@combos, $combo, @filtered);
@@ -355,6 +357,7 @@ sub Featset_combos_get($@)
 	return @feats_combo;
 }
 
+#This code is now obsolete. I've left it here now for reference.
 #sub Featset_combos_get($@)
 ##return an array of strings where each string indicates feature interactions
 ## handles multi-valued features whose settings should not interact
@@ -396,20 +399,15 @@ sub Gsi_xml_parse($\%\%\%)
 # mapping to PS name for given USV and feature setting and
 # mapping from feature settings to list of USVs affected
 #
-# This code gets confused if two glyphs have the same USV and feature setting
-# which can happen if a Glyph requires TWO features to activate it
-# since only one of those features can be indicated in the GSI file
-# and there can be another glyph that is truly activated by that one feature.
-# feat_set_to_usv will list the USV twice (causing a warning below)
-# but usv_feat_to_ps_name can only hold one PS name,
-# so two identical cmd elements will be created.
-# Also, since one of the two features couldn't be indicated in the GSI,
-# that Glyph won't be listed as a possible choice in some Interactions.
-# The result is usable with some editing. (Found working on Andika Basic.)
-#
-# Another scenario is variant glyphs (with the same encoding which are displayed
-# based on context) which are activated by the same feature.
-# (Found adding deprecated glyphs to Doulos.)
+#TODO: handle the DepPUA feature interactions
+# The var_uid for *.Dep?? glyphs holds the PUA codepoint 
+# (though the glyphs are double encoded in FL and named based on official USV).
+# Because of this, interaction with other features is masked 
+# since that is tracked using USVs in the MGI.
+# The official USV for the deprecated glyphs needs to somehow be used 
+# so these glyphs can be offered as choices in cmd elements.
+# Note that the var_uid with the deprecated USV is needed for the DepPUA feature 
+# (and font testing), so that they can be re-encoded properly (and rendered in testing).
 {
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
@@ -439,11 +437,12 @@ sub Gsi_xml_parse($\%\%\%)
 		{
 			if (not defined($ps_name)) {die("no PS name for feature: $attrs{'category'}\n")};
 			if (not defined($var_uid)) 
-			{#should be: 1) variant for a ligature, 2) default glyph for a multivalued feature,
-			 # 3) variant that is encoded
-			 # 3) should be fixed up by Special_glyphs_handle()
-			 # 2) is OK unless multi-valued features start interacting with binary-valued ones
-			 # 1) there's no way to handle this by re-encoding the cmap
+			{#glyphs w/o var_uid's can't be offered as choices in encode cmds
+			 #should be: 1) variant for a ligature, 2) default glyph for a multivalued feature,
+			 # 3) variant that is encoded --
+			 # 3 - should be fixed up by Special_glyphs_handle()
+			 # 2 - these probably should also be fixed up in Special_glyphs_handle()
+			 # 1 - there's no way to handle this by re-encoding the cmap, so can't do anything
 				if ($opt_d) {print "no var_uid for ps_name: $ps_name feat: $attrs{'category'}\n";}
 				return;
 			}; 
@@ -527,6 +526,8 @@ sub Gsi_xml_parse($\%\%\%)
 
 	$xml_parser->parsefile($gsi_fn) or die "Can't read $gsi_fn";
 	
+#	obsolete code to generate a warning if the same USV is associated with a featset multiple times
+#	this used to be acceptable, but code prevents it from happening now
 #	my $featset;
 #	foreach $featset (keys %$featset_to_usvs)
 #	{
@@ -550,6 +551,7 @@ sub Gsi_xml_parse($\%\%\%)
 
 sub Special_glyphs_handle(\%\%\%)
 #add variant glyph info which isn't indicated in the GSI data to various hashes 
+# this allows the glyph to offered as a choice in the cmd elements
 {
 	my ($feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
@@ -594,7 +596,6 @@ sub Dblenc_get($\%)
 sub Features_output($\%\%\%\%)
 #output the <feature>s elements
 #all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
-# this code is similar to Test_output
 {
 	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my $fh = $feat_all_fh;
@@ -634,14 +635,14 @@ sub Features_output($\%\%\%\%)
 			
 			my $flag = 0;
 			
-			#gr_feat cmd
+			### gr_feat cmd
 			unless ($opt_q)
 			{
 				print $fh "\t\t\t<cmd name=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
 				$flag = 1;
 			}
 			
-			#OT cmds
+			#### OT cmds that manipulate the script, language, feature, or lookup structures
 			if ($vietnamese_style_diacs_feat =~ /$feat_id/ and not $opt_g)
 			{#hard-coded
 				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
@@ -658,7 +659,8 @@ sub Features_output($\%\%\%\%)
 				$flag = 1;
 			}
 			
-			#encode cmds
+			#### encode cmds
+			# this code is similar to Test_output
 			my $featset = "$feat_tag-$set_tag";
 			if (defined($featset_to_usvs->{$featset}) and not $opt_g)
 			{#write one cmd for each variant glyph associated with this feature setting
@@ -668,9 +670,12 @@ sub Features_output($\%\%\%\%)
 				{
 					my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$featset}};
 					my $choices = '';
-#					foreach $ps_name (@ps_names)
-#						{$choices .= "$ps_name ";}
-#					chop($choices);
+					#TODO: offer choices or pick the ps_name based on name suffixes
+					#The commented out code offers all ps_names as choices, 
+					# but usually the first one in the mgi file is the right choice
+					#foreach $ps_name (@ps_names)
+					#	{$choices .= "$ps_name ";}
+					#chop($choices);
 					$choices = $ps_names[0];
 					
 					if ($opt_t) #output legal args for testing TypeTuner
@@ -700,7 +705,7 @@ sub Features_output($\%\%\%\%)
 		print $fh "\t</feature>\n";
 	}
 	
-	#output line spacing feature
+	### output line spacing feature
 	unless ($opt_g)
 	{
 		my $line_gap_tag = Tag_lookup('Line spacing', %nm_to_tag);
@@ -804,19 +809,21 @@ sub sort_tests($$)
 sub Test_output($$\%\%\%\%)
 #output the <cmd> elements inside of a <test> element 
 # for one set of feature interactions
-# this code is similar to Features_output
 {
 	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my(@usvs, $usv, @feats, $feat);
 	my $fh = $feat_all_fh;
 	
-	@usvs = @{$featset_to_usvs->{$featset}};
+	# this code is similar to Features_output
+@usvs = @{$featset_to_usvs->{$featset}};
 	@feats = split(/\s/, $featset);
 	foreach $usv (@usvs)
 	{
 		if (defined($used_usvs->{$usv})) {next;}
 		
 		#create string with all relevant ps_names separated by spaces
+		#TODO: try to pick the right ps_name based on feature settings and
+		# glyph name suffixes
 		my $choices = '';
 		my $ps_name;
 		foreach $feat (@feats)
@@ -864,7 +871,6 @@ sub Tests_output($$\%\%\%\%)
 		Test_output($feat_all_fh, $test, %$used_usvs, 
 						%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);
 	}
-	
 }
 
 sub Feats_to_ids($$\%)
@@ -970,7 +976,8 @@ sub Aliases_output($)
 
 	print $feat_all_fh <<END;
 	<aliases>
-		<alias name="IPA" value="IPA "/>
+		#<alias name="IPA" value="IPA "/>
+		<alias name="IPA" value="IPPH"/>
 		<alias name="VIT" value="VIT "/>
 		<alias name="ROM" value="ROM "/>
 		<alias name="ccmp_latin" value="ccmp"/>
