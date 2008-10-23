@@ -974,9 +974,9 @@ sub Aliases_output($)
 {
 	my ($feat_all_fh) = @_;
 
+	#<alias name="IPA" value="IPA "/> move up from below so not output to file
 	print $feat_all_fh <<END;
 	<aliases>
-		#<alias name="IPA" value="IPA "/>
 		<alias name="IPA" value="IPPH"/>
 		<alias name="VIT" value="VIT "/>
 		<alias name="ROM" value="ROM "/>
