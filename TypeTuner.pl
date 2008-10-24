@@ -272,14 +272,18 @@ sub sort_tests($$)
 #compare to <interaction> test attribute strings
 #sort such that longer strings come first
 {
+	#scalar split(/\s/, $a) causes many error msgs
 	my ($a, $b) = @_;
-	my ($a_len, $b_len) = (length($a), length($b));
+	my @t = split(/\s/, $a);
+	my $a_ct = scalar @t;
+	@t = split(/\s/, $b);
+	my $b_ct = scalar @t;
 	
-	if ($a_len > $b_len)
+	if ($a_ct > $b_ct)
 		{return -1;}
-	elsif ($a_len < $b_len)
+	elsif ($a_ct < $b_ct)
 		{return 1;}
-	else #$a_len == $b_len
+	else #$a_ct == $b_ct
 		{return ($a cmp $b);}
 }
 
