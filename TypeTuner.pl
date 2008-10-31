@@ -38,7 +38,8 @@ my $opt_str = 'hdftm:n:o:v:x';
 my $family_name_id = 1; #source for family name to modify 
 my $full_font_name_id = 4; #full font name for setmetrics command
 my $version_name_id = 5;
-my $family_name_ids = [1, 3, 4, 6, 16, 18]; #name ids where family might occur
+my $family_name_ids = [1, 3, 4, 16, 18]; #name ids where family might occur
+my $post_family_name_ids = [6];
 my $version_name_ids = [5];
 my $feat_all_elem = "all_features";
 my $feat_set_elem = "features_set";
@@ -483,14 +484,15 @@ sub Font_ids_update($\%$\%)
 	$feats = $feat_all->{'features'};
 	$feat_set_active = '';
 	
-	$true_tag = $feat_tag->{'True'}; #assumes there will be 'True' tag
+	#if there are no binary valued features, a True tag may not exist
+	$true_tag = defined $feat_tag->{'True'} ? $feat_tag->{'True'} : 'T';
 	@feat_val = split(/\s+/, $feat_set);
 	foreach my $fv (@feat_val)
 	{ #feat_set_active can be empty string if all settings are at defaults
 		next if (not $fv);
 		($feat, $val) = Feat_val_tags($fv);
 		if ($feats->{$feat}{'default'} ne $feats->{$feat}{'values'}{$val}{'name'})
-		{#eliminate default feature value settings
+		{#concatenate non-default feature value settings
 			$feat_set_active .= " " if $feat_set_active;
 			if ($val ne $true_tag)
 				{$feat_set_active .= $feat . $val;} #remove hyphen
@@ -533,7 +535,7 @@ sub Font_ids_update($\%$\%)
 	#handle name id 6: PS name, which shouldn't contain spaces
 	$family_nm_old =~ s/ //g;
 	$family_nm_new =~ s/ //g;
-	Name_mod($font, $family_name_ids, $family_nm_old, $family_nm_new);
+	Name_mod($font, $post_family_name_ids, $family_nm_old, $family_nm_new);
 		
 	#modify version
 	$version_str_old = Name_get($font, $version_name_id);
