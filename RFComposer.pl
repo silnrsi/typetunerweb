@@ -30,6 +30,36 @@ my $feat_all_elem = "all_features";
 my $vietnamese_style_diacs_feat = '1029';
 my $romanian_style_diacs_feat = '1041';
 
+#map feature settings to PS names using regex matching
+#only need mappings for feature settings that interact
+#mappings that are missing below will be output as error messages
+# the error message can be processed to add to the mappings
+# *** Be careful to not discard tags needed by fonts other than the one being worked on
+#Lit-T could be either SngStory or SngBowl
+#SlntItlc-T could be either SlantItalic or 2StorySlantItalic
+my %featset_to_suffix = (
+	'BarBwl-T' => '\.BarBowl', 
+	'Caron-T' => '\.Caron', 
+	'CyShha-T' => '\.UCStyle', 
+	'CyrE-T' => '\.MongolStyle', 
+	'Lit-T' => '(\.SngBowl|\.SngStory)', 
+	'ModAp-Lg' => '\.Lrg', 
+	'Ognk-Strt' => '\.RetroHookStyle', 
+	'OpnO-TopSrf' => '\.TopSerif', 
+	'Ou-Opn' => '\.OpenTop', 
+	'RONdiacs-T' => '\.CommaStyle', 
+	'SlntItlc-T' => '(\.SlantItalic|\.2StorySlantItalic)', 
+	'SmCp-T' => '\.SC',
+	'SmPHk-RtHk' => '\.BowlHook', 
+	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
+	'VHk-StrtLftLowHk' => '\.StraightLft', 
+	'VIEdiacs-T' => '\.VN',
+	'DepPUA-41' => '\.Dep41',  
+	'DepPUA-50' => '\.Dep50',  
+	'DepPUA-51' => '\.Dep51',  
+	'BrdgDiacs-T' => '(\.UU|\.UL|\.LL)',   
+);
+
 #generated using the -l switch 
 # then copying & pasting the file produced into this file.
 # *** Be sure to compare this list to the generated one so as to not lose some tags
@@ -593,6 +623,57 @@ sub Dblenc_get($\%)
 	}
 }
 
+sub Suffixes_get(\@)
+#get all the PS name suffixes for an array of feature settings
+#return an empty array if any feature setting doesn't have a suffix
+{
+	my ($featsets) = @_;
+	my @suffixes;
+	foreach my $featset (@$featsets)
+	{
+		if (defined($featset_to_suffix{$featset}))
+		{
+			push(@suffixes, $featset_to_suffix{$featset});
+		}
+		else
+		{
+			print "*** no suffix found for $featset\n";
+			@suffixes = ();
+			return @suffixes;
+		}
+	}
+	return @suffixes;
+}
+
+sub Suffixes_match_name(\@$)
+#test if a PS name contains all the suffixes in an array
+#returns true if the suffix array is empty
+{
+	my ($suffixes, $name) = @_;
+	
+	my $failed = 0;
+	foreach my $suffix (@$suffixes)
+		{if (not $name =~ /$suffix/) {$failed = 1; last;}}
+	return not $failed;
+}
+
+sub PSName_select(\@$)
+#choose the first name in a space delimited string that matches the feature settings
+#return origial names if no match found
+{
+	my ($featsets, $choices) = @_;
+	
+	my @suffixes = Suffixes_get(@$featsets);
+	
+	foreach my $choice (split(/\s/, $choices))
+	{
+		if (Suffixes_match_name(@suffixes, $choice))
+			{return $choice;}
+	}
+
+	return $choices;
+}
+
 sub Features_output($\%\%\%\%)
 #output the <feature>s elements
 #all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
@@ -669,14 +750,13 @@ sub Features_output($\%\%\%\%)
 				foreach $usv (@usvs)
 				{
 					my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$featset}};
-					my $choices = '';
-					#TODO: offer choices or pick the ps_name based on name suffixes
-					#The commented out code offers all ps_names as choices, 
-					# but usually the first one in the mgi file is the right choice
-					#foreach $ps_name (@ps_names)
-					#	{$choices .= "$ps_name ";}
-					#chop($choices);
-					$choices = $ps_names[0];
+					my $choices .= join(' ', @ps_names);
+					
+					if (scalar @ps_names > 1)
+					{
+						my @featsets = ($featset);
+						$choices = PSName_select(@featsets, $choices);
+					}
 					
 					if ($opt_t) #output legal args for testing TypeTuner
 						{my @c = split(/\s/, $choices); $choices = $c[0];}
@@ -787,6 +867,53 @@ END
 	}
 }
 
+sub Test_output($$\%\%\%\%)
+#output the <cmd> elements inside of a <test> element 
+# for one set of feature interactions
+{
+	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
+	my(@usvs, $usv, @feats, $feat);
+	my $fh = $feat_all_fh;
+	
+	# this code is similar to Features_output
+	@usvs = @{$featset_to_usvs->{$featset}};
+	@feats = split(/\s/, $featset);
+	foreach $usv (@usvs)
+	{
+		if (defined($used_usvs->{$usv})) {next;}
+		
+		#create string with all relevant ps_names separated by spaces
+		my $choices = '';
+		foreach $feat (@feats)
+		{
+			my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$feat}};
+			$choices .= join(' ', @ps_names) . ' ';
+		}
+		if (scalar @feats > 1)
+		{   
+			#offer variants without feature info in the GSI as choices
+			if (defined($usv_feat_to_ps_name->{$usv}{'unk'}))
+			{
+				my @ps_names = @{$usv_feat_to_ps_name->{$usv}{'unk'}};
+				$choices .= join(' ', @ps_names) . ' ';
+			}
+		}
+		chop($choices);
+		$choices = PSName_select(@feats, $choices);
+		
+		if ($opt_t) #output legal args for testing TypeTuner
+			{my @c = split(/\s/, $choices); $choices = $c[0];}
+			
+		if (index($choices, ' ') != -1)
+			{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
+			
+		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
+		if (defined $dblenc_usv->{$usv})
+			{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
+		$used_usvs->{$usv} = 1;
+	}
+}
+
 sub sort_tests($$)
 #compare to <interaction> test attribute strings
 #sort such that strings with more featsets come first
@@ -804,54 +931,6 @@ sub sort_tests($$)
 		{return 1;}
 	else #$a_ct == $b_ct
 		{return ($a cmp $b);}
-}
-
-sub Test_output($$\%\%\%\%)
-#output the <cmd> elements inside of a <test> element 
-# for one set of feature interactions
-{
-	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
-	my(@usvs, $usv, @feats, $feat);
-	my $fh = $feat_all_fh;
-	
-	# this code is similar to Features_output
-@usvs = @{$featset_to_usvs->{$featset}};
-	@feats = split(/\s/, $featset);
-	foreach $usv (@usvs)
-	{
-		if (defined($used_usvs->{$usv})) {next;}
-		
-		#create string with all relevant ps_names separated by spaces
-		#TODO: try to pick the right ps_name based on feature settings and
-		# glyph name suffixes
-		my $choices = '';
-		my $ps_name;
-		foreach $feat (@feats)
-		{
-			my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$feat}};
-			foreach $ps_name (@ps_names)
-				{$choices .= "$ps_name ";}
-		}
-		if (scalar @feats > 1)
-		{   
-			#offer variants without feature info in the GSI as choices
-			if (defined($usv_feat_to_ps_name->{$usv}{'unk'}))
-				{foreach (@{$usv_feat_to_ps_name->{$usv}{'unk'}})
-					{$choices .= "$_ ";}}
-		}
-		chop($choices);
-		
-		if ($opt_t) #output legal args for testing TypeTuner
-			{my @c = split(/\s/, $choices); $choices = $c[0];}
-			
-		if (index($choices, ' ') != -1)
-			{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
-			
-		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
-		if (defined $dblenc_usv->{$usv})
-			{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
-		$used_usvs->{$usv} = 1;
-	}
 }
 
 sub Tests_output($$\%\%\%\%)
