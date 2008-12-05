@@ -35,8 +35,6 @@ my $romanian_style_diacs_feat = '1041';
 #mappings that are missing below will be output as error messages
 # the error message can be processed to add to the mappings
 # *** Be careful to not discard tags needed by fonts other than the one being worked on
-#Lit-T could be either SngStory or SngBowl
-#SlntItlc-T could be either SlantItalic or 2StorySlantItalic
 my %featset_to_suffix = (
 	'BarBwl-T' => '\.BarBowl', 
 	'Caron-T' => '\.Caron', 
@@ -54,10 +52,14 @@ my %featset_to_suffix = (
 	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
 	'VHk-StrtLftLowHk' => '\.StraightLft', 
 	'VIEdiacs-T' => '\.VN',
-	'DepPUA-41' => '\.Dep41',  
-	'DepPUA-50' => '\.Dep50',  
-	'DepPUA-51' => '\.Dep51',  
-	'BrdgDiacs-T' => '(\.UU|\.UL|\.LL)',   
+	'DepPUA-41' => '\.Dep41', 
+	'DepPUA-50' => '\.Dep50', 
+	'DepPUA-51' => '\.Dep51', 
+	'BrdgDiacs-T' => '(\.UU|\.UL|\.LL)',
+	'Eng-LgDsc' => '[eE]ng(?!\.UCStyle|\.BaselineHook|\.Kom)', 
+	'Eng-LgBsln' => '\.BaselineHook', 
+	'Eng-CapN' => '\.UCStyle', 
+	'Eng-LgShrtStm' => '\.Kom', 
 );
 
 #generated using the -l switch 
@@ -238,18 +240,15 @@ sub Feats_get($\%)
 			if (not defined $feats->{$feat_id})
 			{# this could go in the outer loop
 			 #  but it is nice after the settingName call
-				#$feat_tag = Tag_get($feat_nm, 2);
 				$feat_tag = Tag_lookup($feat_nm, %nm_to_tag);
 				$feats->{$feat_id}{'name'} = $feat_nm;
 				$feats->{$feat_id}{'tag'} = $feat_tag;
 				$feats->{$feat_id}{'default'} = $feat->{'default'};
-				#$feats->{$feat_id}{'default'} = $set_id; #assumes lowest id is default
 				if (not defined($feats->{' ids'}))
 					{$feats->{' ids'} = [];}
 				push(@{$feats->{' ids'}}, $feat_id);
 			}
 			
-			#$set_tag = Tag_get($set_nm, 1);
 			$set_tag = Tag_lookup($set_nm, %nm_to_tag);
 			$feats->{$feat_id}{'settings'}{$set_id}{'name'} = $set_nm;
 			$feats->{$feat_id}{'settings'}{$set_id}{'tag'} = $set_tag;
@@ -556,20 +555,6 @@ sub Gsi_xml_parse($\%\%\%)
 
 	$xml_parser->parsefile($gsi_fn) or die "Can't read $gsi_fn";
 	
-#	obsolete code to generate a warning if the same USV is associated with a featset multiple times
-#	this used to be acceptable, but code prevents it from happening now
-#	my $featset;
-#	foreach $featset (keys %$featset_to_usvs)
-#	{
-#		my %usv;
-#		foreach (@{$featset_to_usvs->{$featset}})
-#		{
-#			if (defined($usv{$_}))
-#				{print "WARNING: USV $_ occurs more than once for featset $featset\n"};
-#			$usv{$_} = 1;
-#		}
-#	}
-	
 	if ($opt_d)
 	{
 		print "usvs with variant glyphs: ";
@@ -579,11 +564,11 @@ sub Gsi_xml_parse($\%\%\%)
 	}
 }
 
-sub Special_glyphs_handle(\%\%\%)
+sub Special_glyphs_handle($\%\%\%)
 #add variant glyph info which isn't indicated in the GSI data to various hashes 
 # this allows the glyph to offered as a choice in the cmd elements
 {
-	my ($feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
+	my ($gsi_supp_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
 	#add uni01B7.RevSigmaStyle as a variant for U+01B7 for feature Capital Ezh alternates (1042)
 	# this is a variant glyph that is also encoded in the PUA (F217)
@@ -598,6 +583,10 @@ sub Special_glyphs_handle(\%\%\%)
 		{$featset_to_usvs->{$featset} = [];}
 	push(@{$featset_to_usvs->{$featset}}, '01B7');
 	$usv_feat_to_ps_name->{'01B7'}{$featset} = ['uni01B7.RevSigmaStyle'];
+
+	#small cap support - handle lower case eng interacting with eng alternates
+	if ($gsi_supp_fn)
+		{Gsi_xml_parse($gsi_supp_fn, %$feats, %$usv_feat_to_ps_name, %$featset_to_usvs);}
 }
 
 sub Dblenc_get($\%)
@@ -1075,7 +1064,7 @@ sub Usage_print()
 	print <<END;
 (c) SIL International 2007. All rights reserved.
 usage: 
-	RFComposer <switches> <font.ttf> <gsi.xml> <dblenc.txt>
+	RFComposer <switches> <font.ttf> <gsi.xml> <dblenc.txt> [<gsi_supp_fn.xml>]
 	switches:
 		-g - output no OpenType cmds (Graphite only)
 		-q - output no Graphite cmds (OpenType only)
@@ -1094,7 +1083,7 @@ sub cmd_line_exec() #for UltraEdit function list
 {}
 
 my (%feats, %usv_feat_to_ps_name, %featset_to_usvs, %dblenc_usv, $feat_all_fh);
-my ($font_fn, $gsi_fn, $dblenc_fn, $feat_all_fn);
+my ($font_fn, $gsi_fn, $dblenc_fn, $gsi_supp_fn, $feat_all_fn);
 
 getopts($opt_str); #sets $opt?'s & removes the switch from @ARGV
 
@@ -1144,14 +1133,16 @@ if ($opt_l)
 	exit;	
 }
 
-if (scalar @ARGV != 3)
+if (scalar @ARGV == 3)
+	{($font_fn, $gsi_fn, $dblenc_fn) = ($ARGV[0], $ARGV[1], $ARGV[2]); $gsi_supp_fn = undef;}
+elsif (scalar @ARGV == 4)
+	{($font_fn, $gsi_fn, $dblenc_fn, $gsi_supp_fn) = ($ARGV[0], $ARGV[1], $ARGV[2], $ARGV[3]);}
+else
 	{Usage_print;}
-
-($font_fn, $gsi_fn, $dblenc_fn) = ($ARGV[0], $ARGV[1], $ARGV[2]);
 
 Feats_get($font_fn, %feats);
 Gsi_xml_parse($gsi_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
-Special_glyphs_handle(%feats, %usv_feat_to_ps_name, %featset_to_usvs);
+Special_glyphs_handle($gsi_supp_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
 Dblenc_get($dblenc_fn, %dblenc_usv);
 
 $feat_all_fn = $feat_all_base_fn;
