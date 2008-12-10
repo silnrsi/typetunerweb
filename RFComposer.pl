@@ -3,7 +3,7 @@
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
 # I should have written this in Python. I could have parsed the features.gdh file myself
-# instead of using Font::TTF to get the info from the font.
+# instead of using Font::TTF to get the info from the font. 
 
 use strict;
 use warnings;
