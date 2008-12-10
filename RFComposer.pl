@@ -33,6 +33,7 @@ my $romanian_style_diacs_feat = '1041';
 #map feature settings to PS names using regex matching
 #only need mappings for feature settings that interact
 #mappings that are missing below will be output as error messages
+#the (?! ... ) reg ex below is a negative look ahead match
 # the error message can be processed to add to the mappings
 # *** Be careful to not discard tags needed by fonts other than the one being worked on
 my %featset_to_suffix = (
@@ -49,8 +50,9 @@ my %featset_to_suffix = (
 	'SlntItlc-T' => '(\.SlantItalic|\.2StorySlantItalic)', 
 	'SmCp-T' => '\.SC',
 	'SmPHk-RtHk' => '\.BowlHook', 
-	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
+	'VHk-Crvd' => '(uni01B2|028B)(?!\.StraightLftHighHook|\.StraightLft)',  
 	'VHk-StrtLftLowHk' => '\.StraightLft', 
+	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
 	'VIEdiacs-T' => '\.VN',
 	'DepPUA-41' => '\.Dep41', 
 	'DepPUA-50' => '\.Dep50', 
@@ -59,7 +61,7 @@ my %featset_to_suffix = (
 	'Eng-LgDsc' => '[eE]ng(?!\.UCStyle|\.BaselineHook|\.Kom)', 
 	'Eng-LgBsln' => '\.BaselineHook', 
 	'Eng-CapN' => '\.UCStyle', 
-	'Eng-LgShrtStm' => '\.Kom', 
+	'Eng-LgShrtStm' => '\.Kom',
 );
 
 #generated using the -l switch 
@@ -391,7 +393,7 @@ sub Featset_combos_get($@)
 ##return an array of strings where each string indicates feature interactions
 ## handles multi-valued features whose settings should not interact
 ## mv = multi-valued feature. bv = binary-valued feature
-## TODO: properly handle a bv setting interacting with mv settings
+## 		properly handle a bv setting interacting with mv settings
 ##		the bv setting should interact with each mv setting
 ##		but the mv settings should NOT interact with each other
 ##		currently the bv & mv features don't interact so this case isn't handled
@@ -428,15 +430,19 @@ sub Gsi_xml_parse($\%\%\%)
 # mapping to PS name for given USV and feature setting and
 # mapping from feature settings to list of USVs affected
 #
-#TODO: handle the DepPUA feature interactions
+# The DepPUA features don't interact with any other features because:
 # The var_uid for *.Dep?? glyphs holds the PUA codepoint 
 # (though the glyphs are double encoded in FL and named based on official USV).
 # Because of this, interaction with other features is masked 
 # since that is tracked using USVs in the MGI.
-# The official USV for the deprecated glyphs needs to somehow be used 
+# The official USV for the deprecated glyphs could somehow be used 
 # so these glyphs can be offered as choices in cmd elements.
 # Note that the var_uid with the deprecated USV is needed for the DepPUA feature 
 # (and font testing), so that they can be re-encoded properly (and rendered in testing).
+# In the current scheme, this means any re-encoding specified by other feature settings 
+# will be overridden by a .Dep?? glyph, 
+# which should be OK since we don't want to create inverted glyphs for all features
+# that effect deprecated USVs.
 {
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
@@ -584,7 +590,7 @@ sub Special_glyphs_handle($\%\%\%)
 	push(@{$featset_to_usvs->{$featset}}, '01B7');
 	$usv_feat_to_ps_name->{'01B7'}{$featset} = ['uni01B7.RevSigmaStyle'];
 
-	#small cap support - handle lower case eng interacting with eng alternates
+	#small cap support - handle lower case eng interacting with eng alternate feature
 	if ($gsi_supp_fn)
 		{Gsi_xml_parse($gsi_supp_fn, %$feats, %$usv_feat_to_ps_name, %$featset_to_usvs);}
 }
@@ -635,15 +641,30 @@ sub Suffixes_get(\@)
 }
 
 sub Suffixes_match_name(\@$)
-#test if a PS name contains all the suffixes in an array
+#test if a PS name matches all of the suffixes in an array
+# and that there aren't any extra suffixes in the PS name
+#(the suffixes are now reg exs and represent feature setings)
+# a regex for a multi-value default glyph might match but have no suffix
+# eg (uni01B2|028B)(?!\.StraightLftHighHook|\.StraightLft)
+#the current approach still assumes that extra suffixes in the PS name are sufficient 
+# to eliminate glyphs that should only be used if more feature settings are active
 #returns true if the suffix array is empty
 {
 	my ($suffixes, $name) = @_;
 	
-	my $failed = 0;
+	return 1 if (scalar @$suffixes == 0);
+	
+	my @t = split(/\./, $name);
+	my $name_suffix_ct = scalar @t - 1;
+	if ($name_suffix_ct > scalar @$suffixes)
+		{return 0;} 
+	my $suffix_match_ct = 0;
 	foreach my $suffix (@$suffixes)
-		{if (not $name =~ /$suffix/) {$failed = 1; last;}}
-	return not $failed;
+		{if ($name =~ /$suffix/) {$suffix_match_ct++;}}
+	if ($suffix_match_ct == scalar @$suffixes)
+		{return 1;}
+	else
+		{return 0;}
 }
 
 sub PSName_select(\@$)
@@ -666,6 +687,9 @@ sub PSName_select(\@$)
 sub Features_output($\%\%\%\%)
 #output the <feature>s elements
 #all value elements contain at least a gr_feat cmd or a cmd="null" (if a default)
+#output all of these even though a USV effected by both a binary-valued feature 
+# and a multi-valued feature will always be handled by an interactions element
+# the mv feature always has a setting, even if it's the default.
 {
 	my ($feat_all_fh, $feats, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my $fh = $feat_all_fh;
