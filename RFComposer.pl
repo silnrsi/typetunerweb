@@ -3,7 +3,7 @@
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
 # I should have written this in Python. I could have parsed the features.gdh file myself
-# instead of using Font::TTF to get the info from the font. 
+# instead of using Font::TTF to get the info from the font.
 
 use strict;
 use warnings;
@@ -560,14 +560,6 @@ sub Gsi_xml_parse($\%\%\%)
 	});
 
 	$xml_parser->parsefile($gsi_fn) or die "Can't read $gsi_fn";
-	
-	if ($opt_d)
-	{
-		print "usvs with variant glyphs: ";
-		foreach (sort keys %$usv_feat_to_ps_name) {print "$_ "}; print "\n";
-		print "featsets with variant glyphs: ";
-		foreach (sort keys %$featset_to_usvs) {print "($_)"}; print "\n";
-	}
 }
 
 sub Special_glyphs_handle($\%\%\%)
@@ -591,7 +583,7 @@ sub Special_glyphs_handle($\%\%\%)
 	$usv_feat_to_ps_name->{'01B7'}{$featset} = ['uni01B7.RevSigmaStyle'];
 
 	#small cap support - handle lower case eng interacting with eng alternate feature
-	if ($gsi_supp_fn)
+	if (defined $gsi_supp_fn)
 		{Gsi_xml_parse($gsi_supp_fn, %$feats, %$usv_feat_to_ps_name, %$featset_to_usvs);}
 }
 
@@ -610,12 +602,6 @@ sub Dblenc_get($\%)
 		$dblenc_usv->{$primary_usv} = $deprecated_usv;
 	}
 	close FH;
-	
-	if ($opt_d)
-	{
-		print "double encoded usvs: ";
-		foreach (sort values %$dblenc_usv) {print "$_ ";}; print "\n";
-	}
 }
 
 sub Suffixes_get(\@)
@@ -1167,7 +1153,22 @@ else
 Feats_get($font_fn, %feats);
 Gsi_xml_parse($gsi_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
 Special_glyphs_handle($gsi_supp_fn, %feats, %usv_feat_to_ps_name, %featset_to_usvs);
+
+if ($opt_d)
+{
+	print "usvs with variant glyphs: ";
+	foreach (sort keys %usv_feat_to_ps_name) {print "$_ "}; print "\n";
+	print "featsets with variant glyphs: ";
+	foreach (sort keys %featset_to_usvs) {print "($_)"}; print "\n";
+}
+
 Dblenc_get($dblenc_fn, %dblenc_usv);
+
+if ($opt_d)
+{
+	print "double encoded usvs: ";
+	foreach (sort values %dblenc_usv) {print "$_ ";}; print "\n";
+}
 
 $feat_all_fn = $feat_all_base_fn;
 open $feat_all_fh, ">$feat_all_fn" or die("Could not open $feat_all_fn for writing\n");
