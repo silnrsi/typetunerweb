@@ -1,0 +1,2419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE WpDoc SYSTEM "WorldPad.dtd">
+<WpDoc wpxVersion="2.0">
+
+<Languages>
+  <LgWritingSystem id="xrfx" language="rfx - Roman" type="OTHER">
+    <Name24>
+      <AUni ws="en">Roman</AUni>
+    </Name24>
+    <RightToLeft24><Boolean val="false"/></RightToLeft24>
+    <DefaultSerif24><Uni>Doulos SIL Test</Uni></DefaultSerif24>
+    <DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+    <ICULocale24><Uni>xrfx</Uni></ICULocale24>
+    <KeyboardType24><Uni>standard</Uni></KeyboardType24>
+    <Collations24>
+      <LgCollation>
+        <Name30>
+          <AUni ws="en">DefaultCollation</AUni>
+        </Name30>
+        <WinLCID30><Integer val="1078"/></WinLCID30>
+        <WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+      </LgCollation>
+    </Collations24>
+  </LgWritingSystem>
+</Languages>
+
+<Styles>
+  <StStyle>
+    <Name17><Uni>Normal</Uni></Name17>
+    <Type17><Integer val="0"/></Type17>
+    <BasedOn17><Uni></Uni></BasedOn17>
+    <Next17><Uni>Normal</Uni></Next17>
+    <Rules17>
+      <Prop italic="off" bold="off" superscript="off" underline="none" fontsize="10000" fontsizeUnit="mpt" offset="0" offsetUnit="mpt" forecolor="black" backcolor="white" undercolor="black" align="leading" firstIndent="0" leadingIndent="0" trailingIndent="0" spaceBefore="0" spaceAfter="0" lineHeight="10000" lineHeightUnit="mpt" rightToLeft="0" borderTop="0" borderBottom="0" borderLeading="0" borderTrailing="0" borderColor="black" bulNumScheme="0" bulNumStartAt="1" fontFamily="&lt;default serif&gt;">
+        <BulNumFontInfo backcolor="white" bold="off" fontsize="10000mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Times New Roman"/>
+        <WsStyles9999>
+          <WsProp ws="xrfx" fontFamily="Doulos SIL" fontsize="20000" fontsizeUnit="mpt" />
+        </WsStyles9999>
+      </Prop>
+    </Rules17>
+  </StStyle>
+</Styles>
+
+<Body docRightToLeft="false">
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004C,0308,004C [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004C;&#x0308;&#x004C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004C;&#x0308;&#x004C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004C;&#x0308;&#x004C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004C,0308,006C [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004C;&#x0308;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004C;&#x0308;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004C;&#x0308;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004C,0308,035F,004C [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004C;&#x0308;&#x035F;&#x004C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004C;&#x0308;&#x035F;&#x004C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004C;&#x0308;&#x035F;&#x004C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004C,0308,035F,006C [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004C;&#x0308;&#x035F;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004C;&#x0308;&#x035F;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004C;&#x0308;&#x035F;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004F,0311,0055 [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004F;&#x0311;&#x0055;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004F;&#x0311;&#x0055;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004F;&#x0311;&#x0055;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004F,0311,0075 [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004F;&#x0311;&#x0075;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004F,035F,0311,0055 [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004F;&#x035F;&#x0311;&#x0055;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004F;&#x035F;&#x0311;&#x0055;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004F;&#x035F;&#x0311;&#x0055;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>004F,035F,0311,0075 [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x004F;&#x035F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x004F;&#x035F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x004F;&#x035F;&#x0311;&#x0075;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0061 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0061;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0061 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0061;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0061 [1032, 1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1053=0"> 0,0= &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1053=0"> 1,0= &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1053=1"> 0,1= &#xf130;&#x0061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1053=1"> 1,1= &#xf130;&#x0061;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0066 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0066;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0066;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0066;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0066,0066 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0066;&#x0066;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0066;&#x0066;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0066;&#x0066;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0066,0066,0069 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0066;&#x0066;&#x0069;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0066;&#x0066;&#x0069;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0066;&#x0066;&#x0069;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0066,0066,006C [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0066;&#x0066;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0066;&#x0066;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0066;&#x0066;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0066,0069 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0066;&#x0069;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0066;&#x0069;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0066;&#x0069;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0066,006C [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0066;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0066;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0066;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0067 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0067;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0067;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0067;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0069 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0069;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0069;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0069;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>006C [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>006C,0308,006C, [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x006C;&#x0308;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x006C;&#x0308;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x006C;&#x0308;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>006C,0308,035F,006C [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x006C;&#x0308;&#x035F;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x006C;&#x0308;&#x035F;&#x006C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x006C;&#x0308;&#x035F;&#x006C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>006F,0311,0075 [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x006F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x006F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x006F;&#x0311;&#x0075;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>006F,035F,0311,0075 [1052]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x006F;&#x035F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=0"> 0= &#xf130;&#x006F;&#x035F;&#x0311;&#x0075;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1052=1"> 1= &#xf130;&#x006F;&#x035F;&#x0311;&#x0075;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0076 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0076;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0076;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0076;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>007A [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x007A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x007A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x007A;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00AD [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00AD;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x00AD;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x00AD;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E0 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x00E0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x00E0;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E1 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x00E1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x00E1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E2 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x00E2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x00E2;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E3 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x00E3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E3 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x00E3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E3 [1032, 1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1053=0"> 0,0= &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1053=0"> 1,0= &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1053=1"> 0,1= &#xf130;&#x00E3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1053=1"> 1,1= &#xf130;&#x00E3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E4 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x00E4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x00E4;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E5 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x00E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x00E5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>00E6 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x00E6;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x00E6;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x00E6;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0101 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0101;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0101;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0101;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0103 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0103;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0103;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0103;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0104 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0104;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x0104;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x0104;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0105 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0105;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0105 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x0105;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0105 [1032, 1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1043=0"> 0,0= &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1043=0"> 1,0= &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1043=1"> 0,1= &#xf130;&#x0105;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1043=1"> 1,1= &#xf130;&#x0105;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0111 [1031]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0111;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=0"> 0= &#xf130;&#x0111;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=1"> 1= &#xf130;&#x0111;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0118 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0118;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x0118;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x0118;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0119 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0119;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x0119;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x0119;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>011D [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x011D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x011D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x011D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>011F [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x011F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x011F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x011F;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0121 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0121;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0121;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0121;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0123 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0123;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0123;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0123;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0126 [1038]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0126;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1038=0"> 0= &#xf130;&#x0126;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1038=1"> 1= &#xf130;&#x0126;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>012E [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x012E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x012E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x012E;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>012F [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x012F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x012F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x012F;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0131 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0131;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0131;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0131;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>014A [1024]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x014A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1024=0"> 0= &#xf130;&#x014A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1024=1"> 1= &#xf130;&#x014A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1024=2"> 2= &#xf130;&#x014A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1024=3"> 3= &#xf130;&#x014A;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>015E [1041]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x015E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=0"> 0= &#xf130;&#x015E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=1"> 1= &#xf130;&#x015E;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>015F [1041]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x015F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=0"> 0= &#xf130;&#x015F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=1"> 1= &#xf130;&#x015F;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0162 [1041]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0162;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=0"> 0= &#xf130;&#x0162;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=1"> 1= &#xf130;&#x0162;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0163 [1041]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0163;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=0"> 0= &#xf130;&#x0163;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1041=1"> 1= &#xf130;&#x0163;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0172 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0172;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x0172;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x0172;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0173 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0173;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x0173;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x0173;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0180 [1031]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0180;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=0"> 0= &#xf130;&#x0180;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=1"> 1= &#xf130;&#x0180;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0186 [1059]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0186;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=0"> 0= &#xf130;&#x0186;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=1"> 1= &#xf130;&#x0186;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>019D [1035]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x019D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1035=0"> 0= &#xf130;&#x019D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1035=1"> 1= &#xf130;&#x019D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01A5 [1040]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01A5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1040=0"> 0= &#xf130;&#x01A5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1040=1"> 1= &#xf130;&#x01A5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01AC [1037]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01AC;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1037=0"> 0= &#xf130;&#x01AC;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1037=1"> 1= &#xf130;&#x01AC;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01B3 [1034]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01B3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1034=0"> 0= &#xf130;&#x01B3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1034=1"> 1= &#xf130;&#x01B3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01CE [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01CE;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01CE;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01CE;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01DF [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01DF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01DF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01DF;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01E1 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01E1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01E1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01E1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01E5 [1031]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=0"> 0= &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=1"> 1= &#xf130;&#x01E5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01E5 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01E5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01E5 [1031, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=0,1032=0"> 0,0= &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=1,1032=0"> 1,0= &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=0,1032=1"> 0,1= &#xf130;&#x01E5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1031=1,1032=1"> 1,1= &#xf130;&#x01E5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01E7 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01E7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01E7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01E7;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01EA [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01EA;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x01EA;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x01EA;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01EB [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01EB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x01EB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x01EB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01EC [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01EC;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x01EC;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x01EC;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01ED [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01ED;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x01ED;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x01ED;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01F5 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01F5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01F5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01F5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>01FB [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x01FB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x01FB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x01FB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0201 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0201;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0201;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0201;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0203 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0203;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0203;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0203;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0222 [1045]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0222;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=0"> 0= &#xf130;&#x0222;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=1"> 1= &#xf130;&#x0222;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0223 [1045]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0223;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=0"> 0= &#xf130;&#x0223;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=1"> 1= &#xf130;&#x0223;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0227 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0227;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x0227;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x0227;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0250 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0250;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0250;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0250;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0254 [1059]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0254;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=0"> 0= &#xf130;&#x0254;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=1"> 1= &#xf130;&#x0254;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0264 [1025]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0264;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1025=0"> 0= &#xf130;&#x0264;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1025=1"> 1= &#xf130;&#x0264;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1025=2"> 2= &#xf130;&#x0264;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0284 [1049]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0284;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1049=0"> 0= &#xf130;&#x0284;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1049=1"> 1= &#xf130;&#x0284;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>028B [1033]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x028B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1033=0"> 0= &#xf130;&#x028B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1033=1"> 1= &#xf130;&#x028B;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0293 [1036]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0293;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1036=0"> 0= &#xf130;&#x0293;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1036=1"> 1= &#xf130;&#x0293;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>02BC [1044]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x02BC;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1044=0"> 0= &#xf130;&#x02BC;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1044=1"> 1= &#xf130;&#x02BC;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>02C8 [1057]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x02C8;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=0"> 0= &#xf130;&#x02C8;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=1"> 1= &#xf130;&#x02C8;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>02C9 [1057]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x02C9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=0"> 0= &#xf130;&#x02C9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=1"> 1= &#xf130;&#x02C9;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>02CA [1057]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x02CA;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=0"> 0= &#xf130;&#x02CA;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=1"> 1= &#xf130;&#x02CA;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>02CB [1057]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x02CB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=0"> 0= &#xf130;&#x02CB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1057=1"> 1= &#xf130;&#x02CB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>02DB [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x02DB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x02DB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x02DB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>042D [1027]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x042D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1027=0"> 0= &#xf130;&#x042D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1027=1"> 1= &#xf130;&#x042D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>044D [1027]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x044D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1027=0"> 0= &#xf130;&#x044D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1027=1"> 1= &#xf130;&#x044D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>0493 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x0493;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x0493;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x0493;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>04BB [1056]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x04BB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1056=0"> 0= &#xf130;&#x04BB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1056=1"> 1= &#xf130;&#x04BB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>04E0 [1042]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x04E0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1042=0"> 0= &#xf130;&#x04E0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1042=1"> 1= &#xf130;&#x04E0;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>04FB [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x04FB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x04FB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x04FB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1D10 [1059]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1D10;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=0"> 0= &#xf130;&#x1D10;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=1"> 1= &#xf130;&#x1D10;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1D15 [1045]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1D15;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=0"> 0= &#xf130;&#x1D15;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=1"> 1= &#xf130;&#x1D15;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1D3D [1045]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1D3D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=0"> 0= &#xf130;&#x1D3D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1045=1"> 1= &#xf130;&#x1D3D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1D53 [1059]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1D53;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=0"> 0= &#xf130;&#x1D53;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=1"> 1= &#xf130;&#x1D53;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1D97 [1059]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1D97;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=0"> 0= &#xf130;&#x1D97;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1059=1"> 1= &#xf130;&#x1D97;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1E01 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1E01;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1E01;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1E01;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1E21 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1E21;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1E21;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1E21;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1E9A [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1E9A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1E9A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1E9A;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA1 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EA1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA1 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#x1EA1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA1 [1032, 1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1053=0"> 0,0= &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1053=0"> 1,0= &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0,1053=1"> 0,1= &#xf130;&#x1EA1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1,1053=1"> 1,1= &#xf130;&#x1EA1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA3 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EA3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EA3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA4 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EA4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EA4;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA5 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EA5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA5 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EA5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA5 [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EA5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EA5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA6 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA6;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EA6;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EA6;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA7 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EA7;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA7 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EA7;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA7 [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EA7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EA7;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA8 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA8;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EA8;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EA8;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA9 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EA9;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA9 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EA9;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EA9 [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EA9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EA9;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAA [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAA;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EAA;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EAA;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAB [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EAB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAB [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EAB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAB [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EAB;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EAB;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAD [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAD;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EAD;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EAD;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAE [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAE;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EAE;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EAE;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAF [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EAF;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAF [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EAF;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EAF [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EAF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EAF;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB0 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EB0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EB0;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB1 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EB1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB1 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EB1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB1 [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EB1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EB1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB2 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EB2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EB2;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB3 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EB3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB3 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EB3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB3 [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EB3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EB3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB4 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EB4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EB4;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB5 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EB5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB5 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EB5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB5 [1029, 1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=0"> 0,0= &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=0"> 1,0= &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0,1032=1"> 0,1= &#xf130;&#x1EB5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1,1032=1"> 1,1= &#xf130;&#x1EB5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EB7 [1032]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EB7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=0"> 0= &#xf130;&#x1EB7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1032=1"> 1= &#xf130;&#x1EB7;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EBE [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EBE;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EBE;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EBE;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EBF [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EBF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EBF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EBF;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EC0 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EC0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EC0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EC0;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EC1 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EC1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EC1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EC1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EC2 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EC2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EC2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EC2;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EC3 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EC3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EC3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EC3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EC4 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EC4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EC4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EC4;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1EC5 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1EC5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1EC5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1EC5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED0 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED0;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED0;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED1 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED1;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED1;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED2 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED2;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED2;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED3 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED3;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED3;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED4 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED4;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED4;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED5 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED5;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED5;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED6 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED6;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED6;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED6;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>1ED7 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x1ED7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x1ED7;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x1ED7;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>200B [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x200B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x200B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x200B;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>200C [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x200C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x200C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x200C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>200D [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x200D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x200D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x200D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>200E [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x200E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x200E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x200E;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>200F [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x200F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x200F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x200F;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>202A [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x202A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x202A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x202A;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>202B [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x202B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x202B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x202B;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>202C [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x202C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x202C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x202C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>202D [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x202D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x202D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x202D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>202E [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x202E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x202E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x202E;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>2060 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x2060;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x2060;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x2060;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>2061 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x2061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x2061;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x2061;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>2062 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x2062;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x2062;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x2062;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>2063 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x2063;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x2063;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x2063;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>2205 [1046]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x2205;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1046=0"> 0= &#xf130;&#x2205;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1046=1"> 1= &#xf130;&#x2205;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0302,0300 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0302;&#x0300;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0302;&#x0300;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0302;&#x0300;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0302,0301 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0302;&#x0301;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0302;&#x0301;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0302;&#x0301;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0302,0303 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0302;&#x0303;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0302;&#x0303;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0302;&#x0303;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0302,0309 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0302;&#x0309;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0302;&#x0309;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0302;&#x0309;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0306 [1028]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0306;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1028=0"> 0= &#xf130;&#x25CC;&#x0306;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1028=1"> 1= &#xf130;&#x25CC;&#x0306;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0306,0300 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0306;&#x0300;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0306;&#x0300;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0306;&#x0300;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0306,0301 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0306;&#x0301;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0306;&#x0301;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0306;&#x0301;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0306,0303 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0306;&#x0303;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0306;&#x0303;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0306;&#x0303;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0306,0309 [1029]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0306;&#x0309;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=0"> 0= &#xf130;&#x25CC;&#x0306;&#x0309;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1029=1"> 1= &#xf130;&#x25CC;&#x0306;&#x0309;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,0328 [1043]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x0328;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=0"> 0= &#xf130;&#x25CC;&#x0328;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1043=1"> 1= &#xf130;&#x25CC;&#x0328;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,034F [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#x034F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#x034F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#x034F;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE00 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE00;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE00;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE00;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE01 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE01;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE01;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE01;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE02 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE02;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE02;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE02;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE03 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE03;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE03;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE03;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE04 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE04;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE04;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE04;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE05 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE05;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE05;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE05;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE06 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE06;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE06;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE06;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE07 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE07;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE07;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE07;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE08 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE08;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE08;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE08;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE09 [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE09;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE09;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE09;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE0A [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE0A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE0A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE0A;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE0B [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE0B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE0B;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE0B;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE0C [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE0C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE0C;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE0C;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE0D [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE0D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE0D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE0D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE0E [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE0E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE0E;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE0E;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>25CC,FE0F [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x25CC;&#xFE0F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#x25CC;&#xFE0F;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#x25CC;&#xFE0F;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>2C64 [1039]: </Run>
+        <Run ws="xrfx"> &#xf130;&#x2C64;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1039=0"> 0= &#xf130;&#x2C64;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1039=1"> 1= &#xf130;&#x2C64;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>F1E9 [1047]: </Run>
+        <Run ws="xrfx"> &#xf130;&#xF1E9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1047=0"> 0= &#xf130;&#xF1E9;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1047=1"> 1= &#xf130;&#xF1E9;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>F217 [1042]: </Run>
+        <Run ws="xrfx"> &#xf130;&#xF217;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1042=0"> 0= &#xf130;&#xF217;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1042=1"> 1= &#xf130;&#xF217;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>F21D [1044]: </Run>
+        <Run ws="xrfx"> &#xf130;&#xF21D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1044=0"> 0= &#xf130;&#xF21D;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1044=1"> 1= &#xf130;&#xF21D;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>F26A [1044]: </Run>
+        <Run ws="xrfx"> &#xf130;&#xF26A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1044=0"> 0= &#xf130;&#xF26A;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1044=1"> 1= &#xf130;&#xF26A;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>F327 [1053]: </Run>
+        <Run ws="xrfx"> &#xf130;&#xF327;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=0"> 0= &#xf130;&#xF327;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1053=1"> 1= &#xf130;&#xF327;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>FEFF [1030]: </Run>
+        <Run ws="xrfx"> &#xf130;&#xFEFF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=0"> 0= &#xf130;&#xFEFF;&#xf131;</Run>
+        <Run ws="xrfx" fontVariations="1030=1"> 1= &#xf130;&#xFEFF;&#xf131;</Run>
+
+      </Str>
+    </Contents16>
+  </StTxtPara>
+</Body>
+
+</WpDoc>
