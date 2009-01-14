@@ -271,7 +271,7 @@ sub copy_cmds(\@\@\%)
 
 sub sort_tests($$)
 #compare to <interaction> test attribute strings
-#sort such that longer strings come first
+#sort such that shorter strings come first
 {
 	#scalar split(/\s/, $a) causes many error msgs
 	my ($a, $b) = @_;
@@ -281,9 +281,9 @@ sub sort_tests($$)
 	my $b_ct = scalar @t;
 	
 	if ($a_ct > $b_ct)
-		{return -1;}
-	elsif ($a_ct < $b_ct)
 		{return 1;}
+	elsif ($a_ct < $b_ct)
+		{return -1;}
 	else #$a_ct == $b_ct
 		{return ($a cmp $b);}
 }
@@ -304,7 +304,9 @@ sub Feat_val_tags($)
 sub Feat_Set_cmds(\%$\@)
 #generate a list of commands (cmd-args hashes) to process based on feature settings
 #any cmd_block will be expanded to a list of commands
-#first process interactions tests then feature value cmds
+#first process feature value cmds then interactions tests
+#the tests with the fewest elements are processed first
+# this way the cmds in tests with the most elements override cmds in tests with fewer elements
 {
 	my ($feat_all, $feat_set, $commands) = @_;
 	
@@ -313,6 +315,17 @@ sub Feat_Set_cmds(\%$\@)
 	$interactions = $feat_all->{'interactions'};
 	$cmd_blocks = $feat_all->{'cmd_blocks'};
 	
+	#process feat-value setting based on feature value cmds
+	my (@feat_val, $feat, $val, $cmds);
+	@feat_val = split(/\s+/, $feat_set); 
+	foreach my $fv (@feat_val)
+	{
+		next if (not $fv);
+		($feat, $val) = Feat_val_tags($fv);
+		$cmds = $features->{$feat}{'values'}{$val}{'cmds'};
+		copy_cmds(@$commands, @$cmds, %$cmd_blocks);
+	}
+
 	#create hash for working with sorted test attributes
 	my ($interact, %test_str_to_ix, $ix);
 	$ix = 0;
@@ -320,28 +333,11 @@ sub Feat_Set_cmds(\%$\@)
 		{$test_str_to_ix{$interact->{'test'}} = $ix++;}
 
 	#test feature settings against interaction tests
-	#each successful test removes the feature setttings 
-	# from consideration by tests with fewer conditions
-	# but not from consideration by tests with the same number of conditions
-	# this assumes tests with the same number of conditions affect mutually exclusive USVs
-	# (if the USVs aren't mutually exclusive,
-	#  a test with a higher number of conditions should exist)
 	my ($test_str, @tests, $test, $test_passed);
-	my ($feat_set_next, $feat_set_ct);
-	$feat_set_next = $feat_set; #initialize here in case no interactions section
 	foreach $test_str (sort sort_tests keys %test_str_to_ix)
 	{
 		@tests = split(/\s+/, $test_str);
 		
-		if (not defined($feat_set_ct))
-		{#first test with highest number of conditions
-			$feat_set_ct = scalar @tests;
-		}
-		if ($feat_set_ct > scalar @tests)
-		{#change in number of test conditions
-			$feat_set = $feat_set_next;
-			$feat_set_ct = scalar @tests;
-		}
 		$test_passed = 1;
 		foreach $test (@tests)
 		{ #test if all feat-value settings in an interaction test are set
@@ -356,11 +352,6 @@ sub Feat_Set_cmds(\%$\@)
 			if ($opt_d) {print "interaction matched: $test_str\n";}
 			my $cmds = $interactions->[$test_str_to_ix{$test_str}]->{'cmds'};
 			copy_cmds(@$commands, @$cmds, %$cmd_blocks);
-
-			foreach $test (@tests)
-			{ #remove feature-value pairs that have been processed
-				$feat_set_next =~ s/$test//;
-			}
 		}
 		else
 		{
@@ -368,22 +359,10 @@ sub Feat_Set_cmds(\%$\@)
 		}
 	}
 	
-	#process remaining feat-value setting based on feature value cmds
-	my (@feat_val, $feat, $val, $cmds);
-	@feat_val = split(/\s+/, $feat_set_next); 
-	if ($opt_d) {print "feat-sets applied: ";}
-	foreach my $fv (@feat_val)
-	{
-		next if (not $fv);
-		if ($opt_d) {print "$fv ";}
-		($feat, $val) = Feat_val_tags($fv);
-		$cmds = $features->{$feat}{'values'}{$val}{'cmds'};
-		copy_cmds(@$commands, @$cmds, %$cmd_blocks);
-	}
-	if ($opt_d) {print "\n\n";}
+	if ($opt_d) {print "\n";}
 };
 
-sub Cmds_exec ($\@\%\%)
+sub Cmds_exec($\@\%\%)
 #execute commands (cmd-args hash) in commands array against the font
 #the args string is split into one string for each arg
 # Perl handles the conversion from string to number automatically 
@@ -653,7 +632,7 @@ sub Feat_add($$$$$$)
 	if ($opt_d) {print "Feat_add $feat: orig feats = @$feats\n";}
 	foreach ($feats)
 		{if ($_ eq $feat)
-			{die("Feat_add: feature already exists: tbl_type = $tbl_type script = $script lang = $lang feat = $feat\n");}}
+			{print "Feat_add: ***feature already exists: tbl_type = $tbl_type script = $script lang = $lang feat = $feat\n"; return;}}
 	#push(@$feats, $feat); #add element to array
 	splice(@$feats, $pos, 0, $feat);
 	if ($opt_d) {print "Feat_add $feat: chng feats = @$feats\n";}
@@ -679,7 +658,7 @@ sub Feat_del($$$$$)
 		}
 	}
 	if (not $found)
-		{die("Feat_del: feature not found: tbl_type = $tbl_type script = $script lang = $lang feat = $feat\n");}
+		{print "Feat_del: ***feature not found: tbl_type = $tbl_type script = $script lang = $lang feat = $feat\n"; return;}
 	if ($opt_d) {print "Feat_del $feat: chng feats = @$feats\n";}
 }
 
@@ -721,8 +700,8 @@ sub Lookup_add($$$$)
 		}
 		elsif (@$lookups[$ix] == $lookup)
 		{
-			die("Lookup_add: lookup already exists: tbl_type = $tbl_type feat = $feat lookup = $lookup\n");
-			next;
+			print "Lookup_add: ***lookup already exists: tbl_type = $tbl_type feat = $feat lookup = $lookup\n";
+			return;
 		}
 		else
 		{
@@ -757,7 +736,7 @@ sub Lookup_del($$$$)
 		}
 	}
 	if (not $found)
-		{die("Lookup_del: lookup not found: tbl_type = $tbl_type feat = $feat lookup = $lookup\n");}
+		{print "Lookup_del: ***lookup not found: tbl_type = $tbl_type feat = $feat lookup = $lookup\n"; return;}
 	if ($opt_d) {print "Lookup_del $lookup: chng lookups = @$lookups\n";}
 }
 
