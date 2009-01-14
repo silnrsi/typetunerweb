@@ -723,6 +723,16 @@ sub Features_output($\%\%\%\%)
 			}
 			
 			#### OT cmds that manipulate the script, language, feature, or lookup structures
+			
+			#I think that VIt and ROt should be handled the same way
+			#Using feat_del & feat_add for both VIt and ROt has problems 
+			# if both VIt and ROt are on since the second one processed can't delete ccmp_latin
+			# because the first one will have already deleted it
+			#Using a test select="VIt ROt" to solve this problem would create two features with 
+			# the same OT name (ccmp) and redundant lookups
+			#Using the lookup_add approach doesn't require testing for both VIt and ROt
+			# and avoids the above problem
+			
 			if ($vietnamese_style_diacs_feat =~ /$feat_id/ and not $opt_g)
 			{#hard-coded
 				print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
@@ -866,11 +876,11 @@ END
 	}
 }
 
-sub Test_output($$\%\%\%\%)
+sub Test_output($$\%\%\%)
 #output the <cmd> elements inside of a <test> element 
 # for one set of feature interactions
 {
-	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
+	my ($feat_all_fh, $featset, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
 	my(@usvs, $usv, @feats, $feat);
 	my $fh = $feat_all_fh;
 	
@@ -879,8 +889,6 @@ sub Test_output($$\%\%\%\%)
 	@feats = split(/\s/, $featset);
 	foreach $usv (@usvs)
 	{
-		if (defined($used_usvs->{$usv})) {next;}
-		
 		#create string with all relevant ps_names separated by spaces
 		my $choices = '';
 		foreach $feat (@feats)
@@ -909,13 +917,12 @@ sub Test_output($$\%\%\%\%)
 		print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
 		if (defined $dblenc_usv->{$usv})
 			{print $fh "\t\t\t<cmd name=\"encode\" args=\"$dblenc_usv->{$usv} $choices\"/>\n";}
-		$used_usvs->{$usv} = 1;
 	}
 }
 
 sub sort_tests($$)
 #compare to <interaction> test attribute strings
-#sort such that strings with more featsets come first
+#sort such that strings with fewer featsets come first
 {
 	#scalar split(/\s/, $a) causes many error msgs
 	my ($a, $b) = @_;
@@ -925,30 +932,11 @@ sub sort_tests($$)
 	my $b_ct = scalar @t;
 	
 	if ($a_ct > $b_ct)
-		{return -1;}
-	elsif ($a_ct < $b_ct)
 		{return 1;}
+	elsif ($a_ct < $b_ct)
+		{return -1;}
 	else #$a_ct == $b_ct
 		{return ($a cmp $b);}
-}
-
-sub Tests_output($$\%\%\%\%)
-#output all the the <cmd> elements inside of a <test> element
-# handling all combinations of feature interactions
-{
-	my ($feat_all_fh, $featset, $used_usvs, $featset_to_usvs, $usv_feat_to_ps_name, $dblenc_usv) = @_;
-
-	my @feats = split(/\s/, $featset);
-	my @combos = Combos_get(@feats);
-	foreach (@combos) {$_ = join(' ', @$_)};
-	#sort these so glyph choices can be given for interacting features
-	# before outputing encodings for a single feature
-	my $test; 
-	foreach $test (sort sort_tests @combos)
-	{
-		Test_output($feat_all_fh, $test, %$used_usvs, 
-						%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv);
-	}
 }
 
 sub Feats_to_ids($$\%)
@@ -981,12 +969,6 @@ sub Interactions_output($\%\%\%\%)
 	#start interactions element
 	print $feat_all_fh "\t<interactions>\n";
 
-	my $viet_featset = "None";
-	if (defined $feats->{vietnamese_style_diacs_feat})
-		{$viet_featset = "$feats->{'1029'}{'tag'}-$feats->{'1029'}{'settings'}{'1'}{'tag'}"};
-	my $rmnian_featset = "None";
-	if (defined $feats->{romanian_style_diacs_feat})
-		{$rmnian_featset = "$feats->{'1041'}{'tag'}-$feats->{'1041'}{'settings'}{'1'}{'tag'}"};
 	my $featset;
 	foreach $featset (sort sort_tests keys %$featset_to_usvs)
 	{
@@ -1000,44 +982,9 @@ sub Interactions_output($\%\%\%\%)
 		if ($opt_g and $opt_q)
 			{print $fh "\t\t\t<cmd name=\"null\" args=\"null\"/>\n";}
 			
-		unless ($opt_q)
-		{
-			foreach my $feat (@featsets)
-			{#gr_feat cmds
-				my ($feat_tag, $set_tag) = ($feat =~ /(.*)-(.*)/);
-				my ($feat_id, $set_id) = Feats_to_ids($feat_tag, $set_tag, %$feats);
-				print $fh "\t\t\t<cmd name=\"gr_feat\" args=\"$feat_id $set_id\"/>\n";
-			}
-		}
-		
-		#I think that VIt and ROt should be handled the same way
-		#Using feat_del & feat_add for both VIt and ROt has problems 
-		# if both VIt and ROt are on since the second one processed can't delete ccmp_latin
-		# because the first one will have already deleted it
-		#Using a test select="VIt ROt" to solve this problem would create two features with 
-		# the same OT name (ccmp) and redundant lookups
-		#Using the lookup_add approach doesn't require testing for both VIt and ROt
-		# and avoids the above problem
-		
-		if ($featset =~ /$viet_featset/ and not $opt_g)
-		{#hard-coded
-			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_decomp}\"/>\n";
-			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {viet_precomp}\"/>\n";
-			
-			#see above comment
-			#print $fh "\t\t\t<cmd name=\"feat_del\" args=\"GSUB latn {IPA} {ccmp_latin}\"/>\n";
-			#print $fh "\t\t\t<cmd name=\"feat_add\" args=\"GSUB latn {IPA} {ccmp_vietnamese} 0\"/>\n";
-		}
-		if ($featset =~ /$rmnian_featset/ and not $opt_g)
-		{#hard-coded
-			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_decomp}\"/>\n";
-			print $fh "\t\t\t<cmd name=\"lookup_add\" args=\"GSUB {ccmp_latin} {rom_precomp}\"/>\n";
-		}
-		
 		#encode cmds for all affected usvs
-		my %used_usvs;
-		Tests_output($feat_all_fh, $featset, %used_usvs, 
-					%$featset_to_usvs, %$usv_feat_to_ps_name, %$dblenc_usv) unless $opt_g;
+		Test_output($feat_all_fh, $featset, %$featset_to_usvs, %$usv_feat_to_ps_name, 
+						%$dblenc_usv) unless $opt_g;
 		
 		#end test element
 		print $fh "\t\t</test>\n";
