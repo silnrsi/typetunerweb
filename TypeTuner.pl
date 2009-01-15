@@ -6,13 +6,6 @@
 use strict;
 use warnings;
 
-package TypeTuner;
-
-require Exporter;
-use vars qw(@ISA @EXPORT);
-@ISA = qw(Exporter);
-@EXPORT = qw(&cmd_line_exec);
-
 use Font::TTF::Font;
 use XML::Parser::Expat;
 use Getopt::Std;
