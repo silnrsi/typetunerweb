@@ -19,8 +19,9 @@ use Getopt::Std;
 #$opt_q - output no graphite cmds
 #$opt_t - output <interaction> encode cmds w/o choices for PS name for testing TypeTuner
 #$opt_l - list features and settings to a file to help create %nm_to_tag map
-our($opt_d, $opt_g, $opt_q, $opt_t, $opt_l); #set by &getopts:
-my $opt_str = 'dgqtl';
+#$opt_w  - generate a WorldPad file for testing Graphite features TODO: make this a different program
+our($opt_d, $opt_g, $opt_q, $opt_t, $opt_l, $opt_w); #set by &getopts:
+my $opt_str = 'dgqtlw:';
 my $featset_list_fn = 'featset_list.txt';
 
 my $feat_all_base_fn = 'feat_all_composer.xml';
@@ -522,6 +523,9 @@ sub Gsi_xml_parse($\%\%\%)
 				{$usv_feat_to_ps_name->{$usv}{$featset} = [];}
 			push(@{$usv_feat_to_ps_name->{$usv}{$featset}}, $ps_name);
 			$feat_found = 1;
+		}
+		elsif ($tag eq 'lig_uids')
+		{
 		}
 		else
 		{}
@@ -1117,6 +1121,8 @@ if ($opt_d)
 	foreach (sort values %dblenc_usv) {print "$_ ";}; print "\n";
 }
 
+if (!$opt_w)
+{
 $feat_all_fn = $feat_all_base_fn;
 open $feat_all_fh, ">$feat_all_fn" or die("Could not open $feat_all_fn for writing\n");
 print $feat_all_fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -1131,5 +1137,109 @@ unless ($opt_g)
 }
 
 print $feat_all_fh "</all_features>\n";
+close $feat_all_fn;
+}
+
+else #opt_w
+{
+my ($wpfeatures_fn, $font_nm);
+
+$wpfeatures_fn = "WPFeatures.wpx";
+$font_nm = $opt_w;
+
+open FH, ">$wpfeatures_fn" or die("Could not open $wpfeatures_fn for writing\n");
+print FH <<"EOS";
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE WpDoc SYSTEM "WorldPad.dtd">
+<WpDoc wpxVersion="2.0">
+
+<Languages>
+  <LgWritingSystem id="xrfx" language="rfx - Roman" type="OTHER">
+    <Name24>
+      <AUni ws="en">Roman</AUni>
+    </Name24>
+    <RightToLeft24><Boolean val="false"/></RightToLeft24>
+    <DefaultSerif24><Uni>Doulos SIL Test</Uni></DefaultSerif24>
+    <DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+    <ICULocale24><Uni>xrfx</Uni></ICULocale24>
+    <KeyboardType24><Uni>standard</Uni></KeyboardType24>
+    <Collations24>
+      <LgCollation>
+        <Name30>
+          <AUni ws="en">DefaultCollation</AUni>
+        </Name30>
+        <WinLCID30><Integer val="1078"/></WinLCID30>
+        <WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+      </LgCollation>
+    </Collations24>
+  </LgWritingSystem>
+</Languages>
+
+<Styles>
+  <StStyle>
+    <Name17><Uni>Normal</Uni></Name17>
+    <Type17><Integer val="0"/></Type17>
+    <BasedOn17><Uni></Uni></BasedOn17>
+    <Next17><Uni>Normal</Uni></Next17>
+    <Rules17>
+      <Prop italic="off" bold="off" superscript="off" underline="none" fontsize="10000" fontsizeUnit="mpt" offset="0" offsetUnit="mpt" forecolor="black" backcolor="white" undercolor="black" align="leading" firstIndent="0" leadingIndent="0" trailingIndent="0" spaceBefore="0" spaceAfter="0" lineHeight="10000" lineHeightUnit="mpt" rightToLeft="0" borderTop="0" borderBottom="0" borderLeading="0" borderTrailing="0" borderColor="black" bulNumScheme="0" bulNumStartAt="1" fontFamily="&lt;default serif&gt;">
+        <BulNumFontInfo backcolor="white" bold="off" fontsize="10000mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Times New Roman"/>
+        <WsStyles9999>
+          <WsProp ws="xrfx" fontFamily="$font_nm" fontsize="20000" fontsizeUnit="mpt" />
+        </WsStyles9999>
+      </Prop>
+    </Rules17>
+  </StStyle>
+</Styles>
+
+<Body docRightToLeft="false">
+EOS
+
+foreach my $featsets (sort sort_tests keys %featset_to_usvs)
+{
+	#TODO: process only feature interactions of interest
+	my $featsets_str = '';
+	my @featset = split(/\s/, $featsets);
+	foreach my $featset (@featset)
+	{
+		my ($feat_tag, $set_tag);
+		if ($featset =~ /(.*)-(.*)/)
+			{($feat_tag, $set_tag) = ($1, $2);}
+		else
+			{die("feature-value pair is corrupt: $featset\n");}
+		my ($feat_id, $set_id) = Feats_to_ids($feat_tag, $set_tag, %feats);
+		$featsets_str .= "$feat_id=$set_id ";
+	}
+	chop($featsets_str);
+	
+	my $usvs_str = '';
+	foreach my $usv_str (@{$featset_to_usvs{$featsets}})
+	{
+		#TODO: handle lig_uids
+		#$usv_str = substr($usv_str, 2);
+		$usvs_str .= "&#xf130;" . sprintf("&#x%04s;", lc($usv_str)) . "&#xf131; ";
+	}
+	chop($usvs_str);
+	
+	print FH <<"EOS";
+  <StTxtPara>
+    <Contents16>
+      <Str>
+        <Run>$featsets: </Run>
+        <Run ws="xrfx" fontVariations="$featsets_str">$usvs_str</Run>
+      </Str>
+    </Contents16>
+  </StTxtPara>
+EOS
+}
+
+print FH <<"EOS";
+</Body>
+
+</WpDoc>
+EOS
+
+close FH;
+}
 
 exit;
