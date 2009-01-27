@@ -448,6 +448,7 @@ sub Gsi_xml_parse($\%\%\%)
 	my ($gsi_fn, $feats, $usv_feat_to_ps_name, $featset_to_usvs) = @_;
 	
 	my ($xml_parser, $active, $ps_name, $feat_found, $var_uid_capture, $var_uid);
+	my ($lig_uids_capture, $lig_uids);
 	$xml_parser = XML::Parser::Expat->new();
 	$xml_parser->setHandlers('Start' => sub {
 		my ($xml_parser, $tag, %attrs) = @_;
@@ -469,10 +470,16 @@ sub Gsi_xml_parse($\%\%\%)
 		{
 			$var_uid_capture = 1;
 		}
+		elsif ($tag eq 'lig_uids' and $opt_w)
+		{
+			$lig_uids_capture = 1;
+		}
 		elsif ($tag eq 'feature')
 		{
 			if (not defined($ps_name)) {die("no PS name for feature: $attrs{'category'}\n")};
-			if (not defined($var_uid)) 
+			#if (not defined($var_uid))
+			if ((!$opt_w and not defined($var_uid)) 
+				or ($opt_w and (not defined($var_uid) and not defined($lig_uids))))
 			{#glyphs w/o var_uid's can't be offered as choices in encode cmds
 			 #should be: 1) variant for a ligature, 2) default glyph for a multivalued feature,
 			 # 3) variant that is encoded --
@@ -481,8 +488,21 @@ sub Gsi_xml_parse($\%\%\%)
 			 # 1 - there's no way to handle this by re-encoding the cmap, so can't do anything
 				if ($opt_d) {print "no var_uid for ps_name: $ps_name feat: $attrs{'category'}\n";}
 				return;
-			}; 
-			my $usv = substr($var_uid, 2);
+			};
+			#my $usv = substr($var_uid, 2);
+			my $usv;
+			if (!$opt_w) 
+				{$usv = substr($var_uid, 2);}
+			else
+			{
+				if ($var_uid) {$usv = substr($var_uid, 2);}
+				if ($lig_uids)
+				{
+					my @usvs = split(/\s/, $lig_uids);
+					foreach (@usvs) {$usv .= substr($_, 2) . ' '};
+					chop($usv);
+				}
+			}
 			
 			my $feat = $attrs{'category'};
 			my $set;
@@ -524,9 +544,6 @@ sub Gsi_xml_parse($\%\%\%)
 			push(@{$usv_feat_to_ps_name->{$usv}{$featset}}, $ps_name);
 			$feat_found = 1;
 		}
-		elsif ($tag eq 'lig_uids')
-		{
-		}
 		else
 		{}
 	}, 'End' => sub {
@@ -542,12 +559,17 @@ sub Gsi_xml_parse($\%\%\%)
 			} 
 			$ps_name = undef;
 			$var_uid = undef;
+			if ($opt_w) {$lig_uids = undef;}
 		}
 		elsif ($tag eq 'ps_name')
 		{}
 		elsif ($tag eq 'var_uid')
 		{
 			$var_uid_capture = 0;
+		}
+		elsif ($tag eq 'lig_uids' and $opt_w)
+		{
+			$lig_uids_capture = 0;
 		}
 		elsif ($tag eq 'feature')
 		{}
@@ -560,6 +582,12 @@ sub Gsi_xml_parse($\%\%\%)
 				{$var_uid = $str;}
 			else
 				{$var_uid .= $str;}
+			}
+		if ($lig_uids_capture and $opt_w)
+			{if (not defined($lig_uids))
+				{$lig_uids = $str;}
+			else
+				{$lig_uids .= $str;}
 			}
 	});
 
@@ -1197,7 +1225,7 @@ EOS
 
 foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 {
-	#TODO: process only feature interactions of interest
+	#TODO: should we process only feature interactions of interest?
 	my $featsets_str = '';
 	my @featset = split(/\s/, $featsets);
 	foreach my $featset (@featset)
@@ -1215,9 +1243,11 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 	my $usvs_str = '';
 	foreach my $usv_str (@{$featset_to_usvs{$featsets}})
 	{
-		#TODO: handle lig_uids
-		#$usv_str = substr($usv_str, 2);
-		$usvs_str .= "&#xf130;" . sprintf("&#x%04s;", lc($usv_str)) . "&#xf131; ";
+		my @usvs = split(/\s/,$usv_str);
+		my $lig_str = '';
+		foreach (@usvs)
+			{$lig_str .= sprintf("&#x%04s;", lc($_));}
+		$usvs_str .= "&#xf130;" . $lig_str . "&#xf131; ";
 	}
 	chop($usvs_str);
 	
