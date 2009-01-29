@@ -1,4 +1,4 @@
-# © SIL International 2007. All rights reserved.
+# Â© SIL International 2007. All rights reserved.
 # Please do not redistribute.
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
@@ -1225,7 +1225,7 @@ EOS
 
 foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 {
-	#TODO: should we process only feature interactions of interest?
+	#TODO: should we process only feature interactions of interest? do all for now
 	my $featsets_str = '';
 	my @featset = split(/\s/, $featsets);
 	foreach my $featset (@featset)
@@ -1240,8 +1240,27 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 	}
 	chop($featsets_str);
 	
+	#special test cases for BrdgDiacs-T
+	# Diaresis bridging LL with possible double macron below (occurring after diaresis)
+	my $bridging_diaresis_test = ['004C 0308 004C', '004C 0308 006C', '006C 0308 006C', '004C 0308 035F 004C', '004C 0308 035F 006C', '006C 0308 035F 006C'];
+	# Inverted Breve bridging OU with possible double macron below (occurring before breve)
+	my $bridging_breve_test = ['004F 0311 0055', '004F 0311 0075', '006F 0311 0075', '004F 035F 0311 0055', '004F 035F 0311 0075', '006F 035F 0311 0075'];
+	
+	my @usv_str = sort @{$featset_to_usvs{$featsets}};
+	
+	if ($featsets eq 'BrdgDiacs-T')
+	{
+		foreach (@usv_str) {$_ = '25CC ' . $_};
+		push(@usv_str, @{$bridging_diaresis_test});
+		push(@usv_str, @{$bridging_breve_test});
+	}
+	elsif ($featsets eq 'CmbBrvCyr-T')
+	{
+		foreach (@usv_str) {$_ = '25CC ' . $_};
+	}
+		
 	my $usvs_str = '';
-	foreach my $usv_str (@{$featset_to_usvs{$featsets}})
+	foreach my $usv_str (@usv_str)
 	{
 		my @usvs = split(/\s/,$usv_str);
 		my $lig_str = '';
