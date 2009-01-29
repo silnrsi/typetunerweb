@@ -51,7 +51,7 @@ my %featset_to_suffix = (
 	'SlntItlc-T' => '(\.SlantItalic|\.2StorySlantItalic)', 
 	'SmCp-T' => '\.SC',
 	'SmPHk-RtHk' => '\.BowlHook', 
-	'VHk-Crvd' => '(uni01B2|028B)(?!\.StraightLftHighHook|\.StraightLft)',  
+	'VHk-Crvd' => '(uni01B2|uni028B)(?!\.StraightLftHighHook|\.StraightLft|\.SC)',  
 	'VHk-StrtLftLowHk' => '\.StraightLft', 
 	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
 	'VIEdiacs-T' => '\.VN',
@@ -63,6 +63,13 @@ my %featset_to_suffix = (
 	'Eng-LgBsln' => '\.BaselineHook', 
 	'Eng-CapN' => '\.UCStyle', 
 	'Eng-LgShrtStm' => '\.Kom',
+	'LgEzh-RvSgma' => '\.RevSigmaStyle',
+	'LgHStrk-Vrt' => '\.VertStrk',
+	'LgNLftHk-Lc' => '\.LCStyle',
+	'LgRTl-Lc' => '\.LCStyle',
+	'LgTHk-RtHk' => '\.RtHook',
+	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY|\.SC)',
+	'LrgBHk-T' => '\.TopBar',
 );
 
 #generated using the -l switch 
