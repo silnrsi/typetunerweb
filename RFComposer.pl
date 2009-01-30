@@ -1195,8 +1195,10 @@ print FH <<"EOS";
       <AUni ws="en">Roman</AUni>
     </Name24>
     <RightToLeft24><Boolean val="false"/></RightToLeft24>
-    <DefaultSerif24><Uni>Doulos SIL Test</Uni></DefaultSerif24>
+    <DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
     <DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+    <DefaultBodyFont24><Uni>Times New Roman</Uni></DefaultBodyFont24>
+    <DefaultMonospace24><Uni>Courier</Uni></DefaultMonospace24>
     <ICULocale24><Uni>xrfx</Uni></ICULocale24>
     <KeyboardType24><Uni>standard</Uni></KeyboardType24>
     <Collations24>
@@ -1233,7 +1235,7 @@ EOS
 
 foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 {
-	#TODO: should we process only feature interactions of interest? do all for now
+	#TODO: should we process only feature interactions of interest? do all of them for now
 	my $featsets_str = '';
 	my @featset = split(/\s/, $featsets);
 	foreach my $featset (@featset)
@@ -1244,9 +1246,9 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 		else
 			{die("feature-value pair is corrupt: $featset\n");}
 		my ($feat_id, $set_id) = Feats_to_ids($feat_tag, $set_tag, %feats);
-		$featsets_str .= "$feat_id=$set_id ";
+		$featsets_str .= "$feat_id=$set_id,";
 	}
-	chop($featsets_str);
+	$featsets_str = substr($featsets_str,0,-1);
 	
 	#special test cases for BrdgDiacs-T
 	# Diaresis bridging LL with possible double macron below (occurring after diaresis)
@@ -1280,6 +1282,9 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 	
 	print FH <<"EOS";
   <StTxtPara>
+    <StyleRules15>
+      <Prop namedStyle="Normal"/>
+    </StyleRules15>
     <Contents16>
       <Str>
         <Run>$featsets: </Run>
