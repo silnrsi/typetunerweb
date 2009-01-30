@@ -37,6 +37,7 @@ my $romanian_style_diacs_feat = '1041';
 #the (?! ... ) reg ex below is a negative look ahead match
 # the error message can be processed to add to the mappings
 # *** Be careful to not discard tags needed by fonts other than the one being worked on
+# *** Do NOT eliminate .SC variants for the default glyph of a multi-valued feature
 my %featset_to_suffix = (
 	'BarBwl-T' => '\.BarBowl', 
 	'Caron-T' => '\.Caron', 
@@ -51,7 +52,7 @@ my %featset_to_suffix = (
 	'SlntItlc-T' => '(\.SlantItalic|\.2StorySlantItalic)', 
 	'SmCp-T' => '\.SC',
 	'SmPHk-RtHk' => '\.BowlHook', 
-	'VHk-Crvd' => '(uni01B2|uni028B)(?!\.StraightLftHighHook|\.StraightLft|\.SC)',  
+	'VHk-Crvd' => '(uni01B2|uni028B)(?!\.StraightLftHighHook|\.StraightLft)',  
 	'VHk-StrtLftLowHk' => '\.StraightLft', 
 	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
 	'VIEdiacs-T' => '\.VN',
@@ -68,7 +69,7 @@ my %featset_to_suffix = (
 	'LgNLftHk-Lc' => '\.LCStyle',
 	'LgRTl-Lc' => '\.LCStyle',
 	'LgTHk-RtHk' => '\.RtHook',
-	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY|\.SC)',
+	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
 	'LrgBHk-T' => '\.TopBar',
 );
 
