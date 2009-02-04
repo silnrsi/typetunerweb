@@ -1010,7 +1010,7 @@ sub cmd_line_exec(@)
 	
 	my ($cmd);
 	$cmd = $ARGV[0];
-	if (not $cmd =~ /createset|applyset|applyset_xml|delete|extract|add/)
+	if (not $cmd =~ /^(createset|applyset|applyset_xml|delete|extract|add)$/)
 	{ #no subcommands were given, use simplified command line
 		if (scalar @ARGV == 2)
 		{
