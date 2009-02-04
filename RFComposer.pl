@@ -1254,7 +1254,7 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 	# Diaresis bridging LL with possible double macron below (occurring after diaresis)
 	my $bridging_diaresis_test = ['004C 0308 004C', '004C 0308 006C', '006C 0308 006C', '004C 0308 035F 004C', '004C 0308 035F 006C', '006C 0308 035F 006C'];
 	# Inverted Breve bridging OU with possible double macron below (occurring before breve)
-	my $bridging_breve_test = ['004F 0311 0055', '004F 0311 0075', '006F 0311 0075', '004F 035F 0311 0055', '004F 035F 0311 0075', '006F 035F 0311 0075'];
+	my $bridging_breve_test = ['004F 0311 0055', '004F 0311 0075', '006F 0311 0075', '004F 035F 0311 0055', '004F 035F 0311 0075', '006F 035F 0311 0075', '004F 0361 0055', '004F 0361 0075', '006F 0361 0075', '004F 035F 0361 0055', '004F 035F 0361 0075', '006F 035F 0361 0075'];
 	
 	my @usv_str = sort @{$featset_to_usvs{$featsets}};
 	
