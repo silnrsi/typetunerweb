@@ -75,6 +75,9 @@ sub Feat_All_parse($\%\%)
 				{$feat_all->{'features'}{' tags'} = [];}
 			push(@{$feat_all->{'features'}{' tags'}}, $tag);
 			
+			if (defined $feat_tag->{$attrs{'name'}} 
+					&& $feat_tag->{$attrs{'name'}} ne $attrs{$tag})
+				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
 			$feat_tag->{$attrs{'name'}} = $tag;
 
 			$current = $feat_all->{'features'}{$tag}; #'values' to be added
@@ -139,6 +142,26 @@ sub Feat_All_parse($\%\%)
 		{
 			$tmp = $attrs{'name'};
 			$feat_all->{'aliases'}{$tmp} = $attrs{'value'};
+		}
+		elsif ($elem eq 'old_names')
+		{}
+		elsif ($elem eq 'old_feature')
+		{
+			#$feat_all->{'old_names'}{'old_features'}{$attrs{'name'}} = $attrs{'tag'};
+			#TODO: add subroutine to add name & tag pair to $feat_tag
+			if (defined $feat_tag->{$attrs{'name'}} 
+					&& $feat_tag->{$attrs{'name'}} ne $attrs{$tag})
+				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
+			$feat_tag->{$attrs{'name'}} = $attrs{'tag'};
+		}
+		elsif ($elem eq 'old_value')
+		{
+			#$feat_all->{'old_names'}{'old_values'}{$attrs{'feature'}}{$attrs{'name'}} = $attrs{'tag'};
+			$tmp = $attrs{'feature'} . $attrs{'name'};
+			if (defined $feat_tag->{$tmp} 
+					&& $feat_tag->{$tmp} ne $attrs{$tag})
+				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
+			$feat_tag->{$tmp} = $attrs{'tag'};
 		}
 		else
 		{}
@@ -211,9 +234,19 @@ sub Feat_Set_parse($\%\$\%)
 		if ($elem eq 'feature')
 		{   
 			$tmp = $attrs{'name'};
+#			if (defined $feat_all->{'old_names'}{'old_features'}{$tmp})
+#				{$feature_tag = $feat_all->{'old_names'}{'old_features'}{$tmp};}
+#			else
+#				{$feature_tag = $feat_tag->{$tmp} or die("feature name: $tmp is invalid\n");}
 			$feature_tag = $feat_tag->{$tmp} or die("feature name: $tmp is invalid\n");
-			$tmp = $attrs{'value'};
-			$value_tag = $feat_tag->{$tmp} or die("feature value: $tmp is invalid\n");
+#			$tmp = $attrs{'value'};
+#			if (defined $feat_all->{'old_names'}{'old_values'}{$attrs{'name'}}{$tmp})
+#				{$value_tag = $feat_all->{'old_names'}{'old_values'}{$attrs{'name'}}{$tmp};}
+#			else
+#				{$value_tag = $feat_tag->{$tmp} or die("feature value: $tmp is invalid\n");}
+			$tmp = $attrs{'name'} . $attrs{'value'};
+			$value_tag = $feat_tag->{$tmp} or $feat_tag->{$attrs{'value'}} or die("feature value: $attrs{'value'} is invalid\n");
+			
 			$feat_set_str .= "$feature_tag-$value_tag ";
 		}
 		elsif ($elem eq $feat_all_elem)
