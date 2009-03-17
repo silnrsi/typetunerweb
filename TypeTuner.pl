@@ -138,16 +138,23 @@ sub Feat_All_parse($\%\%)
 			$feat_all->{'aliases'}{$tmp} = $attrs{'value'};
 		}
 		elsif ($elem eq 'old_names')
+		#the below approach (for old_feature & old_value) adds names to the %feat_tag.
+		# this seems like the right place to put the info for later lookup.
+		# the con is that there's no way to tell which feature names come old_names.
+		# an alternative is to store the info in %feat_all since that contains all info
+		#  from the feat_all.xml file (lookup is just unnecessarily harder).
+		#must handle cases where the names for feature or value or both change
 		{}
 		elsif ($elem eq 'old_feature')
 		{
-			#$feat_all->{'old_names'}{'old_features'}{$attrs{'name'}} = $attrs{'tag'};
 			add_name_tag($feat_tag, $attrs{'name'}, $attrs{'tag'});
 		}
 		elsif ($elem eq 'old_value')
 		{
-			#$feat_all->{'old_names'}{'old_values'}{$attrs{'feature'}}{$attrs{'name'}} = $attrs{'tag'};
-			$tmp = $attrs{'feature'} . $attrs{'name'};
+			#must handle the fact that different features can have the same values
+			# (the identical value names would have the same tag)
+			# but only one of the values might change
+			$tmp = $attrs{'feature'} . '|' . $attrs{'name'}; # '|' is not a likely letter for a feature & value name
 			add_name_tag($feat_tag, $tmp, $attrs{'tag'});
 		}
 		else
@@ -221,19 +228,10 @@ sub Feat_Set_parse($\%\$\%)
 		if ($elem eq 'feature')
 		{   
 			$tmp = $attrs{'name'};
-#			if (defined $feat_all->{'old_names'}{'old_features'}{$tmp})
-#				{$feature_tag = $feat_all->{'old_names'}{'old_features'}{$tmp};}
-#			else
-#				{$feature_tag = $feat_tag->{$tmp} or die("feature name: $tmp is invalid\n");}
 			$feature_tag = $feat_tag->{$tmp} or die("feature name: $tmp is invalid\n");
-#			$tmp = $attrs{'value'};
-#			if (defined $feat_all->{'old_names'}{'old_values'}{$attrs{'name'}}{$tmp})
-#				{$value_tag = $feat_all->{'old_names'}{'old_values'}{$attrs{'name'}}{$tmp};}
-#			else
-#				{$value_tag = $feat_tag->{$tmp} or die("feature value: $tmp is invalid\n");}
-			$tmp = $attrs{'name'} . $attrs{'value'};
-			$value_tag = $feat_tag->{$tmp} or $feat_tag->{$attrs{'value'}} or die("feature value: $attrs{'value'} is invalid\n");
-			
+			$tmp = $attrs{'name'} . '|' . $attrs{'value'};
+			$value_tag = $feat_tag->{$tmp} || $feat_tag->{$attrs{'value'}} 
+				|| die("feature value: $attrs{'value'} is invalid\n"); # 'or' does NOT work here
 			$feat_set_str .= "$feature_tag-$value_tag ";
 		}
 		elsif ($elem eq $feat_all_elem)
