@@ -1056,6 +1056,21 @@ sub Aliases_output($)
 END
 }
 
+sub Old_names_output($)
+#output the mappings from old feature & value names to current tags
+{
+	my ($feat_all_fh) = @_;
+
+	print $feat_all_fh <<END;
+	<old_names>
+		<old_feature name="J stroke hook alternate" tag="JStrk"/>
+		<old_feature name="Small v-hook alternates" tag="VHk"/>
+		<old_value feature="Small v-hook alternates" name="Straight" tag="StrtLftLowHk"/>
+		<old_feature name="Cyrillic E alternates" tag="CyrE"/>
+	</old_names>
+END
+}
+
 sub Usage_print()
 {
 	print <<END;
@@ -1171,6 +1186,7 @@ unless ($opt_g)
 {
 	Aliases_output($feat_all_fh);
 }
+Old_names_output($feat_all_fh);
 
 print $feat_all_fh "</all_features>\n";
 close $feat_all_fn;
