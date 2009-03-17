@@ -75,10 +75,7 @@ sub Feat_All_parse($\%\%)
 				{$feat_all->{'features'}{' tags'} = [];}
 			push(@{$feat_all->{'features'}{' tags'}}, $tag);
 			
-			if (defined $feat_tag->{$attrs{'name'}} 
-					&& $feat_tag->{$attrs{'name'}} ne $attrs{$tag})
-				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
-			$feat_tag->{$attrs{'name'}} = $tag;
+			add_name_tag($feat_tag, $attrs{'name'}, $tag);
 
 			$current = $feat_all->{'features'}{$tag}; #'values' to be added
 		}
@@ -94,10 +91,7 @@ sub Feat_All_parse($\%\%)
 				{$current->{'values'}{' tags'} = [];}
 			push(@{$current->{'values'}{' tags'}}, $tag);
 
-			if (defined $feat_tag->{$attrs{'name'}} 
-					&& $feat_tag->{$attrs{'name'}} ne $tag)
-				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
-			$feat_tag->{$attrs{'name'}} = $tag;
+			add_name_tag($feat_tag, $attrs{'name'}, $tag);
 
 			$last = $current;
 			$current = $current->{'values'}{$tag}; #'cmds' to be added
@@ -148,20 +142,13 @@ sub Feat_All_parse($\%\%)
 		elsif ($elem eq 'old_feature')
 		{
 			#$feat_all->{'old_names'}{'old_features'}{$attrs{'name'}} = $attrs{'tag'};
-			#TODO: add subroutine to add name & tag pair to $feat_tag
-			if (defined $feat_tag->{$attrs{'name'}} 
-					&& $feat_tag->{$attrs{'name'}} ne $attrs{$tag})
-				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
-			$feat_tag->{$attrs{'name'}} = $attrs{'tag'};
+			add_name_tag($feat_tag, $attrs{'name'}, $attrs{'tag'});
 		}
 		elsif ($elem eq 'old_value')
 		{
 			#$feat_all->{'old_names'}{'old_values'}{$attrs{'feature'}}{$attrs{'name'}} = $attrs{'tag'};
 			$tmp = $attrs{'feature'} . $attrs{'name'};
-			if (defined $feat_tag->{$tmp} 
-					&& $feat_tag->{$tmp} ne $attrs{$tag})
-				{die("value name: $attrs{'name'} mapped to a second different tag: $tag\n");}
-			$feat_tag->{$tmp} = $attrs{'tag'};
+			add_name_tag($feat_tag, $tmp, $attrs{'tag'});
 		}
 		else
 		{}
@@ -275,6 +262,16 @@ sub Feat_Set_parse($\%\$\%)
 	$xml_parser->parsefile($feat_set_fn) or die "Can't read $feat_set_fn";
 	chop $feat_set_str; #remove final space
 	$$feat_set = $feat_set_str;
+}
+
+sub add_name_tag(\%$$)
+{
+	my ($feat_tag, $name, $tag) = @_;
+	
+	if (defined $feat_tag->{$name} 
+			&& $feat_tag->{$name} ne $tag)
+		{die("value name: $name mapped to a second different tag: $tag\n");}
+	$feat_tag->{$name} = $tag;
 }
 
 #forward declaration so recursive call won't be flagged as an error
@@ -1038,7 +1035,7 @@ sub cmd_line_exec(@)
 	local (@ARGV) = @_; #use 'local' instead of 'my' so &getopts works right
 	getopts($opt_str); #sets $opt_?'s and removes the switches from @ARGV
 	
-	if (scalar @ARGV == 0 or $opt_h)
+	if (scalar @ARGV == 0 || $opt_h)
 		{Usage_print;}
 	
 	my ($cmd);
@@ -1215,7 +1212,7 @@ sub cmd_line_exec(@)
 		Feat_All_parse($feat_all_fn, %feat_all, %feat_tag);
 		Feat_Set_parse($feat_set_fn, %feat_tag, $feat_set, %line_metrics);
 		if ($opt_d) {print "feat_set = $feat_set\n";}
-		if ($opt_d and defined $line_metrics{'metrics'}) 
+		if ($opt_d && defined $line_metrics{'metrics'}) 
 			{print "line_metrics = \'$line_metrics{'font'}\' $line_metrics{'em-sqr'} $line_metrics{'metrics'}\n";}
 		Feat_Set_cmds(%feat_all, $feat_set, @commands);
 		if ($opt_d) {print "commands: \n"; foreach (@commands) {print "$_->{'cmd'}: $_->{'args'}\n"}; print "\n";}
