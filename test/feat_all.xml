@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE all_features SYSTEM "feat_all.dtd">
+<!-- these tests haven't been updated to reflect the reversed processing order 
+     but they still work well for regression testing -->
 <all_features version="1.0">
 	<feature name="Capital Eng alternates" value="Large eng with descender" tag="EN">
 		<value name="Large eng with descender" tag="d">
 			<cmd name="null" args="null"/>
 		</value>
-		<value name="Large eng on baseline" tag="b">
+		<value name="Large Eng on baseline" tag="b"> <!-- test old_value -->
 			<cmd name="encode" args="014A Eng.BaselineHook"/>
 			<cmd name="gr_feat" args="1024 1"/>
 		</value>
@@ -40,7 +42,7 @@
 			<cmd name="feat_add" args="GSUB latn {IPA} {ccmp_vietnamese} 0"/>
 		</value>
 	</feature>
-	<feature name="Romanian-style diacritics" value="False" tag="RD">
+	<feature name="Romanian-style diacs" value="False" tag="RD"> <!-- test old_feature -->
 		<value name="False" tag="f">
 			<cmd name="null" args="null"/>
 		</value>
@@ -99,4 +101,8 @@
 		<alias name="rom_decomp" value="6"/>
 		<alias name="rom_precomp" value="7"/>
 	</aliases>
+	<old_names>
+		<old_feature name="Romanian-style diacritics" tag="RD" />
+		<old_value feature="Capital Eng alternates" name="Large eng on baseline" tag="b" />
+	</old_names>
 </all_features>
