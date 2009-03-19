@@ -1,4 +1,4 @@
-# © SIL International 2007. All rights reserved.
+# © SIL International 2007-2009. All rights reserved.
 # Please do not redistribute.
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
@@ -13,6 +13,10 @@ use XML::Parser::Expat;
 use Getopt::Std;
 
 #### global variables & constants ####
+
+my $version = "1.3"; # output old_names section
+#1.2 - generate WPFeatures test
+#1.1 - handle arbitrary interacting features
 
 #$opt_d - debug output
 #$opt_g - output only graphite cmds
@@ -1074,7 +1078,7 @@ END
 sub Usage_print()
 {
 	print <<END;
-(c) SIL International 2007. All rights reserved.
+RFComposer ver $version (c) SIL International 2007-2009. All rights reserved.
 usage: 
 	RFComposer <switches> <font.ttf> <gsi.xml> <dblenc.txt> [<gsi_supp_fn.xml>]
 	switches:

@@ -1,4 +1,4 @@
-# © SIL International 2007-2008. All rights reserved.
+# © SIL International 2007-2009. All rights reserved.
 # Please do not redistribute.
 
 #todo: don't die on every error, try to keep going
@@ -12,7 +12,10 @@ use Getopt::Std;
 use File::Temp qw(tempfile);
 use Compress::Zlib;
 
-#### package variables & constants ####
+#### global variables & constants ####
+
+my $version = "1.2";
+#1.1 - change processing order
 
 #$opt_h - help via the usage message
 #$opt_d - debug output
@@ -988,7 +991,7 @@ sub Table_add($$$)
 sub Usage_print()
 {
 	print <<END;
-(c) SIL International 2007-2008. All rights reserved.
+TypeTuner ver $version (c) SIL International 2007-2009. All rights reserved.
 see http://scripts.sil.org/TypeTuner
 
 usage: 
