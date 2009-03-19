@@ -18,6 +18,12 @@ my $version = "1.3"; # output old_names section
 #1.2 - generate WPFeatures test
 #1.1 - handle arbitrary interacting features
 
+# This is the version that goes in feat_all.xml file header.
+#   I think it should only change if the way that the xml has to be parsed changes
+#    and by more than adding optional elements.
+#   The features & settings will indicate what font version the feat_all.xml file goes with.
+my $xml_version = "1.0";
+
 #$opt_d - debug output
 #$opt_g - output only graphite cmds
 #$opt_q - output no graphite cmds
@@ -1182,7 +1188,7 @@ $feat_all_fn = $feat_all_base_fn;
 open $feat_all_fh, ">$feat_all_fn" or die("Could not open $feat_all_fn for writing\n");
 print $feat_all_fh "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 print $feat_all_fh "<!DOCTYPE all_features SYSTEM \"feat_all.dtd\">\n";
-print $feat_all_fh "<all_features version=\"1.0\">\n";
+print $feat_all_fh "<all_features version=\"$xml_version\">\n";
 
 Features_output($feat_all_fh, %feats, %featset_to_usvs, %usv_feat_to_ps_name, %dblenc_usv);
 Interactions_output($feat_all_fh, %featset_to_usvs, %usv_feat_to_ps_name, %feats, %dblenc_usv);
