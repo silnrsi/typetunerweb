@@ -91,7 +91,7 @@
 		</cmd_block>
 	</cmd_blocks>
 	<aliases>
-		<alias name="IPA" value="IPA "/>
+		<alias name="IPA" value="IPPH"/>
 		<alias name="ROM" value="ROM "/>
 		<alias name="ccmp_latin" value="ccmp"/>
 		<alias name="ccmp_romanian" value="ccmp _0"/>
