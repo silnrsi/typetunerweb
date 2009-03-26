@@ -1074,8 +1074,8 @@ sub Old_names_output($)
 	print $feat_all_fh <<END;
 	<old_names>
 		<old_feature name="J stroke hook alternate" tag="JStrk"/>
-		<old_feature name="Small v-hook alternates" tag="VHk"/>
-		<old_value feature="Small v-hook alternates" name="Straight" tag="StrtLftLowHk"/>
+		<old_feature name="Small v-hook alternate" tag="VHk"/>
+		<old_value feature="Small v-hook alternate" name="Straight" tag="StrtLftLowHk"/>
 		<old_feature name="Cyrillic E alternates" tag="CyrE"/>
 	</old_names>
 END
