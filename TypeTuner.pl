@@ -1,5 +1,6 @@
-# © SIL International 2007-2009. All rights reserved.
-# Please do not redistribute.
+# TypeTuner is copyright © 2008-2009 by SIL International and is distributed
+# under the Artistic License 2.0 (http://www.opensource.org/licenses/artistic-license-2.0.php). 
+# TypeTuner is a trademark of SIL International.
 
 #todo: don't die on every error, try to keep going
 
@@ -991,7 +992,7 @@ sub Table_add($$$)
 sub Usage_print()
 {
 	print <<END;
-TypeTuner ver $version (c) SIL International 2007-2009. All rights reserved.
+TypeTuner ver $version copyright (c) SIL International 2007-2009
 see http://scripts.sil.org/TypeTuner
 
 usage: 
