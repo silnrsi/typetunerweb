@@ -1259,42 +1259,12 @@ print FH <<"EOS";
 <Body docRightToLeft="false">
 EOS
 
-foreach my $featsets (sort sort_tests keys %featset_to_usvs)
+sub WP_test_output($$@)
+#output a WorldPad test string
+#arguments are a label, the WP feature activation string, 
+# and an array of strings that contain space delimited USVs
 {
-	#TODO: should we process only feature interactions of interest? do all of them for now
-	my $featsets_str = '';
-	my @featset = split(/\s/, $featsets);
-	foreach my $featset (@featset)
-	{
-		my ($feat_tag, $set_tag);
-		if ($featset =~ /(.*)-(.*)/)
-			{($feat_tag, $set_tag) = ($1, $2);}
-		else
-			{die("feature-value pair is corrupt: $featset\n");}
-		my ($feat_id, $set_id) = Feats_to_ids($feat_tag, $set_tag, %feats);
-		$featsets_str .= "$feat_id=$set_id,";
-	}
-	$featsets_str = substr($featsets_str,0,-1);
-	
-	#special test cases for BrdgDiacs-T
-	# Diaresis bridging LL with possible double macron below (occurring after diaresis)
-	my $bridging_diaresis_test = ['004C 0308 004C', '004C 0308 006C', '006C 0308 006C', '004C 0308 035F 004C', '004C 0308 035F 006C', '006C 0308 035F 006C'];
-	# Inverted Breve bridging OU with possible double macron below (occurring before breve)
-	my $bridging_breve_test = ['004F 0311 0055', '004F 0311 0075', '006F 0311 0075', '004F 035F 0311 0055', '004F 035F 0311 0075', '006F 035F 0311 0075', '004F 0361 0055', '004F 0361 0075', '006F 0361 0075', '004F 035F 0361 0055', '004F 035F 0361 0075', '006F 035F 0361 0075'];
-	
-	my @usv_str = sort @{$featset_to_usvs{$featsets}};
-	
-	if ($featsets eq 'BrdgDiacs-T')
-	{
-		foreach (@usv_str) {$_ = '25CC ' . $_};
-		push(@usv_str, @{$bridging_diaresis_test});
-		push(@usv_str, @{$bridging_breve_test});
-	}
-	elsif ($featsets eq 'CmbBrvCyr-T')
-	{
-		foreach (@usv_str) {$_ = '25CC ' . $_};
-	}
-		
+	my ($featsets, $featsets_str, @usv_str) = @_;
 	my $usvs_str = '';
 	foreach my $usv_str (@usv_str)
 	{
@@ -1306,7 +1276,7 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 	}
 	chop($usvs_str);
 	
-	print FH <<"EOS";
+	print FH <<"EOS";  #FH is global
   <StTxtPara>
     <StyleRules15>
       <Prop namedStyle="Normal"/>
@@ -1321,6 +1291,45 @@ foreach my $featsets (sort sort_tests keys %featset_to_usvs)
 EOS
 }
 
+#special test cases for bridging diacritcs
+my @bridging_diacritics_test = ('25CC 0311', '25CC 0361');
+# Diaresis bridging LL with possible double macron below (occurring after diaresis)
+my @bridging_diaresis_test = ('004C 0308 004C', '004C 0308 006C', '006C 0308 006C', '004C 0308 035F 004C', '004C 0308 035F 006C', '006C 0308 035F 006C');
+# Inverted Breve bridging OU with possible double macron below (occurring before breve)
+my @bridging_breve_test = ('004F 0311 0055', '004F 0311 0075', '006F 0311 0075', '004F 035F 0311 0055', '004F 035F 0311 0075', '006F 035F 0311 0075', '004F 0361 0055', '004F 0361 0075', '006F 0361 0075', '004F 035F 0361 0055', '004F 035F 0361 0075', '006F 035F 0361 0075');
+
+push(@bridging_diacritics_test, @bridging_diaresis_test);
+push(@bridging_diacritics_test, @bridging_breve_test);
+WP_test_output('bridging diacs', '1052=1', @bridging_diacritics_test);
+	
+foreach my $featsets (sort sort_tests keys %featset_to_usvs)
+{
+	#TODO: should we process only feature interactions of interest? do all of them for now
+
+	#create feature activation string ($featsets_str) for WorldPad
+	my $featsets_str = '';
+	my @featset = split(/\s/, $featsets);
+	foreach my $featset (@featset)
+	{
+		my ($feat_tag, $set_tag);
+		if ($featset =~ /(.*)-(.*)/)
+			{($feat_tag, $set_tag) = ($1, $2);}
+		else
+			{die("feature-value pair is corrupt: $featset\n");}
+		my ($feat_id, $set_id) = Feats_to_ids($feat_tag, $set_tag, %feats);
+		$featsets_str .= "$feat_id=$set_id,";
+	}
+	$featsets_str = substr($featsets_str, 0, -1); #remove final ','
+	
+	my @usv_str = sort @{$featset_to_usvs{$featsets}};
+	
+	if ($featsets eq 'CmbBrvCyr-T')
+	{
+		foreach (@usv_str) {$_ = '25CC ' . $_};
+	}
+	WP_test_output($featsets, $featsets_str, @usv_str);
+}
+		
 print FH <<"EOS";
 </Body>
 
