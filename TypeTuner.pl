@@ -1,3 +1,4 @@
+#!/usr/bin/perl -w
 # TypeTuner is copyright © 2007-2009 by SIL International and is distributed
 # under the Artistic License 2.0 (http://www.opensource.org/licenses/artistic-license-2.0.php). 
 # TypeTuner is a trademark of SIL International.
@@ -15,7 +16,7 @@ use Compress::Zlib;
 
 #### global variables & constants ####
 
-my $version = "1.2";
+my $version = "1.2"; #add old_names section to feat_all.xml
 #1.1 - change processing order
 
 #$opt_h - help via the usage message
