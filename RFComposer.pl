@@ -897,6 +897,7 @@ sub Features_output($\%\%\%\%)
 		<value name="Loose" tag="$loose_tag">
 			<cmd name="line_gap" args="2900 1100"/>
 		</value>
+		<!-- edit note: do _not_ delete the Imported value -->
 		<value name="Imported" tag="$imported_tag">
 			<cmd name="line_metrics_scaled" args="null"/>
 		</value>
