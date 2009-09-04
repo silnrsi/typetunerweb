@@ -1,15 +1,17 @@
 #!/usr/bin/perl
 
+use strict;  
+
 #
 # Customize these settings as needed for the host system
 #
 my $typeTunerDir = '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner';
 my $tunableFontsDir = "$typeTunerDir/tunable-fonts";
 
-#my $cgiPath = '/cgi-bin';
-my $cgiPath = '/ttw';
-my $cgiName = 'fonts2go.cgi';
-my $title = 'fonts2go';
+my $cgiPathName = $0;     # $0 will be something like /Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi
+$cgiPathName =~ s!^.*(?=/ttw/)!!;
+my $title = 'TypeTuner Web';
+my $defaultFamily = 'CharisSIL';
 
 # no user serviceable parts under here
 
@@ -28,7 +30,7 @@ my $availableFamilies;
 opendir(DIR, "$tunableFontsDir") || die "Cannot opendir $tunableFontsDir: $!";
 foreach (sort readdir(DIR)) {
 	next if m/^\./;
-	$tag = $_;
+	my $tag = $_;
 	$tag =~ s/[^-A-Za-z_0-9]//g;
 	$availableFamilies->{$tag} = $_;
 }
@@ -54,16 +56,18 @@ if ($cgi->param('Select family')) {
 	
 		start_form(
 				-method		=> 'post',
-				-action		=> "$cgiPath/$cgiName",
+				-action		=> "$cgiPathName",
 				-enctype	=> 'multipart/form-data',
 				-charset	=> 'UTF-8' );
 	
 	print
 		p([strong(["Tunable feature settings in $availableFamilies->{$family}"])]);
 
+if (0)   # 'Load settings' not yet implemented
+{
 	print
 		p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
-	
+}	
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_form,
@@ -75,7 +79,7 @@ if ($cgi->param('Select family')) {
 	print
 		hr,
 		strong(['Font name suffix']),
-		' (auto-generated if blank):',
+		' (auto-generated if blank): ',
 		textfield('suffix', '', 50, 80);
 	
 	print
@@ -100,19 +104,22 @@ elsif ($cgi->param('Get tuned font')) {
 	my $family = $cgi->param('family');
 	my $suffix = $cgi->param('suffix');
 	my $suffixOpt = '';
+	my $buffer;
 	
 	my $file_name = $family;
 	if ($suffix ne '') {
 		$file_name .= "-$suffix";
-		$suffixOpt = "-n $suffix" if $suffix ne '';
+		$suffixOpt = "-n $suffix";
 	}
 	else {
 		$file_name .= '-tuned';
 	}
 	$file_name =~ s/[^-A-Za-z_0-9]//g;
+	my $tunedDir = "$tempDir/$file_name";
+	mkdir "$tunedDir";
 	
 	# create the customized settings file
-	open(SETTINGS, "> $tempDir/$family-$feat_set_tuned");
+	open(SETTINGS, "> $tunedDir/$family-$feat_set_tuned");
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_proc,
@@ -123,9 +130,8 @@ elsif ($cgi->param('Get tuned font')) {
 	close(SETTINGS);
 	
 	# run typetuner on all fonts in the family
-	my $ttfs = `ls $tunableFontsDir/$family/*.ttf`;
-	my $tunedDir = "$tempDir/$file_name";
-	mkdir "$tempDir/$file_name";
+	my $ttfs = `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`;
+	
 	foreach (split(/\n/, $ttfs)) {
 		my $tuned = $_;
 		$tuned =~ s!^.*/!$tunedDir/!;
@@ -135,12 +141,20 @@ elsif ($cgi->param('Get tuned font')) {
 		else {
 			$tuned =~ s/\.ttf$/-$suffix.ttf/;
 		}
-		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o $tuned applyset $tempDir/$family-$feat_set_tuned $_)");
+		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o $tuned applyset $tunedDir/$family-$feat_set_tuned $_)");
 	}
+	
+	# Include any other files (e.g., license)
+	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || die "Cannot opendir $tunableFontsDir/$availableFamilies->{$family}: $!";
+	foreach (sort readdir(DIR)) {
+		next if m/^\./ || m/\.ttf$/;
+		link "$tunableFontsDir/$availableFamilies->{$family}/$_", "$tempDir/$file_name/$_";
+	}
+	closedir(DIR);	
 	
 	# create the zip archive
 	my $devnull = File::Spec->devnull();
-	system("(cd $tempDir; zip $file_name.zip $file_name/*.ttf 2>&1 > $devnull)");
+	system("(cd $tempDir; zip -q $file_name.zip $file_name/* 2>&1 > $devnull)");
 
   if (0) {
 	$| = 1;
@@ -157,7 +171,7 @@ elsif ($cgi->param('Get tuned font')) {
 		
 		start_form(
 				-method		=> 'post',
-				-action		=> "$cgiPath/$cgiName",
+				-action		=> "$cgiPathName",
 				-enctype	=> 'multipart/form-data',
 				-charset	=> 'UTF-8' ),
 
@@ -213,7 +227,7 @@ else {
 	
 		start_form(
 				-method		=> 'post',
-				-action		=> "$cgiPath/$cgiName",
+				-action		=> "$cgiPathName",
 				-enctype	=> 'multipart/form-data',
 				-charset	=> 'UTF-8' );
 	
@@ -225,7 +239,7 @@ else {
 					popup_menu(
 						-name => 'family',
 						-values => [ sort keys %$availableFamilies ],
-						-default => 'CharisSIL',
+						-default => $defaultFamily,
 						-labels => $availableFamilies
 					)
 				])
@@ -242,6 +256,7 @@ else {
 	exit;
 }
 
+my ($featureName, $defValue, $values);
 
 sub sh_form
 {
@@ -252,7 +267,6 @@ sub sh_form
 	}
 	
 	elsif ($el eq 'feature') {
-		undef $feature;
 		$featureName = $atts{'name'};
 		$defValue = $atts{'value'};
 		$values = [];
@@ -272,7 +286,7 @@ sub eh_form
 	}
 
 	elsif ($el eq 'feature') {
-		print Tr({-valign => CENTER},
+		print Tr({-valign => 'CENTER'},
 			[
 				td([
 					$featureName,

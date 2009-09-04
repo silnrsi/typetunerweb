@@ -1,0 +1,44 @@
+Some facts that developers might like to know:
+
+1. TYPETUNER INTERFACE
+
+Presently this CGI script invokes TypeTuner in two ways:
+
+	perl TypeTuner.pl -x output.xml input.ttf
+	perl TypeTuner.pl [-n suffix] -o output.ttf applyset input.xml input.ttf
+
+If the command line parameters to TypeTuner.pl change, this CGI scipt 
+may need updating.
+
+
+2. LINE ENDINGS MATTER
+
+On xserve3 (scripts.sil.org), apparently the line-endings do matter for CGI
+scripts. I've discovered that CRLF line endings don't work. Therefore I've
+set the svn:eol-style property to LF making it possible to edit the file
+on Windows and then scp it over to the appropriate folder on xserve.
+
+
+3. XSERVE3 LOCATIONS
+
+The URL to access this tool is: http://scripts.sil.org/ttw/fonts2go.cgi
+
+The relevant folders on xserve3 are:
+
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw 
+  -- root folder where the fonts2go.cgi should be located
+
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner 
+  -- subfolder  containing TypeTuner.pl
+
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts
+  -- subfolder containg source font packages. 
+
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/AndikaBasic
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/CharisSIL 
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/DoulosSIL 
+etc...
+  -- subfolders containing source font packages. The names of these subfolders
+     should not have spaces.
+     
+Bob Hallissy  2009-09-04
