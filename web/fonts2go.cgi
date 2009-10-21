@@ -26,8 +26,22 @@ my $tempDir = undef;
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
+my $dbgFileName;
+sub debug
+{
+	# Used to output text to debug logfile (e.g., 'fonts2go.dbg')
+	unless (defined ($dbgFileName))
+	{
+		$dbgFileName = $0;
+		$dbgFileName =~ s/cgi$/dbg/;
+	}
+	open (DBG, ">> $dbgFileName");
+	print DBG join(' ', @_);
+	close (DBG);
+}
+	
 my $availableFamilies;
-opendir(DIR, "$tunableFontsDir") || die "Cannot opendir $tunableFontsDir: $!";
+opendir(DIR, "$tunableFontsDir") || die "Cannot opendir \"$tunableFontsDir\": $!";
 foreach (sort readdir(DIR)) {
 	next if m/^\./;
 	my $tag = $_;
@@ -42,9 +56,10 @@ if ($cgi->param('Select family')) {
 	#
 	my $family = $cgi->param('family');
 	my $tempDir = tempdir();
+	my $help;
 	
 	my @ttfs = split(/\n/, `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`);
-	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$family-$feat_set_orig $ttfs[0])");
+	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$family-$feat_set_orig \"$ttfs[0]\")");
 	
 	print
 		header(-charset => 'UTF-8'),
@@ -60,8 +75,23 @@ if ($cgi->param('Select family')) {
 				-enctype	=> 'multipart/form-data',
 				-charset	=> 'UTF-8' );
 	
+	if (-f "$tunableFontsDir/$availableFamilies->{$family}/.help_url")
+	{
+		open FH, "< $tunableFontsDir/$availableFamilies->{$family}/.help_url" or die $!;
+		my $helpURL = <FH>;
+		$helpURL =~ s/\s+$//;
+		close FH;
+		my $base = url(-base=>1);
+		if (substr($helpURL, 0, length($base)) eq $base)
+		{
+			# Help URL looks OK
+			$help = "(see " . a({href=>$helpURL, target=>"_blank"},"here") . " for help with font features)";
+		}
+	}
 	print
-		p([strong(["Tunable feature settings in $availableFamilies->{$family}"])]);
+		p(strong("Tunable feature settings in $availableFamilies->{$family}"), $help);
+	
+			
 
 if (0)   # 'Load settings' not yet implemented
 {
@@ -141,11 +171,11 @@ elsif ($cgi->param('Get tuned font')) {
 		else {
 			$tuned =~ s/\.ttf$/-$suffix.ttf/;
 		}
-		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o $tuned applyset $tunedDir/$family-$feat_set_tuned $_)");
+		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o $tuned applyset $tunedDir/$family-$feat_set_tuned \"$_\")");
 	}
 	
 	# Include any other files (e.g., license)
-	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || die "Cannot opendir $tunableFontsDir/$availableFamilies->{$family}: $!";
+	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || die "Cannot opendir \"$tunableFontsDir/$availableFamilies->{$family}\": $!";
 	foreach (sort readdir(DIR)) {
 		next if m/^\./ || m/\.ttf$/;
 		link "$tunableFontsDir/$availableFamilies->{$family}/$_", "$tempDir/$file_name/$_";
@@ -336,3 +366,4 @@ sub eh_proc
 		print SETTINGS "\t</feature>\n";
 	}
 }
+

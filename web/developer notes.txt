@@ -34,11 +34,15 @@ The relevant folders on xserve3 are:
 /Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts
   -- subfolder containg source font packages. 
 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/AndikaBasic
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/CharisSIL 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/DoulosSIL 
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Andika Basic
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Charis SIL 
+/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Doulos SIL 
 etc...
-  -- subfolders containing source font packages. The names of these subfolders
-     should not have spaces.
+  -- subfolders containing source font packages. As of 2009-10-21 the names of 
+     these subfolders may have spaces.
+  -- In addition to the source font package, these folders may contain a file
+     named ".help_url". The first line of this file should be the URL of a
+     page or document that provides user help regarding the features supported
+     by the fonts in the package. 
      
-Bob Hallissy  2009-09-04
+Bob Hallissy  2009-10-21
