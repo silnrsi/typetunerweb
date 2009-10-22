@@ -19,12 +19,16 @@ use CGI qw/:all :push :multipart/;
 use File::Temp qw/tempdir/;
 use File::Spec;
 use XML::Parser::Expat;
+use Time::localtime;
 
 my $cgi = new CGI;
 
 my $tempDir = undef;
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
+
+my $isodate = sprintf ("%04d-%02d-%02d", localtime->year() + 1900, localtime->mon(), localtime->mday);
+my $date = sprintf("%02d %s %04d", localtime->mday, (qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec))[localtime->mon()], localtime->year() + 1900);
 
 my $dbgFileName;
 sub debug
@@ -77,12 +81,16 @@ if ($cgi->param('Select family')) {
 	
 	if (-f "$tunableFontsDir/$availableFamilies->{$family}/.help_url")
 	{
-		open FH, "< $tunableFontsDir/$availableFamilies->{$family}/.help_url" or die $!;
+		# retrieve help url from .help_url file
+		open (FH, "< $tunableFontsDir/$availableFamilies->{$family}/.help_url");
 		my $helpURL = <FH>;
+		close (FH);
+		# For security, make sure the help URL is http, https, or ftp, and on the same server as our CGI script
 		$helpURL =~ s/\s+$//;
-		close FH;
+		my ($helpProtocol, $helpAddress) = split('://', $helpURL, 2);
 		my $base = url(-base=>1);
-		if (substr($helpURL, 0, length($base)) eq $base)
+		my ($baseProtcol, $baseAddress) = split('://', $base), 2 ;
+		if ($helpProtocol =~ /http|ftp/ && substr($helpAddress, 0, length($baseAddress)) eq $baseAddress)
 		{
 			# Help URL looks OK
 			$help = "(see " . a({href=>$helpURL, target=>"_blank"},"here") . " for help with font features)";
@@ -177,8 +185,28 @@ elsif ($cgi->param('Get tuned font')) {
 	# Include any other files (e.g., license)
 	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || die "Cannot opendir \"$tunableFontsDir/$availableFamilies->{$family}\": $!";
 	foreach (sort readdir(DIR)) {
-		next if m/^\./ || m/\.ttf$/;
-		link "$tunableFontsDir/$availableFamilies->{$family}/$_", "$tempDir/$file_name/$_";
+		next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
+		if (m/^(.*)_tt(\..*)+$/i)
+		{
+			# Fix up %DATE% in any file that ends in _tt, _tt.txt, etc. 
+			my $outfile = "$tunedDir/$1$2";
+			local $/;
+			open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$family}/$_") or die ("can't open '$tunableFontsDir/$availableFamilies->{$family}/$_' for reading: !$\n");
+			my $s = <FH>;	# Slurp entire file
+			close (FH);
+			use bytes;
+			$s =~ s/%DATE%/$date/g;
+			$s =~ s/%ISODATE%/$isodate/g;
+			no bytes;
+			open (FH, ">:raw", $outfile) || die ("Can't open '$outfile' for writing: $!\n");
+			print FH $s;
+			close (FH);
+		}
+		else
+		{
+			# anything else is just linked in.
+			link "$tunableFontsDir/$availableFamilies->{$family}/$_", "$tunedDir/$_";
+		}
 	}
 	closedir(DIR);	
 	
