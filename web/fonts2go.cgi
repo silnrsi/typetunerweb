@@ -54,7 +54,7 @@ foreach (sort readdir(DIR)) {
 }
 closedir(DIR);
 
-if ($cgi->param('Select family')) {
+if ($cgi->param('Select features')) {
 	#
 	# present form to select font features
 	#
@@ -146,8 +146,10 @@ elsif ($cgi->param('Get tuned font')) {
 	
 	my $file_name = $family;
 	if ($suffix ne '') {
+		$suffix =~ s/["']//g;		# Things we probably don't want in font names. "
+		$suffixOpt = "-n \"$suffix\"";
+		$suffix =~ s/[^-A-Za-z_0-9]//g;  # Leave just alphanumerics, '-' and '_' in filenames
 		$file_name .= "-$suffix";
-		$suffixOpt = "-n $suffix";
 	}
 	else {
 		$file_name .= '-tuned';
@@ -306,7 +308,7 @@ else {
 		
 	print
 		hr,
-		submit('Select family'),
+		submit('Select features'),
 		defaults('Reset'),
 		end_form,
 		end_html;
