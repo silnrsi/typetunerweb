@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl 
 
 use strict;  
 
@@ -7,19 +7,29 @@ use strict;
 #
 my $typeTunerDir = '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner';
 my $tunableFontsDir = "$typeTunerDir/tunable-fonts";
+my $logDir = '/var/log';
 
-my $cgiPathName = $0;     # $0 will be something like /Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi
-$cgiPathName =~ s!^.*(?=/ttw/)!!;
 my $title = 'TypeTuner Web';
 my $defaultFamily = 'CharisSIL';
+
+my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
+$cgiPathName =~ s!^.*(?=/ttw/)!!;	# something like '/ttw/fonts2go.cgi'
+
 
 # no user serviceable parts under here
 
 use CGI qw/:all :push :multipart/;
+use CGI::Carp qw/warningsToBrowser fatalsToBrowser/;
+use Fcntl qw/:flock :seek/;
 use File::Temp qw/tempdir/;
 use File::Spec;
 use XML::Parser::Expat;
-use Time::localtime;
+
+my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
+$cgiPathName =~ s!^.*(?=/ttw/)!!;	# something like '/ttw/fonts2go.cgi'
+my $logFileName = $logDir . $cgiPathName;
+$logFileName =~ s/\.[^.]*$//;
+$logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
 my $cgi = new CGI;
 
@@ -27,25 +37,8 @@ my $tempDir = undef;
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
-my $isodate = sprintf ("%04d-%02d-%02d", localtime->year() + 1900, localtime->mon(), localtime->mday);
-my $date = sprintf("%02d %s %04d", localtime->mday, (qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec))[localtime->mon()], localtime->year() + 1900);
-
-my $dbgFileName;
-sub debug
-{
-	# Used to output text to debug logfile (e.g., 'fonts2go.dbg')
-	unless (defined ($dbgFileName))
-	{
-		$dbgFileName = $0;
-		$dbgFileName =~ s/cgi$/dbg/;
-	}
-	open (DBG, ">> $dbgFileName");
-	print DBG join(' ', @_);
-	close (DBG);
-}
-	
 my $availableFamilies;
-opendir(DIR, "$tunableFontsDir") || die "Cannot opendir \"$tunableFontsDir\": $!";
+opendir(DIR, "$tunableFontsDir") || dienice ("Cannot opendir \"$tunableFontsDir\": $!");
 foreach (sort readdir(DIR)) {
 	next if m/^\./;
 	my $tag = $_;
@@ -53,6 +46,8 @@ foreach (sort readdir(DIR)) {
 	$availableFamilies->{$tag} = $_;
 }
 closedir(DIR);
+
+my $featurelist;
 
 if ($cgi->param('Select features')) {
 	#
@@ -110,7 +105,7 @@ if (0)   # 'Load settings' not yet implemented
 	$parser->setHandlers(
 		'Start' => \&sh_form,
 		'End'   => \&eh_form);
-	open FH, "< $tempDir/$family-$feat_set_orig" or die $!;
+	open FH, "< $tempDir/$family-$feat_set_orig" or dienice ($!);
 	$parser->parse(*FH);
 	close(FH);
 	
@@ -164,10 +159,13 @@ elsif ($cgi->param('Get tuned font')) {
 	$parser->setHandlers(
 		'Start' => \&sh_proc,
 		'End'   => \&eh_proc);
-	open(FH, "< $tempDir/$family-$feat_set_orig") or die $!;
+	open(FH, "< $tempDir/$family-$feat_set_orig") or dienice ($!);
 	$parser->parse(*FH);
 	close(FH);
 	close(SETTINGS);
+	
+	# Ok, write to logfile:
+	appendlog($family, $featurelist);
 	
 	# run typetuner on all fonts in the family
 	my $ttfs = `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`;
@@ -184,8 +182,12 @@ elsif ($cgi->param('Get tuned font')) {
 		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o $tuned applyset $tunedDir/$family-$feat_set_tuned \"$_\")");
 	}
 	
-	# Include any other files (e.g., license)
-	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || die "Cannot opendir \"$tunableFontsDir/$availableFamilies->{$family}\": $!";
+	# Include any other files (e.g., license), but replace some keywords 
+	my @t = localtime();
+	my $isodate = sprintf ("%04d-%02d-%02d", $t[5]+1900, $t[4]+1, $t[3]);
+	my $date = sprintf("%02d %s %04d", $t[3], (qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec))[$t[4]], $t[5] + 1900);
+
+	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || dienice ("Cannot opendir \"$tunableFontsDir/$availableFamilies->{$family}\": $!");
 	foreach (sort readdir(DIR)) {
 		next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
 		if (m/^(.*)_tt(\..*)+$/i)
@@ -193,14 +195,14 @@ elsif ($cgi->param('Get tuned font')) {
 			# Fix up %DATE% in any file that ends in _tt, _tt.txt, etc. 
 			my $outfile = "$tunedDir/$1$2";
 			local $/;
-			open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$family}/$_") or die ("can't open '$tunableFontsDir/$availableFamilies->{$family}/$_' for reading: !$\n");
+			open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$family}/$_") or dienice ("can't open '$tunableFontsDir/$availableFamilies->{$family}/$_' for reading: !$\n");
 			my $s = <FH>;	# Slurp entire file
 			close (FH);
 			use bytes;
 			$s =~ s/%DATE%/$date/g;
 			$s =~ s/%ISODATE%/$isodate/g;
 			no bytes;
-			open (FH, ">:raw", $outfile) || die ("Can't open '$outfile' for writing: $!\n");
+			open (FH, ">:raw", $outfile) || dienice ("Can't open '$outfile' for writing: $!\n");
 			print FH $s;
 			close (FH);
 		}
@@ -375,8 +377,12 @@ __EOT__
 
 	elsif ($el eq 'feature') {
 		my $featureName = $atts{'name'};
-		my $value = $cgi->param($featureName);
-		print SETTINGS "\t<feature name=\"$featureName\" value=\"$value\">\n";
+		my $oldvalue = $atts{'value'};
+		my $newvalue = $cgi->param($featureName);
+		print SETTINGS "\t<feature name=\"$featureName\" value=\"$newvalue\">\n";
+		if ($newvalue ne $oldvalue) {
+			$featurelist .= $featureName . (lc($newvalue) eq 'true' ? '; ' : " = $newvalue; ") ;
+		}
 	}
 
 	elsif ($el eq 'value') {
@@ -397,3 +403,22 @@ sub eh_proc
 	}
 }
 
+sub appendlog
+{
+	my $logmsg = join(' ', @_);
+	my @t = localtime();
+	open(LOG, ">>$logFileName") or dienice("Couldn't open '$logFileName': $!");
+	flock(LOG, LOCK_EX); # set an exclusive lock -- may wait
+	seek(LOG, 0, SEEK_END); # once we have the lock, then re-seek the end of file
+	printf LOG "%04d-%02d-%02d %02d:%02d:%02d", $t[5]+1900, $t[4]+1, $t[3], $t[2], $t[1], $t[0];
+	print LOG " $ENV{'SERVER_NAME'} to $ENV{'REMOTE_ADDR'}: $logmsg\n";
+	close(LOG);
+}
+
+sub dienice {
+	my($errmsg) = join(' ', @_);
+	print "<h2>Error</h2>\n";
+	print "<p>$errmsg</p>\n";
+	print end_html;
+	exit;
+}
