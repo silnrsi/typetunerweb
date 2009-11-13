@@ -15,6 +15,9 @@ my $defaultFamily = 'CharisSIL';
 my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
 $cgiPathName =~ s!^.*(?=/ttw/)!!;	# something like '/ttw/fonts2go.cgi'
 
+my $logFileName = $logDir . $cgiPathName;
+$logFileName =~ s/\.[^.]*$//;
+$logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
 # no user serviceable parts under here
 
@@ -23,17 +26,11 @@ use CGI::Carp qw/warningsToBrowser fatalsToBrowser/;
 use Fcntl qw/:flock :seek/;
 use File::Temp qw/tempdir/;
 use File::Spec;
+use File::Path;
 use XML::Parser::Expat;
-
-my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
-$cgiPathName =~ s!^.*(?=/ttw/)!!;	# something like '/ttw/fonts2go.cgi'
-my $logFileName = $logDir . $cgiPathName;
-$logFileName =~ s/\.[^.]*$//;
-$logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
 my $cgi = new CGI;
 
-my $tempDir = undef;
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
@@ -84,7 +81,7 @@ if ($cgi->param('Select features')) {
 		$helpURL =~ s/\s+$//;
 		my ($helpProtocol, $helpAddress) = split('://', $helpURL, 2);
 		my $base = url(-base=>1);
-		my ($baseProtcol, $baseAddress) = split('://', $base), 2 ;
+		my ($baseProtcol, $baseAddress) = split('://', $base, 2) ;
 		if ($helpProtocol =~ /http|ftp/ && substr($helpAddress, 0, length($baseAddress)) eq $baseAddress)
 		{
 			# Help URL looks OK
@@ -250,7 +247,8 @@ elsif ($cgi->param('Get tuned font')) {
 	   print $buffer;
 	}
 	close(ZIP);
-	system("rm -rf $tempDir");
+	rmtree($tunedDir);
+	unlink("$tempDir/$file_name.zip");
 	
 	print multipart_final();
   }
@@ -261,7 +259,9 @@ elsif ($cgi->param('Get tuned font')) {
 	   print $buffer;
 	}
 	close(ZIP);
-	system("rm -rf $tempDir");
+	rmtree($tunedDir);
+	unlink("$tempDir/$file_name.zip");
+
   }
 
 	exit;
@@ -273,7 +273,7 @@ else {
 	#
 	my $tempDir = $cgi->param('temp_dir');
 	if ($tempDir ne '') {
-		system("rm -rf $tempDir");
+		rmtree($tempDir);
 	}
 
 	print
