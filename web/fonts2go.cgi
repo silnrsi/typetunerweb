@@ -46,15 +46,19 @@ closedir(DIR);
 
 my $featurelist;
 
+######################################################################
+
 if ($cgi->param('Select features')) {
 	#
 	# present form to select font features
 	#
 	my $family = $cgi->param('family');
-	my $tempDir = tempdir();
 	my $help;
 	
 	my @ttfs = split(/\n/, `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`);
+	dienice("Invalid parameter \"$family\"") unless scalar(@ttfs);
+	
+	my $tempDir = tempdir();
 	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$family-$feat_set_orig \"$ttfs[0]\")");
 	
 	print
@@ -97,7 +101,7 @@ if (0)   # 'Load settings' not yet implemented
 {
 	print
 		p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
-}	
+}
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_form,
@@ -113,9 +117,8 @@ if (0)   # 'Load settings' not yet implemented
 		textfield('suffix', '', 50, 80);
 	
 	print
-		hidden('family', $family),
-		hidden('temp_dir', $tempDir);
-
+		hidden('family', $family);
+	
 	print
 		hr,
 		submit('Get tuned font'),
@@ -123,18 +126,29 @@ if (0)   # 'Load settings' not yet implemented
 		end_form,
 		end_html;
 
+	rmtree($tempDir);
 	exit;
+
 }
+
+######################################################################
 
 elsif ($cgi->param('Get tuned font')) {
 	#
 	# run TypeTuner and deliver the resulting font(s)
 	#
-	my $tempDir = $cgi->param('temp_dir');
 	my $family = $cgi->param('family');
 	my $suffix = $cgi->param('suffix');
 	my $suffixOpt = '';
 	my $buffer;
+	
+	
+	my @ttfs = split(/\n/, `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`);
+	dienice("Invalid parameter \"$family\"") unless scalar(@ttfs);
+	
+	my $tempDir = tempdir();
+	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$family-$feat_set_orig \"$ttfs[0]\")");
+	
 	
 	my $file_name = $family;
 	if ($suffix ne '') {
@@ -165,9 +179,8 @@ elsif ($cgi->param('Get tuned font')) {
 	appendlog($family, $featurelist);
 	
 	# run typetuner on all fonts in the family
-	my $ttfs = `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`;
 	
-	foreach (split(/\n/, $ttfs)) {
+	foreach (@ttfs) {
 		my $tuned = $_;
 		$tuned =~ s!^.*/!$tunedDir/!;
 		if ($suffix eq '') {
@@ -247,8 +260,6 @@ elsif ($cgi->param('Get tuned font')) {
 	   print $buffer;
 	}
 	close(ZIP);
-	rmtree($tunedDir);
-	unlink("$tempDir/$file_name.zip");
 	
 	print multipart_final();
   }
@@ -259,22 +270,19 @@ elsif ($cgi->param('Get tuned font')) {
 	   print $buffer;
 	}
 	close(ZIP);
-	rmtree($tunedDir);
-	unlink("$tempDir/$file_name.zip");
 
   }
 
+	rmtree($tempDir);
 	exit;
 }
+
+######################################################################
 
 else {
 	#
 	# Initial page: present welcome screen, font family choice
 	#
-	my $tempDir = $cgi->param('temp_dir');
-	if ($tempDir ne '') {
-		rmtree($tempDir);
-	}
 
 	print
 		header(-charset => 'UTF-8'),
