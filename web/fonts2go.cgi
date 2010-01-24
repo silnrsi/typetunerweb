@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;  
 
@@ -8,6 +8,7 @@ use strict;
 my $typeTunerDir = '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner';
 my $tunableFontsDir = "$typeTunerDir/tunable-fonts";
 my $logDir = '/var/log';
+my $tmpDir = '/tmp';
 
 my $title = 'TypeTuner Web';
 my $defaultFamily = 'CharisSIL';
@@ -24,7 +25,7 @@ $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 use CGI qw/:all :push :multipart/;
 use CGI::Carp qw/warningsToBrowser fatalsToBrowser/;
 use Fcntl qw/:flock :seek/;
-use File::Temp qw/tempdir/;
+use File::Temp qw/tempdir tempfile/;
 use File::Spec;
 use File::Path;
 use XML::Parser::Expat;
@@ -35,16 +36,28 @@ my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
 my $availableFamilies;
-opendir(DIR, "$tunableFontsDir") || dienice ("Cannot opendir \"$tunableFontsDir\": $!");
+opendir(DIR, "$tunableFontsDir") || die ("Cannot opendir tunableFontsDir: $!\n");
 foreach (sort readdir(DIR)) {
 	next if m/^\./;
-	my $tag = $_;
-	$tag =~ s/[^-A-Za-z_0-9]//g;
-	$availableFamilies->{$tag} = $_;
+	my $familytag = $_;
+	$familytag =~ s/[^-A-Za-z_0-9]//g;
+	$availableFamilies->{$familytag} = $_;
 }
 closedir(DIR);
 
-my $featurelist;
+# Secure the environment:
+$ENV{'PATH'} = '/bin:/usr/bin';
+delete @ENV{'IFS', 'CDPATH', 'ENV', 'BASH_ENV'};
+
+my $featurelist;	# var to accumulate list of user-selected font features (for log file)
+
+# Create a tempfile used for debugging output. This file will be unlinked
+# just before the script exits. Thus if the script exits prematurely, the
+# tempfile remains. To add to this file, use appendtemp() function.
+my ($tmpf, $tmpfilename) = tempfile( "ttwXXXXX", DIR => $tmpDir, SUFFIX => '.txt');
+print $tmpf "Starting $cgiPathName\n";
+close $tmpf;
+
 
 ######################################################################
 
@@ -52,14 +65,12 @@ if ($cgi->param('Select features')) {
 	#
 	# present form to select font features
 	#
-	my $family = $cgi->param('family');
+	my $familytag = checkparam('family');
 	my $help;
 	
-	my @ttfs = split(/\n/, `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`);
-	dienice("Invalid parameter \"$family\"") unless scalar(@ttfs);
-	
+	my $ttf = ttflist($familytag);		# One font from family needed -- to get feature info
 	my $tempDir = tempdir();
-	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$family-$feat_set_orig \"$ttfs[0]\")");
+	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttf\")");
 	
 	print
 		header(-charset => 'UTF-8'),
@@ -75,10 +86,10 @@ if ($cgi->param('Select features')) {
 				-enctype	=> 'multipart/form-data',
 				-charset	=> 'UTF-8' );
 	
-	if (-f "$tunableFontsDir/$availableFamilies->{$family}/.help_url")
+	if (-f "$tunableFontsDir/$availableFamilies->{$familytag}/.help_url")
 	{
 		# retrieve help url from .help_url file
-		open (FH, "< $tunableFontsDir/$availableFamilies->{$family}/.help_url");
+		open (FH, "< $tunableFontsDir/$availableFamilies->{$familytag}/.help_url");
 		my $helpURL = <FH>;
 		close (FH);
 		# For security, make sure the help URL is http, https, or ftp, and on the same server as our CGI script
@@ -89,11 +100,11 @@ if ($cgi->param('Select features')) {
 		if ($helpProtocol =~ /http|ftp/ && substr($helpAddress, 0, length($baseAddress)) eq $baseAddress)
 		{
 			# Help URL looks OK
-			$help = "(see " . a({href=>$helpURL, target=>"_blank"},"here") . " for help with font features)";
+			$help = "(for help see " . a({href=>$helpURL, target=>"_blank"},"$availableFamilies->{$familytag} font features") . ")";
 		}
 	}
 	print
-		p(strong("Tunable feature settings in $availableFamilies->{$family}"), $help);
+		p(strong("Tunable feature settings in $availableFamilies->{$familytag}"), $help);
 	
 			
 
@@ -106,7 +117,7 @@ if (0)   # 'Load settings' not yet implemented
 	$parser->setHandlers(
 		'Start' => \&sh_form,
 		'End'   => \&eh_form);
-	open FH, "< $tempDir/$family-$feat_set_orig" or dienice ($!);
+	open FH, "< $tempDir/$familytag-$feat_set_orig" or die ("cannot open feature_set_org: $!\n");
 	$parser->parse(*FH);
 	close(FH);
 	
@@ -117,7 +128,7 @@ if (0)   # 'Load settings' not yet implemented
 		textfield('suffix', '', 50, 80);
 	
 	print
-		hidden('family', $family);
+		hidden('family', $familytag);
 	
 	print
 		hr,
@@ -127,6 +138,7 @@ if (0)   # 'Load settings' not yet implemented
 		end_html;
 
 	rmtree($tempDir);
+	unlink "$tmpfilename";
 	exit;
 
 }
@@ -137,59 +149,59 @@ elsif ($cgi->param('Get tuned font')) {
 	#
 	# run TypeTuner and deliver the resulting font(s)
 	#
-	my $family = $cgi->param('family');
-	my $suffix = $cgi->param('suffix');
+	my $familytag = checkparam('family');	# de-taint hidden param
+	my $suffix = checkparam('suffix');		# de-taint suffix
 	my $suffixOpt = '';
 	my $buffer;
 	
+	appendtemp("Starting 'Get tuned font': familytag = $familytag, suffix = $suffix");
 	
-	my @ttfs = split(/\n/, `ls "$tunableFontsDir/$availableFamilies->{$family}"/*.ttf`);
-	dienice("Invalid parameter \"$family\"") unless scalar(@ttfs);
+	my @ttfs = ttflist($familytag);		# Complete checking of 'family' param, and get list of fonts.
 	
 	my $tempDir = tempdir();
-	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$family-$feat_set_orig \"$ttfs[0]\")");
+	appendtemp("tempdir = $tempDir");
+	
+	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttfs[0]\")");
 	
 	
-	my $file_name = $family;
+	my $file_name = $familytag;
 	if ($suffix ne '') {
-		$suffix =~ s/["']//g;		# Things we probably don't want in font names. "
 		$suffixOpt = "-n \"$suffix\"";
-		$suffix =~ s/[^-A-Za-z_0-9]//g;  # Leave just alphanumerics, '-' and '_' in filenames
 		$file_name .= "-$suffix";
 	}
 	else {
 		$file_name .= '-tuned';
 	}
-	$file_name =~ s/[^-A-Za-z_0-9]//g;
 	my $tunedDir = "$tempDir/$file_name";
 	mkdir "$tunedDir";
+	appendtemp("tunedDir = $tunedDir");
 	
 	# create the customized settings file
-	open(SETTINGS, "> $tunedDir/$family-$feat_set_tuned");
+	open(SETTINGS, "> $tunedDir/$familytag-$feat_set_tuned");
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_proc,
 		'End'   => \&eh_proc);
-	open(FH, "< $tempDir/$family-$feat_set_orig") or dienice ($!);
+	open(FH, "< $tempDir/$familytag-$feat_set_orig") or die ("cannot open feature_set_org: $!\n");
 	$parser->parse(*FH);
 	close(FH);
 	close(SETTINGS);
 	
 	# Ok, write to logfile:
-	appendlog($family, $featurelist);
+	appendlog($familytag, $featurelist);
+	appendtemp("log file written");
 	
 	# run typetuner on all fonts in the family
 	
 	foreach (@ttfs) {
-		my $tuned = $_;
-		$tuned =~ s!^.*/!$tunedDir/!;
+		my $tuned = "$tunedDir/$_";
 		if ($suffix eq '') {
 			$tuned =~ s/\.ttf$/-TT.ttf/;
 		}
 		else {
 			$tuned =~ s/\.ttf$/-$suffix.ttf/;
 		}
-		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o $tuned applyset $tunedDir/$family-$feat_set_tuned \"$_\")");
+		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$familytag-$feat_set_tuned \"$tunableFontsDir/$availableFamilies->{$familytag}/$_\")");
 	}
 	
 	# Include any other files (e.g., license), but replace some keywords 
@@ -197,36 +209,40 @@ elsif ($cgi->param('Get tuned font')) {
 	my $isodate = sprintf ("%04d-%02d-%02d", $t[5]+1900, $t[4]+1, $t[3]);
 	my $date = sprintf("%02d %s %04d", $t[3], (qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec))[$t[4]], $t[5] + 1900);
 
-	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$family}") || dienice ("Cannot opendir \"$tunableFontsDir/$availableFamilies->{$family}\": $!");
+	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}") || die ("Cannot opendir tunableFontsDir/$availableFamilies->{$familytag}: $!\n");
 	foreach (sort readdir(DIR)) {
 		next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
 		if (m/^(.*)_tt(\..*)+$/i)
 		{
 			# Fix up %DATE% in any file that ends in _tt, _tt.txt, etc. 
 			my $outfile = "$tunedDir/$1$2";
+			appendtemp ("Processing '$_' -> '$outfile'");
 			local $/;
-			open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$family}/$_") or dienice ("can't open '$tunableFontsDir/$availableFamilies->{$family}/$_' for reading: !$\n");
+			open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$familytag}/$_") or die ("cannot open tunableFontsDir/$availableFamilies->{$familytag}/$_ for reading: !$\n");
 			my $s = <FH>;	# Slurp entire file
 			close (FH);
 			use bytes;
 			$s =~ s/%DATE%/$date/g;
 			$s =~ s/%ISODATE%/$isodate/g;
 			no bytes;
-			open (FH, ">:raw", $outfile) || dienice ("Can't open '$outfile' for writing: $!\n");
+			open (FH, ">:raw", $outfile) || die ("Cannot open '$outfile' for writing: $!\n");
 			print FH $s;
 			close (FH);
 		}
 		else
 		{
 			# anything else is just linked in.
-			link "$tunableFontsDir/$availableFamilies->{$family}/$_", "$tunedDir/$_";
+			appendtemp ("Linking '$_'");
+			link "$tunableFontsDir/$availableFamilies->{$familytag}/$_", "$tunedDir/$_";
 		}
 	}
 	closedir(DIR);	
 	
 	# create the zip archive
+	appendtemp ("Creating '$file_name.zip'");
 	my $devnull = File::Spec->devnull();
 	system("(cd $tempDir; zip -q $file_name.zip $file_name/* 2>&1 > $devnull)");
+
 
   if (0) {
 	$| = 1;
@@ -274,6 +290,7 @@ elsif ($cgi->param('Get tuned font')) {
   }
 
 	rmtree($tempDir);
+	unlink "$tmpfilename";
 	exit;
 }
 
@@ -323,6 +340,7 @@ else {
 		end_form,
 		end_html;
 	
+	unlink "$tmpfilename";
 	exit;
 }
 
@@ -411,11 +429,40 @@ sub eh_proc
 	}
 }
 
+sub checkparam
+{
+	# verify and de-taint a cgi parameter value
+	my $value = $cgi->param(shift);
+	$value =~ s/[^-A-Za-z_0-9]//g;		# Keep only alphanumerics, '-' and '_' 
+	$value =~ /^(.*)$/;					# de-taint
+	return $1;
+}
+	
+
+sub ttflist
+{
+	# return the first (in scalar context) or complete list (in list context) of the
+	# font files within a given family.
+	my $familytag = shift;
+	unless (exists ($availableFamilies->{$familytag}) && opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}"))
+	{ die ("Invalid parameter \"$familytag\"");}
+	my @ttfs =  (sort grep { /\.[ot]tf$/oi } readdir(DIR));
+	closedir(DIR);	
+	unless (scalar(@ttfs))
+	{ die ("Invalid parameter \"$familytag\"");}
+	return (wantarray ? @ttfs : $ttfs[0]);
+}
+
 sub appendlog
 {
+	# Append timestamp, user details, and message to our logfile
 	my $logmsg = join(' ', @_);
 	my @t = localtime();
-	open(LOG, ">>$logFileName") or dienice("Couldn't open '$logFileName': $!");
+	unless (open(LOG, ">>$logFileName"))
+	{
+		warn("Couldn't open '$logFileName': $!\n");
+		return;
+	}
 	flock(LOG, LOCK_EX); # set an exclusive lock -- may wait
 	seek(LOG, 0, SEEK_END); # once we have the lock, then re-seek the end of file
 	printf LOG "%04d-%02d-%02d %02d:%02d:%02d", $t[5]+1900, $t[4]+1, $t[3], $t[2], $t[1], $t[0];
@@ -423,10 +470,17 @@ sub appendlog
 	close(LOG);
 }
 
-sub dienice {
-	my($errmsg) = join(' ', @_);
-	print "<h2>Error</h2>\n";
-	print "<p>$errmsg</p>\n";
-	print end_html;
-	exit;
+sub appendtemp
+{
+	# Append a message to our temporary file (for debugging)
+	my $logmsg = join(' ', @_);
+	
+	unless (open(TMP, ">>$tmpfilename"))
+	{
+		warn("Couldn't open '$tmpfilename': $!\n");
+		return;
+	}
+	print TMP "$logmsg\n";
+	close(TMP);
 }
+
