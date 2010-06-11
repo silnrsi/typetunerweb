@@ -197,6 +197,11 @@ my %featset_to_suffix = (
 #map one set of feature settings to a simpler set
 # each simpler set is used to search for a matching glyph before it's reduced again
 # so stepwise simplification is good
+# small caps negates literacy alts, slant italics, and
+# usually low profile diacritics (since low profile composites for small caps weren't built) 
+# (though three *.LP.SC glyphs exist in Gentium, which are found as searching is done)
+# literacy would negate slant italics but the two always occur with small caps
+# Chinantec tones negates low profile diacritics
 my %reduced_featsets = (
 	'CHZtn-T LpDiacs-T' => 'CHZtn-T', 
 	'LpDiacs-T SmCp-T' => 'SmCp-T', 
