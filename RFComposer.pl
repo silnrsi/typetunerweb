@@ -81,6 +81,8 @@ my %featset_to_suffix = (
 	'LgTHk-RtHk' => '\.RtHook',
 	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
 	'LrgBHk-T' => '\.TopBar',
+	'LpDiacs-T' => '\.LP',
+	'CHZtn-T' => '\.ChinantecTn',  
 );
 
 #generated using the -l switch 
@@ -161,6 +163,7 @@ my %nm_to_tag = (
 	'Circle' => 'Crcl',
 	'Zero' => 'Zro',
 	'Small Caps' => 'SmCp',
+	'Low-profile diacritics' => 'LpDiacs', 
 	'Show deprecated PUA' => 'DepPUA',
 	'None' => 'none',
 	'Through Unicode 4.0' => '40',
