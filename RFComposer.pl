@@ -14,7 +14,8 @@ use Getopt::Std;
 
 #### global variables & constants ####
 
-my $version = "1.3"; # output old_names section
+my $version = "1.4"; # add mechanism to map interacting features to a simpler, equivalent form
+#1.3 - output old_names section
 #1.2 - generate WPFeatures test
 #1.1 - handle arbitrary interacting features
 
@@ -40,50 +41,6 @@ my $feat_all_elem = "all_features";
 #all the ids must be 4 digits
 my $vietnamese_style_diacs_feat = '1029';
 my $romanian_style_diacs_feat = '1041';
-
-#map feature settings to PS names using regex matching
-#only need mappings for feature settings that interact
-#mappings that are missing below will be output as error messages
-#the (?! ... ) reg ex below is a negative look ahead match
-# the error message can be processed to add to the mappings
-# *** Be careful to not discard tags needed by fonts other than the one being worked on
-# *** Do NOT eliminate .SC variants for the default glyph of a multi-valued feature
-my %featset_to_suffix = (
-	'BarBwl-T' => '\.BarBowl', 
-	'Caron-T' => '\.Caron', 
-	'CyShha-T' => '\.UCStyle', 
-	'CyrE-T' => '\.MongolStyle', 
-	'Lit-T' => '(\.SngBowl|\.SngStory)', 
-	'ModAp-Lg' => '\.Lrg', 
-	'Ognk-Strt' => '\.RetroHookStyle', 
-	'OpnO-TopSrf' => '\.TopSerif', 
-	'Ou-Opn' => '\.OpenTop', 
-	'RONdiacs-T' => '\.CommaStyle', 
-	'SlntItlc-T' => '(\.SlantItalic|\.2StorySlantItalic)', 
-	'SmCp-T' => '\.SC',
-	'SmPHk-RtHk' => '\.BowlHook', 
-	'VHk-Crvd' => '(uni01B2|uni028B)(?!\.StraightLftHighHook|\.StraightLft)',  
-	'VHk-StrtLftLowHk' => '\.StraightLft', 
-	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
-	'VIEdiacs-T' => '\.VN',
-	'DepPUA-41' => '\.Dep41', 
-	'DepPUA-50' => '\.Dep50', 
-	'DepPUA-51' => '\.Dep51', 
-	'BrdgDiacs-T' => '(\.UU|\.UL|\.LL)',
-	'Eng-LgDsc' => '[eE]ng(?!\.UCStyle|\.BaselineHook|\.Kom)', 
-	'Eng-LgBsln' => '\.BaselineHook', 
-	'Eng-CapN' => '\.UCStyle', 
-	'Eng-LgShrtStm' => '\.Kom',
-	'LgEzh-RvSgma' => '\.RevSigmaStyle',
-	'LgHStrk-Vrt' => '\.VertStrk',
-	'LgNLftHk-Lc' => '\.LCStyle',
-	'LgRTl-Lc' => '\.LCStyle',
-	'LgTHk-RtHk' => '\.RtHook',
-	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
-	'LrgBHk-T' => '\.TopBar',
-	'LpDiacs-T' => '\.LP',
-	'CHZtn-T' => '\.ChinantecTn',  
-);
 
 #generated using the -l switch 
 # then copying & pasting the file produced into this file.
@@ -163,7 +120,9 @@ my %nm_to_tag = (
 	'Circle' => 'Crcl',
 	'Zero' => 'Zro',
 	'Small Caps' => 'SmCp',
-	'Low-profile diacritics' => 'LpDiacs', 
+	'Low-profile diacritics' => 'LpDiacs',
+	'Serbian-style alternates' => 'Serb', 
+	'Serif beta alternates' => 'BetaSerif',  
 	'Show deprecated PUA' => 'DepPUA',
 	'None' => 'none',
 	'Through Unicode 4.0' => '40',
@@ -187,6 +146,69 @@ my %nm_to_tag = (
 	'Line spacing' => 'LnSpc',
 	'Loose' => 'Ls',
 	'Imported' => 'Im',
+);
+
+#map feature settings to PS names using regex matching
+#only need mappings for feature settings that interact
+#mappings that are missing below will be output as error messages
+#the (?! ... ) reg ex below is a negative look ahead match
+# the error message can be processed to add to the mappings
+# *** Be careful to not discard tags needed by fonts other than the one being worked on
+# *** Do NOT eliminate .SC variants for the default glyph of a multi-valued feature
+my %featset_to_suffix = (
+	'BarBwl-T' => '\.BarBowl', 
+	'Caron-T' => '\.Caron', 
+	'CyShha-T' => '\.UCStyle', 
+	'CyrE-T' => '\.MongolStyle', 
+	'Lit-T' => '(\.SngBowl|\.SngStory)', 
+	'ModAp-Lg' => '\.Lrg', 
+	'Ognk-Strt' => '\.RetroHookStyle', 
+	'OpnO-TopSrf' => '\.TopSerif', 
+	'Ou-Opn' => '\.OpenTop', 
+	'RONdiacs-T' => '\.CommaStyle', 
+	'SlntItlc-T' => '(\.SlantItalic|\.2StorySlantItalic)', 
+	'SmCp-T' => '\.SC',
+	'SmPHk-RtHk' => '\.BowlHook', 
+	'VHk-Crvd' => '(uni01B2|uni028B)(?!\.StraightLftHighHook|\.StraightLft)',  
+	'VHk-StrtLftLowHk' => '\.StraightLft', 
+	'VHk-StrtLftHk' => '\.StraightLftHighHook', 
+	'VIEdiacs-T' => '\.VN',
+	'DepPUA-41' => '\.Dep41', 
+	'DepPUA-50' => '\.Dep50', 
+	'DepPUA-51' => '\.Dep51', 
+	'BrdgDiacs-T' => '(\.UU|\.UL|\.LL)',
+	'Eng-LgDsc' => '[eE]ng(?!\.UCStyle|\.BaselineHook|\.Kom)', 
+	'Eng-LgBsln' => '\.BaselineHook', 
+	'Eng-CapN' => '\.UCStyle', 
+	'Eng-LgShrtStm' => '\.Kom',
+	'LgEzh-RvSgma' => '\.RevSigmaStyle',
+	'LgHStrk-Vrt' => '\.VertStrk',
+	'LgNLftHk-Lc' => '\.LCStyle',
+	'LgRTl-Lc' => '\.LCStyle',
+	'LgTHk-RtHk' => '\.RtHook',
+	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
+	'LrgBHk-T' => '\.TopBar',
+	'LpDiacs-T' => '\.LP',
+	'CHZtn-T' => '\.ChinantecTn',
+	'Serb-T' => '\.Serb',
+	'BetaSerif-T' => '\.Serif',
+);
+
+#map one set of feature settings to a simpler set
+# each simpler set is used to search for a matching glyph before it's reduced again
+# so stepwise simplification is good
+my %reduced_featsets = (
+	'CHZtn-T LpDiacs-T' => 'CHZtn-T', 
+	'LpDiacs-T SmCp-T' => 'SmCp-T', 
+	'Lit-T LpDiacs-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
+	'LpDiacs-T Ognk-Strt SmCp-T' => 'Ognk-Strt SmCp-T', 
+	'LpDiacs-T SlntItlc-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
+	'LpDiacs-T SmCp-T VIEdiacs-T' => 'SmCp-T VIEdiacs-T', 
+	'Lit-T LpDiacs-T SlntItlc-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
+	'Lit-T LpDiacs-T SmCp-T VIEdiacs-T' => 'LpDiacs-T SmCp-T VIEdiacs-T', #above
+	'LpDiacs-T SlntItlc-T SmCp-T VIEdiacs-T' => 'LpDiacs-T SmCp-T VIEdiacs-T', #above
+	'Lit-T LpDiacs-T SlntItlc-T SmCp-T VIEdiacs-T' => 'LpDiacs-T SmCp-T VIEdiacs-T', #above
+	'SlntItlc-T SmCp-T VIEdiacs-T' => 'SmCp-T VIEdiacs-T', 
 );
 
 #### subroutines ####
@@ -706,8 +728,12 @@ sub Suffixes_match_name(\@$)
 		{return 0;}
 }
 
+#forward declare this since it's a recursive subroutine to avoid a warning
+sub PSName_select(\@$);
+
 sub PSName_select(\@$)
 #choose the first name in a space delimited string that matches the feature settings
+#if no name is found, try simplifying the feature settings according to the %reduced_featsets hash
 #return origial names if no match found
 {
 	my ($featsets, $choices) = @_;
@@ -719,7 +745,16 @@ sub PSName_select(\@$)
 		if (Suffixes_match_name(@suffixes, $choice))
 			{return $choice;}
 	}
-
+	
+	#if no choice was found, reduce feature settings to simpler form and search again
+	my $featsets_old = join(' ', @$featsets);
+	if (defined $reduced_featsets{$featsets_old})
+	{
+		my $featsets_new = $reduced_featsets{$featsets_old} ;
+		my @featsets_new = split(/\s/, $featsets_new);
+		return PSName_select(@featsets_new, $choices);
+	}
+	
 	return $choices;
 }
 
