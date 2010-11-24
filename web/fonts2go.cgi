@@ -38,10 +38,12 @@ my $feat_set_tuned = 'feat_set_tuned.xml';
 my $availableFamilies;
 opendir(DIR, "$tunableFontsDir") || die ("Cannot opendir tunableFontsDir: $!\n");
 foreach (sort readdir(DIR)) {
-	next if m/^\./;
+	next if m/^\./ || !(-d "$tunableFontsDir/$_");
 	my $familytag = $_;
 	$familytag =~ s/[^-A-Za-z_0-9]//g;
-	$availableFamilies->{$familytag} = $_;
+	# Save the family tag and name unless the name matches "test" and this is the production script.
+	# This gives us a way to test new releases without making them public.
+	$availableFamilies->{$familytag} = $_ unless $familytag =~ /test/oi && $cgiPathName =~ /fonts2go/oi;
 }
 closedir(DIR);
 
@@ -209,39 +211,55 @@ elsif ($cgi->param('Get tuned font')) {
 	my $isodate = sprintf ("%04d-%02d-%02d", $t[5]+1900, $t[4]+1, $t[3]);
 	my $date = sprintf("%02d %s %04d", $t[3], (qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec))[$t[4]], $t[5] + 1900);
 
-	opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}") || die ("Cannot opendir tunableFontsDir/$availableFamilies->{$familytag}: $!\n");
-	foreach (sort readdir(DIR)) {
-		next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
-		if (m/^(.*)_tt(\..*)+$/i)
+	my @jobs = ( '.' );
+
+	while ($#jobs >= 0)
+	{
+		my $subdir = shift @jobs;
+		appendtemp ("starting subdir: '$subdir'");
+		unless (-d $subdir)
 		{
-			# Fix up %DATE% in any file that ends in _tt, _tt.txt, etc. 
-			my $outfile = "$tunedDir/$1$2";
-			appendtemp ("Processing '$_' -> '$outfile'");
-			local $/;
-			open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$familytag}/$_") or die ("cannot open tunableFontsDir/$availableFamilies->{$familytag}/$_ for reading: !$\n");
-			my $s = <FH>;	# Slurp entire file
-			close (FH);
-			use bytes;
-			$s =~ s/%DATE%/$date/g;
-			$s =~ s/%ISODATE%/$isodate/g;
-			no bytes;
-			open (FH, ">:raw", $outfile) || die ("Cannot open '$outfile' for writing: $!\n");
-			print FH $s;
-			close (FH);
+			mkdir("$tunedDir/$subdir") or die ("Cannot mkdir '$tunedDir/$subdir': $!\n");
 		}
-		else
-		{
-			# anything else is just linked in.
-			appendtemp ("Linking '$_'");
-			link "$tunableFontsDir/$availableFamilies->{$familytag}/$_", "$tunedDir/$_";
+		opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir") or die ("Cannot opendir '$tunableFontsDir/$availableFamilies->{$familytag}/$subdir': $!\n");
+		foreach (sort readdir(DIR)) {
+			next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
+			if (m/^(.*)_tt(\..*)+$/i)
+			{
+				# Fix up %DATE% in any file that ends in _tt, _tt.txt, etc. 
+				my $outfile = "$tunedDir/$subdir/$1$2";
+				appendtemp ("Processing '$_' -> '$subdir/$outfile'");
+				local $/;
+				open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_") or die ("cannot open '$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_' for reading: !$\n");
+				my $s = <FH>;	# Slurp entire file
+				close (FH);
+				use bytes;
+				$s =~ s/%DATE%/$date/g;
+				$s =~ s/%ISODATE%/$isodate/g;
+				no bytes;
+				open (FH, ">:raw", $outfile) || die ("Cannot open '$outfile' for writing: $!\n");
+				print FH $s;
+				close (FH);
+			}
+			elsif (-d "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_")
+			{
+				# subfolder -- schedule it for a later time.
+				appendtemp ("Saving directory '$subdir/$_' for later");
+				push @jobs, "$subdir/$_";
+			}
+			else
+			{
+				# anything else is just linked in.
+				appendtemp ("Linking '$_'");
+				link "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_", "$tunedDir/$subdir/$_";
+			}
 		}
+		closedir(DIR);	
 	}
-	closedir(DIR);	
 	
 	# create the zip archive
 	appendtemp ("Creating '$file_name.zip'");
-	my $devnull = File::Spec->devnull();
-	system("(cd $tempDir; zip -q $file_name.zip $file_name/* 2>&1 > $devnull)");
+	system("(cd $tempDir; zip -r $file_name.zip $file_name 2>&1 >> $tmpfilename)");
 
 
   if (0) {
