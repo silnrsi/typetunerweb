@@ -72,7 +72,8 @@ if ($cgi->param('Select features')) {
 	
 	my $ttf = ttflist($familytag);		# One font from family needed -- to get feature info
 	my $tempDir = tempdir();
-	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttf\")");
+	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttf\")");
+	die "$res\n" if $res;
 	
 	print
 		header(-charset => 'UTF-8'),
@@ -163,8 +164,8 @@ elsif ($cgi->param('Get tuned font')) {
 	my $tempDir = tempdir();
 	appendtemp("tempdir = $tempDir");
 	
-	system("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttfs[0]\")");
-	
+	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttfs[0]\")");
+	die "$res\n" if $res;
 	
 	my $file_name = $familytag;
 	if ($suffix ne '') {
@@ -203,7 +204,20 @@ elsif ($cgi->param('Get tuned font')) {
 		else {
 			$tuned =~ s/\.ttf$/-$suffix.ttf/;
 		}
-		system("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$familytag-$feat_set_tuned \"$tunableFontsDir/$availableFamilies->{$familytag}/$_\")");
+		$res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$familytag-$feat_set_tuned \"$tunableFontsDir/$availableFamilies->{$familytag}/$_\")");
+		if ($res)
+		{
+			print header(-charset => 'UTF-8'),
+				start_html({-leftmargin => '18px', -title => $title}),
+				p("Unexpected error from SIL Typetuner when processing font '$_':"),
+			    pre("$res"),
+			    p("Please click your browser's Back button, check your feature settings and try again."),
+			    p("Be aware that feature settings that require an ", em("input"), " font will not work with $title"),
+			    end_html;
+			rmtree($tempDir);
+			unlink $tmpfilename;
+			exit; 
+		}
 	}
 	
 	# Include any other files (e.g., license), but replace some keywords 
@@ -259,7 +273,8 @@ elsif ($cgi->param('Get tuned font')) {
 	
 	# create the zip archive
 	appendtemp ("Creating '$file_name.zip'");
-	system("(cd $tempDir; zip -r $file_name.zip $file_name 2>&1 >> $tmpfilename)");
+	$res = run_cmd("(cd $tempDir; zip -r $file_name.zip $file_name >> $tmpfilename)");
+	die "$res\n" if $res;
 
 
   if (0) {
@@ -463,11 +478,11 @@ sub ttflist
 	# font files within a given family.
 	my $familytag = shift;
 	unless (exists ($availableFamilies->{$familytag}) && opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}"))
-	{ die ("Invalid parameter \"$familytag\"");}
+	{ die ("Invalid parameter \"$familytag\"\n");}
 	my @ttfs =  (sort grep { /\.[ot]tf$/oi } readdir(DIR));
 	closedir(DIR);	
 	unless (scalar(@ttfs))
-	{ die ("Invalid parameter \"$familytag\"");}
+	{ die ("Invalid parameter \"$familytag\"\n");}
 	return (wantarray ? @ttfs : $ttfs[0]);
 }
 
@@ -502,3 +517,36 @@ sub appendtemp
 	close(TMP);
 }
 
+sub run_cmd
+{
+	# Wrapper around system() that does error checking.
+	# Return undef if command completes without error.
+	# Otherwise returns a string with error info, including any STDERR output
+	
+	my $cmd = shift;
+	
+	my ($tmpf, $tmpfilename) = tempfile( "sysXXXXX", DIR => $tmpDir, SUFFIX => '.txt');
+	
+	my $res;
+	system("$cmd 2> $tmpfilename");
+	
+	# Error checking, basically from perlfunc:
+	
+	if ($? == -1) {
+        $res = "External program failed to execute: $!";
+    }
+    elsif ($? & 127) {
+        $res = sprintf ("External program died with signal %d, %s coredump", ($? & 127),  ($? & 128) ? 'with' : 'without');
+    }
+    elsif ($? >> 8)
+    {
+    	$res = sprintf("External program exited with return code %d\n", $? >> 8);
+    	# Recover STDERR:
+    	local $/;    
+    	$res .= <$tmpf>;
+    }
+    close $tmpf;
+    unlink $tmpfilename;
+    return $res;
+}
+ 
