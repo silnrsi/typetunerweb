@@ -46,9 +46,11 @@ etc...
 	     example "fonts3go". This allows for testing of new font packages (e.g., 
 	     use a subfolder called "Gentium Plus Test").
 	  -- In addition to the source font package, these folders may contain a file
+	     named ".ttwrc". See below
+	  -- In addition to the source font package, these folders may contain a file
 	     named ".help_url". The first line of this file should be the URL of a
 	     page or document that provides user help regarding the features supported
-	     by the fonts in the package. 
+	     by the fonts in the package. [use of this file is deprecated]
 	  -- Any file whose name ends in _TT (optionally followed by an extension, e.g.
 	     FONTLOG_TT.txt) is processed by a script that replaces %DATE% and
 	     %ISODATE% with the current date (Dallas timezone). The first of these
@@ -75,7 +77,34 @@ etc...
      completion of the script; but if the script crashes they will remain and may
      be helpful in figuring out what went wrong.
 
-4. DEBUGGING
+4. .ttwrc FILE
+
+As mentioned above, each font family folder may include a .ttwrc file which provides
+optional information to fonts2go.cgi. Lines in this file are of the form:
+
+	keyword = value
+
+where whitespace is allowed before and after the keyword and the value, and also within the value.
+Currently three keywords are recognized:
+
+	helpurl - value is the URL of a page or document that provides user help 
+			regarding the features supported by the fonts in the package.
+	
+	omittedfeature - value is the name of a feature that should be completely 
+			omitted from TTW's UI
+	
+	omittedvalue -- value is compound string which identifies a feature value 
+			that should be omitted from TTW's UI. The format of this compound
+			string is:  feature name : feature value
+
+Example:
+
+	helpurl = http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=CharisSIL_Technical#TTW_Help
+	omittedfeature = Small Caps
+	omittedvalue = Line spacing : Imported 
+	
+
+5. DEBUGGING
 
 Debugging CGI scripts can be a pain. To aid in that process, fonts2go.cgi sends
 progress messages to a temporary file in the /tmp folder. The file will have a name

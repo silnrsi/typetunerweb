@@ -60,6 +60,9 @@ my ($tmpf, $tmpfilename) = tempfile( "ttwXXXXX", DIR => $tmpDir, SUFFIX => '.txt
 print $tmpf "Starting $cgiPathName\n";
 close $tmpf;
 
+# These are global because they are referenced by XML parser:
+my %omittedfeatures = ();	# Hash of feature names that are to be completely omitted from the form
+my %omittedvalues = ();		# Hash of features (names and values) that are to be omitted from the form.
 
 ######################################################################
 
@@ -68,7 +71,7 @@ if ($cgi->param('Select features')) {
 	# present form to select font features
 	#
 	my $familytag = checkparam('family');
-	my $help;
+	my $help='';
 	
 	my $ttf = ttflist($familytag);		# One font from family needed -- to get feature info
 	my $tempDir = tempdir();
@@ -93,19 +96,51 @@ if ($cgi->param('Select features')) {
 	{
 		# retrieve help url from .help_url file
 		open (FH, "< $tunableFontsDir/$availableFamilies->{$familytag}/.help_url");
-		my $helpURL = <FH>;
+		$help = <FH>;
 		close (FH);
+	}
+	if (-f "$tunableFontsDir/$availableFamilies->{$familytag}/.ttwrc")
+	{
+		# Retrieve info from .ttwrc file
+		open (FH, "< $tunableFontsDir/$availableFamilies->{$familytag}/.ttwrc");
+		while (<FH>)
+		{
+			s/^\s*#.*$//;			# Trim comments
+			next unless /^\s*([^=]+?)\s*=\s*(.+?)\s*$/;  # Must match "keyword=value" but allow whitespace around keyword and within value
+			my ($kw, $val) = (lc($1), $2);
+			if ($kw eq 'helpurl')
+			{
+				$help = $val;
+			}
+			elsif ($kw eq 'omittedfeature')
+			{
+				$omittedfeatures{$val} = 1;
+			}
+			elsif ($kw eq 'omittedvalue')
+			{
+				if ($val =~ /^([^:]+?)\s*:\s*(.+)$/)	# Must match "feature:value" but allow whitespace
+				{
+					$omittedvalues{$1}{$2} = 1;
+				}
+			}
+		}
+		close (FH);
+	}
+	
+	if ($help ne '')
+	{
 		# For security, make sure the help URL is http, https, or ftp, and on the same server as our CGI script
-		$helpURL =~ s/\s+$//;
-		my ($helpProtocol, $helpAddress) = split('://', $helpURL, 2);
+		$help =~ s/\s+$//;
+		my ($helpProtocol, $helpAddress) = split('://', $help, 2);
 		my $base = url(-base=>1);
 		my ($baseProtcol, $baseAddress) = split('://', $base, 2) ;
 		if ($helpProtocol =~ /http|ftp/ && substr($helpAddress, 0, length($baseAddress)) eq $baseAddress)
 		{
 			# Help URL looks OK
-			$help = "(for help see " . a({href=>$helpURL, target=>"_blank"},"$availableFamilies->{$familytag} font features") . ")";
+			$help = "(for help see " . a({href=>$help, target=>"_blank"},"$availableFamilies->{$familytag} font features") . ")";
 		}
-	}
+	}	
+	
 	print
 		p(strong("Tunable feature settings in $availableFamilies->{$familytag}"), $help);
 	
@@ -394,7 +429,7 @@ sub sh_form
 	}
 	
 	elsif ($el eq 'value') {
-		push @$values, $atts{'name'};
+		push @$values, $atts{'name'} unless $omittedvalues{$featureName}{$atts{'name'}};
 	}
 }
 
@@ -418,7 +453,7 @@ sub eh_form
 					)
 				])
 			]
-		);
+		) unless $omittedfeatures{$featureName};
 	}
 }
 
@@ -437,7 +472,7 @@ __EOT__
 	elsif ($el eq 'feature') {
 		my $featureName = $atts{'name'};
 		my $oldvalue = $atts{'value'};
-		my $newvalue = $cgi->param($featureName);
+		my $newvalue = defined $cgi->param($featureName) ? $cgi->param($featureName) : $atts{'value'};
 		print SETTINGS "\t<feature name=\"$featureName\" value=\"$newvalue\">\n";
 		if ($newvalue ne $oldvalue) {
 			$featurelist .= $featureName . (lc($newvalue) eq 'true' ? '; ' : " = $newvalue; ") ;
