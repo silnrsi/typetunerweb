@@ -20,7 +20,119 @@ my $logFileName = $logDir . $cgiPathName;
 $logFileName =~ s/\.[^.]*$//;
 $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
-# no user serviceable parts under here
+# Below are literals to override style info -- these are set to match scripts.sil.org as of Jan 2011
+
+my $dtd = "-//W3C//DTD HTML 4.01 Transitional//EN";
+
+my $css = "../cms/sites/nrsi/themes/default/_css/default.css";
+
+my $style_verbatim = <<'EOF' ;
+
+<!--
+
+A.GlobalNavLink, A.GlobalNavLink:visited {
+	color: #FFFF00;
+	font-size: smaller;
+	font-weight: bold;
+}
+
+-->
+
+EOF
+
+my $preamble = <<'EOF' ;
+
+<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td style="background: #336699; padding-left:20; padding-top:10; white-space:nowrap;" width="110" valign="top">
+		<p><a href="http://www.sil.org/"><img src="../cms/sites/nrsi/themes/default/_media/SIL_logo_left_column.gif" width="86" height="80" border="0"></a><br><br></p>
+    	<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Home">Home</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ContactUs">Contact Us</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=General">General</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Babel">Initiative B@bel</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=WSI_Guidelines">WSI Guidelines</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Encoding">Encoding</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=EncodingPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Unicode">Unicode</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=UnicodeTraining">Training</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=UnicodeTutorials">Tutorials</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=UnicodePUA">PUA</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Conversion">Conversion</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=EncConvRes">Resources</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ConversionUtilities">Utilities</a></p>
+<p class="Cat4"><a class="Cat4" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TECkit">TECkit</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ConversionMaps">Maps</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=EncodingResources">Resources</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Input">Input</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputUtilities">Utilities</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputTutorials">Tutorials</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputResources">Resources</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TypeDesign">Type Design</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TypeDesignPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDesignTools">Design Tools</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontFormats">Formats</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TypeDesignResources">Resources</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloads">Font Downloads</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloadsGentium">Gentium</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloadsDoulos">Doulos</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloadsIPA">IPA</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Rendering">Rendering</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingTechnologies">Technologies</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingOpenType">OpenType</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingGraphite">Graphite</a></p>
+<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingResources">Resources</a></p>
+<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontFAQ">Font FAQ</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Links">Links</a></p>
+<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Glossary">Glossary</a></p>
+
+    	<br>
+	</td>
+
+    <td valign="top" style="padding:0" xwidth="650">
+		<div style="background: #6699CC url(../cms/sites/nrsi/themes/default/_media/home_banner_gradient.gif) no-repeat right; padding:0 0 0 25; height:36px; margin:0; color:#FFFFFF;">
+			<p style="font-family:Times New Roman; font-size:25px; color:#FFFFFF; padding:10 0 0 0; margin:0 0 0 0">NRSI: Computers & Writing Systems</p>
+		</div>
+		<div style="padding:0 0 0 0; background-color:#000000; color:#FFFFFF">
+			<table width='100%'>
+				<tr>
+					<td style="padding: 0 0 0 25px"><a class="GlobalNavLink" href="http://www.sil.org/">SIL HOME</a>
+							| <a class="GlobalNavLink" href="http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&cat_id=ContactUs">CONTACT US</a>
+					</td>
+					<td align='right'>
+						<p><!-- RegionBegin: region_type='SearchForm' id='e3c92b87' --><form action='../cms/scripts/page.php?site_id=nrsi' method='POST' name='search_form'><input style='font-size:9' maxlength='200' name='search_query' size='30' value=''/> <input style='font-size:9' type='submit' value='Search'/></form><!-- RegionEnd: region_type='SearchForm' id='e3c92b87' --></p>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div style="padding:0 25 25 25">
+			<p class='CategoryPath'>You are here: <a class='CategoryPath' href='http://scripts.sil.org/ttw/fonts2go.cgi'>TypeTuner Web</a><br>
+			Short URL: <a href='http://scripts.sil.org/ttw/fonts2go.cgi'>http://scripts.sil.org/ttw/fonts2go.cgi</a></p>
+
+<!-- Begin TypeTuner Info -->
+
+EOF
+
+my $postamble = <<'EOF' ;
+
+<!-- End TypeTuner Info -->
+			
+			<p><small>© 2008-2011 <a href='http://www.sil.org/' target='_blank'>SIL International</a>, all rights reserved, unless otherwise noted elsewhere on this page.<br>
+			Provided by SIL's Non-Roman Script Initiative. Contact us at <a href='mailto:nrsi@sil.org'>nrsi@sil.org</a>.</small></p>
+		</div>
+    </td>
+
+</table>
+EOF
+# '
+
+##########################################
+#                                        #
+# no user serviceable parts below here   #
+#                                        #
+##########################################
 
 use CGI qw/:all :push :multipart/;
 use CGI::Carp qw/warningsToBrowser fatalsToBrowser/;
@@ -79,11 +191,17 @@ if ($cgi->param('Select features')) {
 	die "$res\n" if $res;
 	
 	print
-		header(-charset => 'UTF-8'),
-		start_html({-leftmargin => '18px', -title => $title}),
+		header(-charset => 'utf-8'),
+		start_html(
+				-dtd => $dtd,
+				-title => $title,
+				-meta => { keywords => "typetuner sil"},
+				-style => { -src => $css, 
+									-verbatim => $style_verbatim },
+				'--style' => "padding:0; margin:0"),
+		$preamble,
 	
-		h2({-style => 'margin-bottom: 3px'}, "Welcome to $title!"),
-		p({-style => 'margin-top: 0px'}, em("type that's tuned to suit your taste")),
+		h1("Welcome to $title!<br>", span({-class => 'item_subtitle'}, p("Type that's tuned to suit your taste"))),
 		hr,
 	
 		start_form(
@@ -173,6 +291,7 @@ if (0)   # 'Load settings' not yet implemented
 		submit('Get tuned font'),
 		submit('Go back'),
 		end_form,
+		$postamble,
 		end_html;
 
 	rmtree($tempDir);
@@ -313,47 +432,51 @@ elsif ($cgi->param('Get tuned font')) {
 
 
   if (0) {
-	$| = 1;
-	print multipart_init();
-
-	#print header(-charset => 'UTF-8');
-
-	print multipart_start();
-	print
-		start_html({-leftmargin => '18px', -title => $title}),
+  	# Jonathan apparently tried this to do the download but didn't use it, for unknown reasons
+		$| = 1;
+		print multipart_init();
 	
-		h2({-style => 'margin-bottom: 3px'}, "Thanks for using $title!"),
-		hr,
+		#print header(-charset => 'UTF-8');
+	
+		print multipart_start();
+		print
+			start_html({-leftmargin => '18px', -title => $title}),
 		
-		start_form(
-				-method		=> 'post',
-				-action		=> "$cgiPathName",
-				-enctype	=> 'multipart/form-data',
-				-charset	=> 'UTF-8' ),
-
-		defaults('Start again'),
-		end_form,
-
-		end_html;
-	print multipart_end();
-
-	print multipart_start(-type => 'application/zip');
-#	print header(-attachment => "$file_name.zip");
-	open(ZIP, "< $tempDir/$file_name.zip");
-	while (read(ZIP, $buffer, 1024)) {
-	   print $buffer;
-	}
-	close(ZIP);
+			h2({-style => 'margin-bottom: 3px'}, "Thanks for using $title!"),
+			hr,
+			
+			start_form(
+					-method		=> 'post',
+					-action		=> "$cgiPathName",
+					-enctype	=> 'multipart/form-data',
+					-charset	=> 'UTF-8' ),
 	
-	print multipart_final();
+			defaults('Start again'),
+			end_form,
+	
+			end_html;
+		print multipart_end();
+	
+		print multipart_start(-type => 'application/zip');
+	#	print header(-attachment => "$file_name.zip");
+		open(ZIP, "< $tempDir/$file_name.zip");
+		while (read(ZIP, $buffer, 1024)) {
+		   print $buffer;
+		}
+		close(ZIP);
+		
+		print multipart_final();
   }
-  else {
-	print header({-type => 'application/zip', -attachment => "$file_name.zip"});
-	open(ZIP, "< $tempDir/$file_name.zip");
-	while (read(ZIP, $buffer, 1024)) {
-	   print $buffer;
-	}
-	close(ZIP);
+  else 
+  {
+  	# Instead, this is what does the download:
+  	
+		print header({-type => 'application/zip', -attachment => "$file_name.zip"});
+		open(ZIP, "< $tempDir/$file_name.zip");
+		while (read(ZIP, $buffer, 1024)) {
+		   print $buffer;
+		}
+		close(ZIP);
 
   }
 
@@ -370,11 +493,16 @@ else {
 	#
 
 	print
-		header(-charset => 'UTF-8'),
-		start_html({-leftmargin => '18px', -title => $title}),
-	
-		h2({-style => 'margin-bottom: 3px'}, "Welcome to $title!"),
-		p({-style => 'margin-top: 0px'}, em("type that's tuned to suit your taste")),
+		header(-charset => 'utf-8'),
+		start_html(	
+				-dtd => $dtd,
+				-title => $title,
+				-meta => { keywords => "typetuner sil"},
+				-style => { -src => $css, 
+									-verbatim => $style_verbatim },
+				'--style' => "padding:0; margin:0"),
+		$preamble,
+		h1("Welcome to $title!<br>", span({-class => 'item_subtitle'}, p("Type that's tuned to suit your taste"))),
 		p('This service allows you to download customized versions of our fonts.
 		First, choose a typeface family; then you can select various alternate glyphs
 		and other optional features to be the defaults in your new font.'),
@@ -406,6 +534,7 @@ else {
 		submit('Select features'),
 		defaults('Reset'),
 		end_form,
+		$postamble,
 		end_html;
 	
 	unlink "$tmpfilename";
