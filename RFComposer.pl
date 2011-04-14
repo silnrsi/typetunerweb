@@ -160,7 +160,8 @@ my %featset_to_suffix = (
 	'Caron-T' => '\.Caron', 
 	'CyShha-T' => '\.UCStyle', 
 	'CyrE-T' => '\.MongolStyle', 
-	'Lit-T' => '(\.SngBowl|\.SngStory)', 
+	'Lit-T' => '(\.SngBowl|\.SngStory)',
+	'Lit-F' => '(?!\.SngBowl|\.SngStory)', 
 	'ModAp-Lg' => '\.Lrg', 
 	'Ognk-Strt' => '\.RetroHookStyle', 
 	'OpnO-TopSrf' => '\.TopSerif', 
@@ -192,6 +193,12 @@ my %featset_to_suffix = (
 	'CHZtn-T' => '\.ChinantecTn',
 	'Serb-T' => '\.Serb',
 	'BetaSerif-T' => '\.Serif',
+	'SmITail-T' => '\.TailI',
+	'SmJSerif-T' => '\.TopLftSerif',
+	'SmLTail-T' => '\.TailL', 
+	'SmQTail-T' => '\.Point', 
+	'SmTTail-T' => '\.NoTailT', 
+	'SmYTail-T' => '\.NoTailY', 
 );
 
 #map one set of feature settings to a simpler set
