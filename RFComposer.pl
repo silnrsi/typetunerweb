@@ -209,9 +209,18 @@ my %featset_to_suffix = (
 # (though three *.LP.SC glyphs exist in Gentium, which are found as searching is done)
 # literacy would negate slant italics but the two always occur with small caps
 # Chinantec tones negates low profile diacritics
+# Small caps negate the various tail variants
 my %reduced_featsets = (
 	'CHZtn-T LpDiacs-T' => 'CHZtn-T', 
-	'LpDiacs-T SmCp-T' => 'SmCp-T', 
+	'LpDiacs-T SmCp-T' => 'SmCp-T',
+	'SmCp-T SmITail-T' => 'SmCp-T',  
+	'SmCp-T SmJSerif-T' => 'SmCp-T',  
+	'SmCp-T SmLTail-T' => 'SmCp-T',  
+	'SmCp-T SmQTail-T' => 'SmCp-T',  
+	'SmCp-T SmTTail-T' => 'SmCp-T',  
+	'SmCp-T SmYTail-T' => 'SmCp-T',  
+	'SlntItlc-T SmITail-T' => 'SmITail-T', # for Andika Reg, which lacks some SlantItalic glyphs
+	'SlntItlc-T SmLTail-T' => 'SmLTail-T', # for Andika Reg, which lacks some SlantItalic glyphs
 	'Lit-T LpDiacs-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
 	'LpDiacs-T Ognk-Strt SmCp-T' => 'Ognk-Strt SmCp-T', 
 	'LpDiacs-T SlntItlc-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
@@ -221,6 +230,14 @@ my %reduced_featsets = (
 	'LpDiacs-T SlntItlc-T SmCp-T VIEdiacs-T' => 'LpDiacs-T SmCp-T VIEdiacs-T', #above
 	'Lit-T LpDiacs-T SlntItlc-T SmCp-T VIEdiacs-T' => 'LpDiacs-T SmCp-T VIEdiacs-T', #above
 	'SlntItlc-T SmCp-T VIEdiacs-T' => 'SmCp-T VIEdiacs-T', 
+	'SlntItlc-T SmCp-T SmITail-T' => 'SmCp-T SmITail-T', #above
+	'SlntItlc-T SmCp-T SmLTail-T' => 'SmCp-T SmLTail-T', #above
+	'Caron-T SmCp-T SmLTail-T' => 'Caron-T SmCp-T', 
+	'Caron-T SmCp-T SmTTail-T' => 'Caron-T SmCp-T', 
+	'LgTHk-RtHk SmCp-T SmTTail-T' => 'LgTHk-RtHk SmCp-T', 
+	'LgYHk-LftHk SmCp-T SmYTail-T' => 'LgYHk-LftHk SmCp-T', 
+	'Ognk-Strt SmCp-T SmITail-T' => 'Ognk-Strt SmCp-T', 
+	'RONdiacs-T SmCp-T SmTTail-T' => 'RONdiacs-T SmCp-T', 
 );
 
 #### subroutines ####
