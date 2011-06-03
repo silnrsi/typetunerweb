@@ -195,7 +195,8 @@ my %featset_to_suffix = (
 	'BetaSerif-T' => '\.Serif',
 	'SmITail-T' => '\.TailI',
 	'SmJSerif-T' => '\.TopLftSerif',
-	'SmLTail-T' => '\.TailL', 
+	'SmLTail-T' => '\.TailL',
+	'CapQ-T' => '\.DiagTail',  
 	'SmQTail-T' => '\.Point', 
 	'SmTTail-T' => '\.NoTailT', 
 	'SmYTail-T' => '\.NoTailY', 
@@ -223,6 +224,7 @@ my %reduced_featsets = (
 	'SlntItlc-T SmLTail-T' => 'SmLTail-T', # for Andika Reg, which lacks some SlantItalic glyphs
 	'LgTHk-RtHk SmTTail-T' => 'SmTTail-T', # lower case glyph not affected by Capital T-hook alternate
 	'LgYHk-LftHk SmYTail-T' => 'SmYTail-T', # lower case glyph not affected by Capital Y-hook alternate
+	'CapQ-T SmQTail-T' => 'SmQTail-T', # lower case glyph not affected by Capital Q alternate
 	'Lit-T LpDiacs-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
 	'LpDiacs-T Ognk-Strt SmCp-T' => 'Ognk-Strt SmCp-T', 
 	'LpDiacs-T SlntItlc-T SmCp-T' => 'LpDiacs-T SmCp-T', #above
@@ -239,7 +241,8 @@ my %reduced_featsets = (
 	'LgTHk-RtHk SmCp-T SmTTail-T' => 'LgTHk-RtHk SmCp-T', 
 	'LgYHk-LftHk SmCp-T SmYTail-T' => 'LgYHk-LftHk SmCp-T', 
 	'Ognk-Strt SmCp-T SmITail-T' => 'Ognk-Strt SmCp-T', 
-	'RONdiacs-T SmCp-T SmTTail-T' => 'RONdiacs-T SmCp-T', 
+	'RONdiacs-T SmCp-T SmTTail-T' => 'RONdiacs-T SmCp-T',
+	'CapQ-T SmCp-T SmQTail-T' => 'CapQ-T SmCp-T', 
 );
 
 #### subroutines ####
@@ -766,6 +769,7 @@ sub PSName_select(\@$)
 #choose the first name in a space delimited string that matches the feature settings
 #if no name is found, try simplifying the feature settings according to the %reduced_featsets hash
 #return origial names if no match found
+# if there is only one choice, it will be returned
 {
 	my ($featsets, $choices) = @_;
 	
@@ -878,18 +882,18 @@ sub Features_output($\%\%\%\%)
 				foreach $usv (@usvs)
 				{
 					my @ps_names = @{$usv_feat_to_ps_name->{$usv}{$featset}};
-					my $choices .= join(' ', @ps_names);
+					my $choices .= join(' ', @ps_names); #there could be only one choice
 					
 					if (scalar @ps_names > 1)
 					{
 						my @featsets = ($featset);
-						$choices = PSName_select(@featsets, $choices);
+						$choices = PSName_select(@featsets, $choices); #if there is only one choice, it will be returned
 					}
 					
 					if ($opt_t) #output legal args for testing TypeTuner
 						{my @c = split(/\s/, $choices); $choices = $c[0];}
 						
-					if (index($choices, ' ') != -1)
+					if (index($choices, ' ') != -1) #if there was only one choice, it will be used w/o this comment
 						{print $fh "\t\t\t<!-- edit below line(s) -->\n";}
 						
 					print $fh "\t\t\t<cmd name=\"encode\" args=\"$usv $choices\"/>\n";
