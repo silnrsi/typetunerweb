@@ -15,7 +15,8 @@ use Getopt::Std;
 #### global variables & constants ####
 
 my $version = "1.5"; 
-#1.5 -  add mechanism to handle glyphs with a suffix but no corresponding feature setting (eg LtnCapYHook.RtHook)
+#1.5 - add mechanism to handle glyphs with a suffix but no corresponding feature setting (eg LtnCapYHook.RtHook)
+#      select glyphs based on exact number of ps name suffixes indicated by feature settings
 #1.4 - add mechanism to map interacting features to a simpler, equivalent form
 #1.3 - output old_names section
 #1.2 - generate WPFeatures test
@@ -151,19 +152,16 @@ my %nm_to_tag = (
 );
 
 #map feature settings to PS names using regex matching
-#only need mappings for feature settings that interact
+#the (?! ... ) regex below is a negative look ahead match
 #mappings that are missing below will be output as error messages
-#the (?! ... ) reg ex below is a negative look ahead match
-# the error message can be processed to add to the mappings
-# *** Be careful to not discard tags needed by fonts other than the one being worked on
-# *** Do NOT eliminate .SC variants for the default glyph of a multi-valued feature
+#*** Be careful to not discard tags needed by fonts other than the one being worked on
 my %featset_to_suffix = (
 	'BarBwl-T' => '\.BarBowl', 
 	'Caron-T' => '\.Caron', 
 	'CyShha-T' => '\.UCStyle', 
 	'CyrE-T' => '\.MongolStyle', 
 	'Lit-T' => '(\.SngBowl|\.SngStory)',
-	'Lit-F' => '(?!\.SngBowl|\.SngStory)', 
+	'Lit-F' => '^[a-zA-Z0-9]+(\.|$)(?!SngBowl|SngStory)', 
 	'ModAp-Lg' => '\.Lrg', 
 	'Ognk-Strt' => '\.RetroHookStyle', 
 	'OpnO-TopSrf' => '\.TopSerif', 
@@ -189,8 +187,7 @@ my %featset_to_suffix = (
 	'LgNLftHk-Lc' => '\.LCStyle',
 	'LgRTl-Lc' => '\.LCStyle',
 	'LgTHk-RtHk' => '\.RtHook',
-	'LgYHk-RtHk' => '\.RtHook',
-#	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
+	'LgYHk-RtHk' => '\.RtHook', #in %glyph_to_featset
 	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook)',
 	'LrgBHk-T' => '\.TopBar',
 	'LpDiacs-T' => '\.LP',
@@ -246,9 +243,15 @@ my %reduced_featsets = (
 	'LgYHk-LftHk SmCp-T SmYTail-T' => 'LgYHk-LftHk SmCp-T', 
 	'Ognk-Strt SmCp-T SmITail-T' => 'Ognk-Strt SmCp-T', 
 	'RONdiacs-T SmCp-T SmTTail-T' => 'RONdiacs-T SmCp-T',
-	'CapQ-T SmCp-T SmQTail-T' => 'CapQ-T SmCp-T', 
+	'CapQ-T SmCp-T SmQTail-T' => 'CapQ-T SmCp-T',
+	'Lit-F SlntItlc-T SmCp-T VIEdiacs-T' => 'SmCp-T VIEdiacs-T',  
 );
 
+#specify glyph variants which have a suffix but no corresponding non-default feature setting
+# such LtnSmYHook.RtHook.* variants 
+#  LtnSmYHook.RtHook is encoded, LtnSmYHook is selected by LgYHk-LftHk; LtnSmYHook.RtHook.SC is the small cap variant
+#dflt specifies an implicit feature setting, which would be default setting
+#if a feature is set to one the of the alts values, then the dflt featset is not used
 my %glyph_to_featset = (
 	'uni01B4' => {('dflt' => 'LgYHk-RtHk', 'alts' => [('LgYHk-LftHk')])}, #LtnSmYHook
 	'uni01B3' => {('dflt' => 'LgYHk-RtHk', 'alts' => [('LgYHk-LftHk')])}, #LtnCapYHook
@@ -726,40 +729,29 @@ sub Dblenc_get($\%)
 sub Featsets_add_default($\@\%)
 #add a default featset to the featsets array
 #based on the name of the base glyph and the current featsets
-#needed to handle variant glyphs which are encoded
-# such LtnSmYHook.RtHook.SC and LtnCapYHook.RtHook
-# where a suffix should be used to select the correct glyph 
+#needed to handle variant glyphs where a suffix should be used
 # but there is no feature setting for that suffix
+# such LtnSmYHook.RtHook.* variants 
+#  (LtnSmYHook.RtHook is encoded, LtnSmYHook is selected by a featset; LtnSmYHook.RtHook.SC is the small cap variant)
 {
 	my ($ps_names, $featsets, $glyph_to_featset) = @_;
-	#my ($dflt_featset, @alt_featsets);
 
-	my @n = split(/\s/, $ps_names);
-	my @s = split('\.', $n[0]);
-	my $ps_name = $s[0];
+	#assumes all the space separated ps names have same base name
+	#my $ps_name = $ps_names;
+	#$ps_name =~ s/^(.*?)\..*$/$1/;  dooes not work because first ps name may not contain a '.'
+	my @a = split(/\s/, $ps_names);
+	my @b = split(/\./, $a[0]);
+	my $ps_name = $b[0];
+
 	if (defined($glyph_to_featset->{$ps_name}))
 	{
-		my $dflt_featset = $glyph_to_featset->{$ps_name}{'dflt'};
-		my @alt_featsets = @{$glyph_to_featset->{$ps_name}{'alts'}};
-	
 		my $alt_found = 0;
-		foreach my $alt_featset (@alt_featsets)
-		{
-			foreach my $featset (@$featsets)
-			{
-				if ($alt_featset eq $featset)
-				{
-					$alt_found = 1;
-					last;
-				}
-			}
-			if ($alt_found) {last;}
-		}
+		foreach my $alt_featset (@{$glyph_to_featset->{$ps_name}{'alts'}})
+			{foreach my $featset (@$featsets)
+				{if ($alt_featset eq $featset) {$alt_found = 1;}}}
 		
 		if (not $alt_found)
-		{
-			push(@$featsets, $dflt_featset)
-		}
+			{push(@$featsets, $glyph_to_featset->{$ps_name}{'dflt'})}
 	}
 	return;
 }
@@ -788,12 +780,12 @@ sub Suffixes_get(\@)
 
 sub Suffixes_match_name(\@$)
 #test if a PS name matches all of the suffixes in an array
-# and that there aren't any extra suffixes in the PS name
+# and that the correct number of suffixes are in the PS name
 #(the suffixes are now reg exs and represent feature setings)
-# a regex for a multi-value default glyph might match but have no suffix
+#a regex for a multi-value default glyph might match but have no suffix
 # eg (uni01B2|028B)(?!\.StraightLftHighHook|\.StraightLft)
-#the current approach still assumes that extra suffixes in the PS name are sufficient 
-# to eliminate glyphs that should only be used if more feature settings are active
+# if a negative look ahead match (as above) is used, 
+# the number of suffixes needed in the name is reduced
 #returns true if the suffix array is empty
 {
 	my ($suffixes, $name) = @_;
@@ -802,12 +794,19 @@ sub Suffixes_match_name(\@$)
 	
 	my @t = split(/\./, $name);
 	my $name_suffix_ct = scalar @t - 1;
-	if ($name_suffix_ct > scalar @$suffixes)
-		{return 0;} 
+	my $suffix_ct = scalar @$suffixes;
+#	if ($name_suffix_ct > $suffix_ct)
+#		{return 0;} #return if more name suffixes than suffixes (regexs) being matched
+		
 	my $suffix_match_ct = 0;
+	my $active_suffix_ct = $suffix_ct;
 	foreach my $suffix (@$suffixes)
-		{if ($name =~ /$suffix/) {$suffix_match_ct++;}}
-	if ($suffix_match_ct == scalar @$suffixes)
+	{
+		if ($name =~ /$suffix/) {$suffix_match_ct++;}
+		if ($suffix =~ /\?\!/) {$active_suffix_ct--;} #no name suffix for negative look ahead matches
+	}
+		
+	if (($suffix_match_ct == $suffix_ct) && ($active_suffix_ct == $name_suffix_ct))
 		{return 1;}
 	else
 		{return 0;}
