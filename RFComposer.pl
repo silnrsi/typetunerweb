@@ -14,7 +14,9 @@ use Getopt::Std;
 
 #### global variables & constants ####
 
-my $version = "1.4"; # add mechanism to map interacting features to a simpler, equivalent form
+my $version = "1.5"; 
+#1.5 -  add mechanism to handle glyphs with a suffix but no corresponding feature setting (eg LtnCapYHook.RtHook)
+#1.4 - add mechanism to map interacting features to a simpler, equivalent form
 #1.3 - output old_names section
 #1.2 - generate WPFeatures test
 #1.1 - handle arbitrary interacting features
@@ -187,7 +189,9 @@ my %featset_to_suffix = (
 	'LgNLftHk-Lc' => '\.LCStyle',
 	'LgRTl-Lc' => '\.LCStyle',
 	'LgTHk-RtHk' => '\.RtHook',
-	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
+	'LgYHk-RtHk' => '\.RtHook',
+#	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook|\.NoTailY)',
+	'LgYHk-LftHk' => '(uni01B4|uni01B3)(?!\.RtHook)',
 	'LrgBHk-T' => '\.TopBar',
 	'LpDiacs-T' => '\.LP',
 	'CHZtn-T' => '\.ChinantecTn',
@@ -244,6 +248,12 @@ my %reduced_featsets = (
 	'RONdiacs-T SmCp-T SmTTail-T' => 'RONdiacs-T SmCp-T',
 	'CapQ-T SmCp-T SmQTail-T' => 'CapQ-T SmCp-T', 
 );
+
+my %glyph_to_featset = (
+	'uni01B4' => {('dflt' => 'LgYHk-RtHk', 'alts' => [('LgYHk-LftHk')])}, #LtnSmYHook
+	'uni01B3' => {('dflt' => 'LgYHk-RtHk', 'alts' => [('LgYHk-LftHk')])}, #LtnCapYHook
+);
+
 
 #### subroutines ####
 
@@ -713,6 +723,47 @@ sub Dblenc_get($\%)
 	close FH;
 }
 
+sub Featsets_add_default($\@\%)
+#add a default featset to the featsets array
+#based on the name of the base glyph and the current featsets
+#needed to handle variant glyphs which are encoded
+# such LtnSmYHook.RtHook.SC and LtnCapYHook.RtHook
+# where a suffix should be used to select the correct glyph 
+# but there is no feature setting for that suffix
+{
+	my ($ps_names, $featsets, $glyph_to_featset) = @_;
+	#my ($dflt_featset, @alt_featsets);
+
+	my @n = split(/\s/, $ps_names);
+	my @s = split('\.', $n[0]);
+	my $ps_name = $s[0];
+	if (defined($glyph_to_featset->{$ps_name}))
+	{
+		my $dflt_featset = $glyph_to_featset->{$ps_name}{'dflt'};
+		my @alt_featsets = @{$glyph_to_featset->{$ps_name}{'alts'}};
+	
+		my $alt_found = 0;
+		foreach my $alt_featset (@alt_featsets)
+		{
+			foreach my $featset (@$featsets)
+			{
+				if ($alt_featset eq $featset)
+				{
+					$alt_found = 1;
+					last;
+				}
+			}
+			if ($alt_found) {last;}
+		}
+		
+		if (not $alt_found)
+		{
+			push(@$featsets, $dflt_featset)
+		}
+	}
+	return;
+}
+
 sub Suffixes_get(\@)
 #get all the PS name suffixes for an array of feature settings
 #return an empty array if any feature setting doesn't have a suffix
@@ -885,9 +936,10 @@ sub Features_output($\%\%\%\%)
 					my $choices .= join(' ', @ps_names); #there could be only one choice
 					
 					if (scalar @ps_names > 1)
-					{
+					{ #if there is only one choice, it will be used
 						my @featsets = ($featset);
-						$choices = PSName_select(@featsets, $choices); #if there is only one choice, it will be returned
+						Featsets_add_default($choices, @featsets, %glyph_to_featset);
+						$choices = PSName_select(@featsets, $choices); 
 					}
 					
 					if ($opt_t) #output legal args for testing TypeTuner
@@ -1030,6 +1082,7 @@ sub Test_output($$\%\%\%)
 			}
 		}
 		chop($choices);
+		Featsets_add_default($choices, @feats, %glyph_to_featset);
 		$choices = PSName_select(@feats, $choices);
 		
 		if ($opt_t) #output legal args for testing TypeTuner
@@ -1158,7 +1211,7 @@ END
 sub Usage_print()
 {
 	print <<END;
-RFComposer ver $version (c) SIL International 2007-2009. All rights reserved.
+RFComposer ver $version (c) SIL International 2007-2011. All rights reserved.
 usage: 
 	RFComposer <switches> <font.ttf> <gsi.xml> <dblenc.txt> [<gsi_supp_fn.xml>]
 	switches:
