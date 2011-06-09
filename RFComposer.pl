@@ -1,4 +1,4 @@
-# © SIL International 2007-2009. All rights reserved.
+# © SIL International 2007-20011. All rights reserved.
 # Please do not redistribute.
 
 #Script to create a template for the TypeTuner feat_all.xml file for our Roman fonts.
@@ -33,9 +33,10 @@ my $xml_version = "1.0";
 #$opt_q - output no graphite cmds
 #$opt_t - output <interaction> encode cmds w/o choices for PS name for testing TypeTuner
 #$opt_l - list features and settings to a file to help create %nm_to_tag map
-#$opt_w  - generate a WorldPad file for testing Graphite features TODO: make this a different program
-our($opt_d, $opt_g, $opt_q, $opt_t, $opt_l, $opt_w); #set by &getopts:
-my $opt_str = 'dgqtlw:';
+#$opt_w - generate a WorldPad file for testing Graphite features TODO: make this a different program
+#$opt_a - hook for ad hoc subroutine to analyze parsed glyph data, does NOT produce an output file
+our($opt_d, $opt_g, $opt_q, $opt_t, $opt_l, $opt_w, $opt_a); #set by &getopts:
+my $opt_str = 'dgqtlw:a';
 my $featset_list_fn = 'featset_list.txt';
 
 my $feat_all_base_fn = 'feat_all_composer.xml';
@@ -1298,6 +1299,39 @@ if ($opt_d)
 	foreach (sort keys %usv_feat_to_ps_name) {print "$_ "}; print "\n";
 	print "featsets with variant glyphs: ";
 	foreach (sort keys %featset_to_usvs) {print "($_)"}; print "\n";
+}
+
+if ($opt_a)
+#analysis option for examining parsed glyph data
+#find glyphs with multiple suffixes with a <feature> element in the GSI
+{
+	foreach my $usv (sort keys %usv_feat_to_ps_name)
+	{
+		foreach my $feat (sort keys %{$usv_feat_to_ps_name{$usv}})
+		{
+			if ($feat ne 'unk')
+#			if ($feat eq 'unk')
+			{
+#				print "$usv,$feat";
+#				my $first = 1;      
+				foreach my $nm (@{$usv_feat_to_ps_name{$usv}{$feat}})
+				{
+#					print ",$nm";
+					my @nms = split(/\./, $nm);
+					if (scalar @nms > 2)
+					{
+#						if ($first) {print "$usv,$feat"; $first = 0}
+						#if ($first) {print "$feat"; $first = 0}
+						#print ",$nm";
+						print "$feat,$nm\n";
+					}
+				}
+				#if (not $first) {print "\n";}
+#				print "\n";
+			}
+		}
+	}
+	exit;
 }
 
 Dblenc_get($dblenc_fn, %dblenc_usv);
