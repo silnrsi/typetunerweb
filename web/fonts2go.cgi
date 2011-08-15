@@ -20,6 +20,34 @@ my $logFileName = $logDir . $cgiPathName;
 $logFileName =~ s/\.[^.]*$//;
 $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
+# This function can be change to modify font file names in a way consistent
+# with vendor preferences. Note that $suffix may be empty, but if
+# provided it comes from either:
+#   The suffix field provided by the user.
+#   The package name given in the URL
+# but in any case it will have had whitespace removed.
+
+sub fontFileName
+{
+	# SIL's new convention e.g. CharisSILLiteracy-R.ttf, but we should handle other things.
+	my ($oldFileName, $suffix) = @_;
+	$suffix = "TT" unless $suffix;
+	if ($oldFileName =~ /^(.+)-(r|i|b|bi)\.([ot]tf)$/io)
+	{
+		# New SIL convention:
+		return "$1$suffix-$2.$3";
+	}
+	elsif ($oldFileName =~ /^(.+)\.([^.]+)$/o)
+	{
+		# General whatever.ext
+		return "$1-$suffix.$2";
+	}
+	else
+	{
+		return "$oldFileName-$suffix";
+	}
+}
+	
 # Below are literals to override style info -- these are set to match scripts.sil.org as of Jan 2011
 
 my $dtd = "-//W3C//DTD HTML 4.01 Transitional//EN";
@@ -140,22 +168,37 @@ use Fcntl qw/:flock :seek/;
 use File::Temp qw/tempdir tempfile/;
 use File::Spec;
 use File::Path;
+use File::Basename;
 use XML::Parser::Expat;
+use Data::Dumper;
+
+# Help foil denial-of-service attacks:
+$CGI::POST_MAX = 100 x 1024;	# Set max size of POST.    TODO: This limit needs to be increased when we allow file uploads.
+$CGI::DISABLE_UPLOADS = 1;  	# TODO: delete this line when we have support for font/settings uploads.
+
+# Some assumptions made in this code:
+#
+# Font files are either .ttf or .otf
 
 my $cgi = new CGI;
 
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
-my $availableFamilies;
+my ($availableFamilies, %uiFamilies);
 opendir(DIR, "$tunableFontsDir") || die ("Cannot opendir tunableFontsDir: $!\n");
 foreach (sort readdir(DIR)) {
-	next if m/^\./ || !(-d "$tunableFontsDir/$_");
-	my $familytag = $_;
-	$familytag =~ s/[^-A-Za-z_0-9]//g;
-	# Save the family tag and name unless the name matches "test" and this is the production script.
-	# This gives us a way to test new releases without making them public.
-	$availableFamilies->{$familytag} = $_ unless $familytag =~ /test/oi && $cgiPathName =~ /fonts2go/oi;
+	next if m/^\./ || !(-d "$tunableFontsDir/$_") || (/test/oi && $cgiPathName =~ /fonts2go/oi);
+	m/^(.*?)(?:\s+([0-9\.]+))?$/;		# parse family name and, if present, version
+	my ($family, $ver) = ($1,$2);
+	$family =~ s/[^-A-Za-z_]//g;
+	my $familytag = $family;
+	$familytag .= "-$ver" if $ver;		# e.g.:  CharisSIL-4.108
+	# NB: familytag should not have spaces, but subdirectory name may have them.
+	# Save mapping of familytag -> folder name for all available families:
+	$availableFamilies->{$familytag} = $_ ;
+	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent version.
+	$uiFamilies{$family} = $familytag unless exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag;
 }
 closedir(DIR);
 
@@ -178,16 +221,76 @@ my %omittedvalues = ();		# Hash of features (names and values) that are to be om
 
 ######################################################################
 
+if ($cgi->param('pkg')) {
+	#
+	# Process hardcoded URL to get a specific package, e.g.
+	#    fonts2go.cgi?pkg=Literacy&family=Charis
+	#    fonts2go.cgi?pkg=Literacy&family=Charis&ver=4.106
+	#
+	my $familytag = getFamilytag();
+	my $fontdir = "$tunableFontsDir/$availableFamilies->{$familytag}";
+	invalid_parameter("No packages available for font family \"$availableFamilies->{$familytag}\".") 
+		unless -d "$fontdir/.packages";
+	
+	my $pkg_re = qr/[^-A-Za-z_]/o;
+	my $pkg = checkparam('pkg', $pkg_re);
+	appendtemp("pkg = $pkg");
+	
+	# Note: Settings file names can have spaces, e.g. "Literacy Compact", 
+	# but for convenience on the URL the 'pkg' parameter has no spaces.
+	# So we have to find the config file that matches the pkg being requested.
+	opendir(DIR, "$fontdir/.packages") || die ("Cannot opendir \"$fontdir/.packages\": $!\n");
+	my $settingsFile = '';
+	foreach (sort readdir(DIR)) {
+		next unless -f "$fontdir/.packages/$_";
+		my $s = $_;
+		$s =~ s/$pkg_re//g;
+		if ($s eq $pkg) {
+			$settingsFile = $_;
+			last;
+		}
+	}
+	closedir(DIR);
+	appendtemp("settingsFile = \"$settingsFile\"");
+	invalid_parameter("pkg=$pkg") unless $pkg && $settingsFile;
+	
+	my $suffixOpt = "-n \"$settingsFile\"";
+	my $file_name = "$familytag-$pkg";
+	
+	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
+	appendtemp("tempdir = $tempDir");
+
+	my $tunedDir = "$tempDir/$file_name";
+	appendtemp("tunedDir = $tunedDir");
+	mkdir "$tunedDir";
+
+	# link in the settings file for this package
+	link("$fontdir/.packages/$settingsFile", "$tunedDir/$familytag-$feat_set_tuned") or die "Unable to link settings file: $!\n";
+	
+	# Ok, write to logfile and build the fonts:
+	appendlog($familytag, "pkg $pkg = $settingsFile");
+	appendtemp("log file written");
+	buildfonts ($tempDir, $tunedDir, $file_name, $familytag, $fontdir, $pkg, $suffixOpt);
+	
+	# Done!
+	rmtree($tempDir);
+	unlink "$tmpfilename";
+	exit;}
+
+	
+######################################################################
+
 if ($cgi->param('Select features')) {
 	#
 	# present form to select font features
 	#
-	my $familytag = checkparam('family');
+	my $familytag = getFamilytag();
+	my $fontdir = "$tunableFontsDir/$availableFamilies->{$familytag}";
 	my $help='';
 	
-	my $ttf = ttflist($familytag);		# One font from family needed -- to get feature info
-	my $tempDir = tempdir();
-	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttf\")");
+	my $ttf = ttflist($fontdir);		# Complete checking of 'family' param and retrieve one font from family to get feature info
+	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
+	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$fontdir/$ttf\")");
 	die "$res\n" if $res;
 	
 	print
@@ -210,17 +313,17 @@ if ($cgi->param('Select features')) {
 				-enctype	=> 'multipart/form-data',
 				-charset	=> 'UTF-8' );
 	
-	if (-f "$tunableFontsDir/$availableFamilies->{$familytag}/.help_url")
+	if (-f "$fontdir/.help_url")
 	{
 		# retrieve help url from .help_url file
-		open (FH, "< $tunableFontsDir/$availableFamilies->{$familytag}/.help_url");
+		open (FH, "< $fontdir/.help_url");
 		$help = <FH>;
 		close (FH);
 	}
-	if (-f "$tunableFontsDir/$availableFamilies->{$familytag}/.ttwrc")
+	if (-f "$fontdir/.ttwrc")
 	{
 		# Retrieve info from .ttwrc file
-		open (FH, "< $tunableFontsDir/$availableFamilies->{$familytag}/.ttwrc");
+		open (FH, "< $fontdir/.ttwrc");
 		while (<FH>)
 		{
 			s/^\s*#.*$//;			# Trim comments
@@ -306,24 +409,25 @@ elsif ($cgi->param('Get tuned font')) {
 	#
 	# run TypeTuner and deliver the resulting font(s)
 	#
-	my $familytag = checkparam('family');	# de-taint hidden param
-	my $suffix = checkparam('suffix');		# de-taint suffix
+	my $familytag = getFamilytag();
+	my $fontdir = "$tunableFontsDir/$availableFamilies->{$familytag}";
+	my $suffix = checkparam('suffix', qr/[^-A-Za-z_ ]/o);		# de-taint suffix
 	my $suffixOpt = '';
-	my $buffer;
 	
 	appendtemp("Starting 'Get tuned font': familytag = $familytag, suffix = $suffix");
 	
-	my @ttfs = ttflist($familytag);		# Complete checking of 'family' param, and get list of fonts.
+	my $ttf = ttflist($fontdir);		# Complete checking of 'family' param and retrieve one font from family to get feature info
 	
-	my $tempDir = tempdir();
+	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
 	
-	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$tunableFontsDir/$availableFamilies->{$familytag}/$ttfs[0]\")");
+	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$fontdir/$ttf\")");
 	die "$res\n" if $res;
 	
 	my $file_name = $familytag;
 	if ($suffix ne '') {
 		$suffixOpt = "-n \"$suffix\"";
+		$suffix =~ s/\s//g;
 		$file_name .= "-$suffix";
 	}
 	else {
@@ -344,21 +448,87 @@ elsif ($cgi->param('Get tuned font')) {
 	close(FH);
 	close(SETTINGS);
 	
-	# Ok, write to logfile:
+	# Ok, write to logfile and build the fonts:
 	appendlog($familytag, $featurelist);
 	appendtemp("log file written");
+	buildfonts ($tempDir, $tunedDir, $file_name, $familytag, $fontdir, $suffix, $suffixOpt);
+
+	# Done!
+	rmtree($tempDir);
+	unlink "$tmpfilename";
+	exit;
+}
+
+
+######################################################################
+
+else {
+	#
+	# Initial page: present welcome screen, font family choice
+	#
+
+	print
+		header(-charset => 'utf-8'),
+		start_html(	
+				-dtd => $dtd,
+				-title => $title,
+				-meta => { keywords => "typetuner sil"},
+				-style => { -src => $css, 
+									-verbatim => $style_verbatim },
+				'--style' => "padding:0; margin:0"),
+		$preamble,
+		h1("Welcome to $title!<br>", span({-class => 'item_subtitle'}, p("Type that's tuned to suit your taste"))),
+		p('This service allows you to download customized versions of our fonts.
+		First, choose a typeface family; then you can select various alternate glyphs
+		and other optional features to be the defaults in your new font.'),
+		hr,
 	
+		start_form(
+				-method		=> 'post',
+				-action		=> "$cgiPathName",
+				-enctype	=> 'multipart/form-data',
+				-charset	=> 'UTF-8' );
+	
+	print
+		table({-border => '0'},
+			Tr([
+				td([
+					strong(['Font family']),
+					popup_menu(
+						-name => 'family',
+						-values => [ sort values %uiFamilies ],
+						-default => $defaultFamily,
+						-labels => $availableFamilies
+					)
+				])
+			])
+		);
+		
+	print
+		hr,
+		submit('Select features'),
+		defaults('Reset'),
+		end_form,
+		$postamble,
+		end_html;
+	
+	unlink "$tmpfilename";
+	exit;
+}
+
+
+sub buildfonts{
 	# run typetuner on all fonts in the family
 	
+	my ($tempDir, $tunedDir, $file_name, $familytag, $fontdir, $suffix, $suffixOpt) = @_;
+	
+	my ($res, $buffer);
+	
+	my @ttfs = ttflist($fontdir);		# get list of fonts.
+	
 	foreach (@ttfs) {
-		my $tuned = "$tunedDir/$_";
-		if ($suffix eq '') {
-			$tuned =~ s/\.ttf$/-TT.ttf/;
-		}
-		else {
-			$tuned =~ s/\.ttf$/-$suffix.ttf/;
-		}
-		$res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$familytag-$feat_set_tuned \"$tunableFontsDir/$availableFamilies->{$familytag}/$_\")");
+		my $tuned = "$tunedDir/" . fontFileName($_, $suffix);
+		$res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$familytag-$feat_set_tuned \"$fontdir/$_\")");
 		if ($res)
 		{
 			print header(-charset => 'UTF-8'),
@@ -389,7 +559,7 @@ elsif ($cgi->param('Get tuned font')) {
 		{
 			mkdir("$tunedDir/$subdir") or die ("Cannot mkdir '$tunedDir/$subdir': $!\n");
 		}
-		opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir") or die ("Cannot opendir '$tunableFontsDir/$availableFamilies->{$familytag}/$subdir': $!\n");
+		opendir(DIR, "$fontdir/$subdir") or die ("Cannot opendir '$fontdir/$subdir': $!\n");
 		foreach (sort readdir(DIR)) {
 			next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
 			if (m/^(.*)_tt(\..*)+$/i)
@@ -398,7 +568,7 @@ elsif ($cgi->param('Get tuned font')) {
 				my $outfile = "$tunedDir/$subdir/$1$2";
 				appendtemp ("Processing '$_' -> '$subdir/$outfile'");
 				local $/;
-				open (FH, "<:raw", "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_") or die ("cannot open '$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_' for reading: !$\n");
+				open (FH, "<:raw", "$fontdir/$subdir/$_") or die ("cannot open '$fontdir/$subdir/$_' for reading: !$\n");
 				my $s = <FH>;	# Slurp entire file
 				close (FH);
 				use bytes;
@@ -409,7 +579,7 @@ elsif ($cgi->param('Get tuned font')) {
 				print FH $s;
 				close (FH);
 			}
-			elsif (-d "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_")
+			elsif (-d "$fontdir/$subdir/$_")
 			{
 				# subfolder -- schedule it for a later time.
 				appendtemp ("Saving directory '$subdir/$_' for later");
@@ -419,7 +589,7 @@ elsif ($cgi->param('Get tuned font')) {
 			{
 				# anything else is just linked in.
 				appendtemp ("Linking '$_'");
-				link "$tunableFontsDir/$availableFamilies->{$familytag}/$subdir/$_", "$tunedDir/$subdir/$_";
+				link "$fontdir/$subdir/$_", "$tunedDir/$subdir/$_";
 			}
 		}
 		closedir(DIR);	
@@ -479,66 +649,6 @@ elsif ($cgi->param('Get tuned font')) {
 		close(ZIP);
 
   }
-
-	rmtree($tempDir);
-	unlink "$tmpfilename";
-	exit;
-}
-
-######################################################################
-
-else {
-	#
-	# Initial page: present welcome screen, font family choice
-	#
-
-	print
-		header(-charset => 'utf-8'),
-		start_html(	
-				-dtd => $dtd,
-				-title => $title,
-				-meta => { keywords => "typetuner sil"},
-				-style => { -src => $css, 
-									-verbatim => $style_verbatim },
-				'--style' => "padding:0; margin:0"),
-		$preamble,
-		h1("Welcome to $title!<br>", span({-class => 'item_subtitle'}, p("Type that's tuned to suit your taste"))),
-		p('This service allows you to download customized versions of our fonts.
-		First, choose a typeface family; then you can select various alternate glyphs
-		and other optional features to be the defaults in your new font.'),
-		hr,
-	
-		start_form(
-				-method		=> 'post',
-				-action		=> "$cgiPathName",
-				-enctype	=> 'multipart/form-data',
-				-charset	=> 'UTF-8' );
-	
-	print
-		table({-border => '0'},
-			Tr([
-				td([
-					strong(['Font family']),
-					popup_menu(
-						-name => 'family',
-						-values => [ sort keys %$availableFamilies ],
-						-default => $defaultFamily,
-						-labels => $availableFamilies
-					)
-				])
-			])
-		);
-		
-	print
-		hr,
-		submit('Select features'),
-		defaults('Reset'),
-		end_form,
-		$postamble,
-		end_html;
-	
-	unlink "$tmpfilename";
-	exit;
 }
 
 my ($featureName, $defValue, $values);
@@ -626,13 +736,27 @@ sub eh_proc
 	}
 }
 
+# Retrieve 'family' and 'ver' varibles from CGI; detaint them and
+# determine the familytag value to be used. 
+
+sub getFamilytag
+{
+	my $ver = checkparam('ver', qr/[^0-9.]/o);
+	my $familytag = ($ver ? checkparam('family', qr/[^-A-Za-z_]/o) . "-$ver" : checkparam('family', qr/[^-A-Za-z_0-9\.]/o));
+		
+	invalid_parameter("tag=$familytag\n") unless exists $availableFamilies->{$familytag};
+	return $familytag;
+}
+	
 sub checkparam
 {
 	# verify and de-taint a cgi parameter value
 	my $value = $cgi->param(shift);
-	$value =~ s/[^-A-Za-z_0-9]//g;		# Keep only alphanumerics, '-' and '_' 
-	$value =~ /^(.*)$/;					# de-taint
-	return $1;
+	my $re = shift;
+	$value =~ s/$re//g;					# Keep only what caller wants
+	$value =~ s/ +/ /;					# compress spaces
+	$value =~ /^ *(.*?) *$/;		# de-taint and trim leading/trailing whitespace
+	return substr($1, 0, 50);		# limit length.
 }
 	
 
@@ -640,13 +764,12 @@ sub ttflist
 {
 	# return the first (in scalar context) or complete list (in list context) of the
 	# font files within a given family.
-	my $familytag = shift;
-	unless (exists ($availableFamilies->{$familytag}) && opendir(DIR, "$tunableFontsDir/$availableFamilies->{$familytag}"))
-	{ die ("Invalid parameter \"$familytag\"\n");}
+	my $fontdir = shift;
+	opendir(DIR, "$fontdir") || invalid_parameter ("Invalid directory \"$fontdir\"");
 	my @ttfs =  (sort grep { /\.[ot]tf$/oi } readdir(DIR));
 	closedir(DIR);	
 	unless (scalar(@ttfs))
-	{ die ("Invalid parameter \"$familytag\"\n");}
+	{ invalid_parameter ("Invalid directory \"$fontdir\"");}
 	return (wantarray ? @ttfs : $ttfs[0]);
 }
 
@@ -655,6 +778,9 @@ sub appendlog
 	# Append timestamp, user details, and message to our logfile
 	my $logmsg = join(' ', @_);
 	my @t = localtime();
+	my $logdir = dirname($logFileName);
+	mkpath($logdir) unless -d $logdir;
+	warn "Can't create log directory $logdir: !$\n" unless -d $logdir;
 	unless (open(LOG, ">>$logFileName"))
 	{
 		warn("Couldn't open '$logFileName': $!\n");
@@ -714,3 +840,15 @@ sub run_cmd
     return $res;
 }
  
+sub invalid_parameter {
+	my ($msg, $tempDir) = @_;
+	print
+		header(-status => '404 Not found'),
+		start_html('Problems'),
+		h2('Invalid parameter'),
+		p($msg),
+		end_html;
+	unlink "$tmpfilename";
+	rmtree($tempDir) if defined $tempDir && -d $tempDir;
+	exit;
+}	
