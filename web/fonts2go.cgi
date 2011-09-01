@@ -11,7 +11,7 @@ my $logDir = '/var/log';
 my $tmpDir = '/tmp';
 
 my $title = 'TypeTuner Web';
-my $defaultFamily = 'CharisSIL';
+my $defaultFamilyRE = qr/^Charis/o;
 
 my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
 $cgiPathName =~ s!^.*(?=/ttw/)!!;	# something like '/ttw/fonts2go.cgi'
@@ -20,7 +20,7 @@ my $logFileName = $logDir . $cgiPathName;
 $logFileName =~ s/\.[^.]*$//;
 $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
-# This function can be change to modify font file names in a way consistent
+# This function can be changed to modify font file names in a way consistent
 # with vendor preferences. Note that $suffix may be empty, but if
 # provided it comes from either:
 #   The suffix field provided by the user.
@@ -46,6 +46,22 @@ sub fontFileName
 	{
 		return "$oldFileName-$suffix";
 	}
+}
+
+# Similar to above, this function can be changed to modify the directory name
+# (and ultimately the name of the downloaded zip file) into which the tuned
+# fonts are placed.
+
+sub fontDirName
+{
+	# Per SIL convention we insert the suffix in front of the version if present, e.g:
+	#		CharisSIL -> CharisSILSuffix
+	#		CharisSIL-1.408 -> CharisSILSuffix-1.408
+	#
+	my ($familytag, $suffix) = @_;
+	my $dir = $familytag;
+	$dir =~ s/(-[0-9\.]+)?$/$suffix$1/;
+	return $dir;
 }
 	
 # Below are literals to override style info -- these are set to match scripts.sil.org as of Jan 2011
@@ -170,7 +186,7 @@ use File::Spec;
 use File::Path;
 use File::Basename;
 use XML::Parser::Expat;
-use Data::Dumper;
+# use Data::Dumper;
 
 # Help foil denial-of-service attacks:
 $CGI::POST_MAX = 100 x 1024;	# Set max size of POST.    TODO: This limit needs to be increased when we allow file uploads.
@@ -185,20 +201,44 @@ my $cgi = new CGI;
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
-my ($availableFamilies, %uiFamilies);
+# Create a tempfile used for debugging output. This file will be unlinked
+# just before the script exits. Thus if the script exits prematurely, the
+# tempfile remains. To add to this file, use appendtemp() function.
+my ($tmpf, $tmpfilename) = tempfile( "ttwXXXXX", DIR => $tmpDir, SUFFIX => '.txt');
+print $tmpf "Starting $cgiPathName\n";
+close $tmpf;
+
+my ($availableFamilies, %uiFamilies, $defaultFamily);
 opendir(DIR, "$tunableFontsDir") || die ("Cannot opendir tunableFontsDir: $!\n");
-foreach (sort readdir(DIR)) {
-	next if m/^\./ || !(-d "$tunableFontsDir/$_") || (/test/oi && $cgiPathName =~ /fonts2go/oi);
-	m/^(.*?)(?:\s+([0-9\.]+))?$/;		# parse family name and, if present, version
+foreach my $dir (sort readdir(DIR)) {
+	next if $dir =~ m/^\./ || !(-d "$tunableFontsDir/$dir") || ($dir =~ /test/oi && $cgiPathName =~ /fonts2go/oi);
+	$dir =~ m/^(.*?)(?:\s+([0-9\.]+))?$/;		# parse family name and, if present, version
 	my ($family, $ver) = ($1,$2);
 	$family =~ s/[^-A-Za-z_]//g;
 	my $familytag = $family;
 	$familytag .= "-$ver" if $ver;		# e.g.:  CharisSIL-4.108
 	# NB: familytag should not have spaces, but subdirectory name may have them.
 	# Save mapping of familytag -> folder name for all available families:
-	$availableFamilies->{$familytag} = $_ ;
-	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent version.
-	$uiFamilies{$family} = $familytag unless exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag;
+	$availableFamilies->{$familytag} = $dir ;
+	appendtemp("'$dir'");
+	# Retrieve 'hide' value from .ttwrc file
+	my $hide;
+	if (-f "$tunableFontsDir/$dir/.ttwrc")
+	{
+		open (FH, "< $tunableFontsDir/$dir/.ttwrc");
+		while (<FH>)
+		{
+			s/^\s*#.*$//;		# Trim comments
+			next unless /^\s*([^=]+?)\s*=\s*(.+?)\s*$/;  # Must match "keyword=value" but allow whitespace around keyword and within value
+			$hide = $2 if lc($1) eq 'hide';
+		}
+		close (FH);
+	}
+	next if (exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag) or $hide;
+	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent non-hidden version.
+	$uiFamilies{$family} = $familytag;
+	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE; 
+	
 }
 closedir(DIR);
 
@@ -207,13 +247,6 @@ $ENV{'PATH'} = '/bin:/usr/bin';
 delete @ENV{'IFS', 'CDPATH', 'ENV', 'BASH_ENV'};
 
 my $featurelist;	# var to accumulate list of user-selected font features (for log file)
-
-# Create a tempfile used for debugging output. This file will be unlinked
-# just before the script exits. Thus if the script exits prematurely, the
-# tempfile remains. To add to this file, use appendtemp() function.
-my ($tmpf, $tmpfilename) = tempfile( "ttwXXXXX", DIR => $tmpDir, SUFFIX => '.txt');
-print $tmpf "Starting $cgiPathName\n";
-close $tmpf;
 
 # These are global because they are referenced by XML parser:
 my %omittedfeatures = ();	# Hash of feature names that are to be completely omitted from the form
@@ -255,7 +288,7 @@ if ($cgi->param('pkg')) {
 	invalid_parameter("pkg=$pkg") unless $pkg && $settingsFile;
 	
 	my $suffixOpt = "-n \"$settingsFile\"";
-	my $file_name = "$familytag-$pkg";
+	my $file_name = fontDirName($familytag, $pkg);
 	
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
@@ -265,7 +298,7 @@ if ($cgi->param('pkg')) {
 	mkdir "$tunedDir";
 
 	# link in the settings file for this package
-	link("$fontdir/.packages/$settingsFile", "$tunedDir/$familytag-$feat_set_tuned") or die "Unable to link settings file: $!\n";
+	link("$fontdir/.packages/$settingsFile", "$tunedDir/$feat_set_tuned") or die "Unable to link settings file: $!\n";
 	
 	# Ok, write to logfile and build the fonts:
 	appendlog($familytag, "pkg $pkg = $settingsFile");
@@ -290,7 +323,7 @@ if ($cgi->param('Select features')) {
 	
 	my $ttf = ttflist($fontdir);		# Complete checking of 'family' param and retrieve one font from family to get feature info
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
-	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$fontdir/$ttf\")");
+	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
 	die "$res\n" if $res;
 	
 	print
@@ -376,7 +409,7 @@ if (0)   # 'Load settings' not yet implemented
 	$parser->setHandlers(
 		'Start' => \&sh_form,
 		'End'   => \&eh_form);
-	open FH, "< $tempDir/$familytag-$feat_set_orig" or die ("cannot open feature_set_org: $!\n");
+	open FH, "< $tempDir/$feat_set_orig" or die ("cannot open feature_set_org: $!\n");
 	$parser->parse(*FH);
 	close(FH);
 	
@@ -421,29 +454,29 @@ elsif ($cgi->param('Get tuned font')) {
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
 	
-	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$familytag-$feat_set_orig \"$fontdir/$ttf\")");
+	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
 	die "$res\n" if $res;
 	
-	my $file_name = $familytag;
+	my $file_name;
 	if ($suffix ne '') {
 		$suffixOpt = "-n \"$suffix\"";
 		$suffix =~ s/\s//g;
-		$file_name .= "-$suffix";
+		$file_name = fontDirName($familytag, $suffix);
 	}
 	else {
-		$file_name .= '-tuned';
+		$file_name = fontDirName($familytag, '-tuned');
 	}
 	my $tunedDir = "$tempDir/$file_name";
 	mkdir "$tunedDir";
 	appendtemp("tunedDir = $tunedDir");
 	
 	# create the customized settings file
-	open(SETTINGS, "> $tunedDir/$familytag-$feat_set_tuned");
+	open(SETTINGS, "> $tunedDir/$feat_set_tuned");
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_proc,
 		'End'   => \&eh_proc);
-	open(FH, "< $tempDir/$familytag-$feat_set_orig") or die ("cannot open feature_set_org: $!\n");
+	open(FH, "< $tempDir/$feat_set_orig") or die ("cannot open feature_set_org: $!\n");
 	$parser->parse(*FH);
 	close(FH);
 	close(SETTINGS);
@@ -528,7 +561,7 @@ sub buildfonts{
 	
 	foreach (@ttfs) {
 		my $tuned = "$tunedDir/" . fontFileName($_, $suffix);
-		$res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$familytag-$feat_set_tuned \"$fontdir/$_\")");
+		$res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$feat_set_tuned \"$fontdir/$_\")");
 		if ($res)
 		{
 			print header(-charset => 'UTF-8'),
@@ -743,9 +776,19 @@ sub getFamilytag
 {
 	my $ver = checkparam('ver', qr/[^0-9.]/o);
 	my $familytag = ($ver ? checkparam('family', qr/[^-A-Za-z_]/o) . "-$ver" : checkparam('family', qr/[^-A-Za-z_0-9\.]/o));
-		
-	invalid_parameter("tag=$familytag\n") unless exists $availableFamilies->{$familytag};
-	return $familytag;
+	
+	return $familytag if exists $availableFamilies->{$familytag};	# found it right off the bat.
+	
+	return $uiFamilies{$familytag} if exists $uiFamilies{$familytag};	# If just missing the version, it should show up in this list.
+
+	# search through available familys for one that matches what we have so far
+	my $re = qr/^$familytag/i;
+	foreach my $k (keys(%{$availableFamilies}))
+	{
+		return $k if $k =~ $re;
+	}
+
+	invalid_parameter("tag=$familytag\n");	
 }
 	
 sub checkparam
@@ -841,14 +884,14 @@ sub run_cmd
 }
  
 sub invalid_parameter {
-	my ($msg, $tempDir) = @_;
+	my ($msg, $tempDir, $flag) = @_;
 	print
 		header(-status => '404 Not found'),
 		start_html('Problems'),
 		h2('Invalid parameter'),
 		p($msg),
 		end_html;
-	unlink "$tmpfilename";
+	unlink "$tmpfilename" unless $flag;
 	rmtree($tempDir) if defined $tempDir && -d $tempDir;
 	exit;
 }	

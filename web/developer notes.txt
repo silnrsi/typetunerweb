@@ -4,8 +4,8 @@ Some facts that developers might like to know:
 
 Presently this CGI script invokes TypeTuner in two ways:
 
-	perl TypeTuner.pl -x output.xml input.ttf
-	perl TypeTuner.pl [-n suffix] -o output.ttf applyset input.xml input.ttf
+    perl TypeTuner.pl -x output.xml input.ttf
+    perl TypeTuner.pl [-n suffix] -o output.ttf applyset input.xml input.ttf
 
 If the command line parameters to TypeTuner.pl change, this CGI scipt 
 may need updating.
@@ -19,9 +19,31 @@ set the svn:eol-style property to LF making it possible to edit the file
 on Windows and then scp it over to the appropriate folder on xserve.
 
 
-3. XSERVE LOCATIONS
+3. URLs
 
-The URL to access this tool is: http://scripts.sil.org/ttw/fonts2go.cgi
+The URL to access this tool on scripts.sil.org in interactive mode is:
+
+    http://scripts.sil.org/ttw/fonts2go.cgi
+
+As of 2011-08, the tool also supports "direct download" URLs whereby
+specific packages defined on the server (see .packages below) can be
+identified by a specially crafted URL. The URL options include:
+    family  required: Specifies the font family tag (without spaces
+            and without any version information)
+    pkg     required: Specifies the TypeTuner configuration file to
+            use (with spaces removed).
+    ver     optional: The specific version desired.
+
+So, for example, to retrieve the current SIL Charis Literacy Compact font,
+the URL would be:
+
+    http://scripts.sil.org/ttw/fonts2go.cgi?family=CharisSIL&pkg=LiteracyCompact
+
+and to retrieve an older version, say 4.106:
+
+    http://scripts.sil.org/ttw/fonts2go.cgi?family=CharisSIL&pkg=LiteracyCompact&ver=4.106
+
+4. XSERVE Locations
 
 The relevant folders on xserve are:
 
@@ -40,29 +62,34 @@ The relevant folders on xserve are:
 etc...
   -- subfolders containing source font packages. As of 2009-10-21 the names of 
      these subfolders may have spaces.
-	  -- As of 2010-11-24, a subfolder name containing "test" (case insensitive) 
-	     will not show up in the family list if the CGI program name matches 
-	     "fonts2go". But it will if the CGI program name is something else, for 
-	     example "fonts3go". This allows for testing of new font packages (e.g., 
-	     use a subfolder called "Gentium Plus Test").
-	  -- In addition to the source font package, these folders may contain a file
-	     named ".ttwrc". See below
-	  -- In addition to the source font package, these folders may contain a file
-	     named ".help_url". The first line of this file should be the URL of a
-	     page or document that provides user help regarding the features supported
-	     by the fonts in the package. [use of this file is deprecated]
-	  -- Any file whose name ends in _TT (optionally followed by an extension, e.g.
-	     FONTLOG_TT.txt) is processed by a script that replaces %DATE% and
-	     %ISODATE% with the current date (Dallas timezone). The first of these
-	     will be in "dd MMM yyyy" format, the second in "yyyy-mm-dd" format. The
-	     resultant file will not include the "_TT" in its name.
-	  -- As of 2010-11-24, arbitrary subfolder structures are allowed. The 
-	     above-mentioned text modification of files whose name ends in _TT 
-	     occurs in all subfolders.
-	  -- As pf 2011-08-05, supports .packages subfolder (see below)
+      -- As of 2010-11-24, a subfolder name containing "test" (case insensitive) 
+         will not show up in the family list if the CGI program name matches 
+         "fonts2go". But it will if the CGI program name is something else, for 
+         example "fonts3go". This allows for testing of new font packages (e.g., 
+         use a subfolder called "Gentium Plus Test").
+      -- In addition to the source font package, these folders may contain a file
+         named ".ttwrc". See below
+      -- In addition to the source font package, these folders may contain a file
+         named ".help_url". The first line of this file should be the URL of a
+         page or document that provides user help regarding the features supported
+         by the fonts in the package. [use of this file is deprecated]
+      -- Any file whose name ends in _TT (optionally followed by an extension, e.g.
+         FONTLOG_TT.txt) is processed by a script that replaces %DATE% and
+         %ISODATE% with the current date (Dallas timezone). The first of these
+         will be in "dd MMM yyyy" format, the second in "yyyy-mm-dd" format. The
+         resultant file will not include the "_TT" in its name.
+      -- As of 2010-11-24, arbitrary subfolder structures are allowed. The 
+         above-mentioned text modification of files whose name ends in _TT 
+         occurs in all subfolders.
+      -- As of 2011-08-05, supports .packages subfolder (see below)
+      -- As of 2011-08-15, folder names may include a trailing version
+         number such as " 4.106". Multiple versions of a single family can
+         thus be available to TTW. However, in interactive mode TTW will 
+         present only one version (normally the latest, but see 'hide' in 
+         .ttwrc, below). Other versions are available only on the 
+         direct-download URLs.
 
 /Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Family Name/.packages
-
   -- subfolder containing TypeTuner control files for preconfigured packages,
      thus making it possible to easily specify a URL that is a direct download
      of the specific configuration. For example, a file by the name:
@@ -79,50 +106,54 @@ etc...
      and features were requested, and could be used to generate some statistics. 
      Example lines:
 
-		2010-10-12 15:23:19 scripts.sil.org to 75.151.118.139: AndikaBasic Digit Zero with slash; Capital Q alternate; Line spacing = Tight;
-		2010-10-25 11:17:32 scripts.sil.org to 65.93.97.180: Scheherazade Language = Urdu; Shadda+kasra placement = Raised; Sukun = Open down; Dotless head of khah = Jasm open left; Downward comma; Six-nine dammatan; End of ayah = Simplified A; Old Shina hack = Unicode 4.0;
-		2010-11-03 07:02:47 scripts.sil.org to 203.153.30.194: AndikaBasic Literacy alternates = False; Digit One without base; Digit Four with open top; Digit Six and Nine alternates; Line spacing = Tight;
-		2010-11-03 07:30:26 scripts.sil.org to 196.43.68.137: CharisSIL Literacy alternates;
+        2010-10-12 15:23:19 scripts.sil.org to 75.151.118.139: AndikaBasic Digit Zero with slash; Capital Q alternate; Line spacing = Tight;
+        2010-10-25 11:17:32 scripts.sil.org to 65.93.97.180: Scheherazade Language = Urdu; Shadda+kasra placement = Raised; Sukun = Open down; Dotless head of khah = Jasm open left; Downward comma; Six-nine dammatan; End of ayah = Simplified A; Old Shina hack = Unicode 4.0;
+        2010-11-03 07:02:47 scripts.sil.org to 203.153.30.194: AndikaBasic Literacy alternates = False; Digit One without base; Digit Four with open top; Digit Six and Nine alternates; Line spacing = Tight;
+        2010-11-03 07:30:26 scripts.sil.org to 196.43.68.137: CharisSIL Literacy alternates;
      
-/tmp/
-  -- folder containing temporary directory (name generated by tempdir()), and 
-     temporary debug output file (named ttw*.txt). These are deleted upon successful
-     completion of the script; but if the script crashes they will remain and may
+/tmp
+  -- folder containing temporary directory (named ttw*), and temporary debug 
+     output file (named ttw*.txt). These are deleted upon successful completion 
+     of the script; but if the script crashes they will remain and may
      be helpful in figuring out what went wrong.
 
-4. .ttwrc FILE
+5. .ttwrc FILE
 
 As mentioned above, each font family folder may include a .ttwrc file which provides
 optional information to fonts2go.cgi. Lines in this file are of the form:
 
-	keyword = value
+    keyword = value
 
 where whitespace is allowed before and after the keyword and the value, and also within the value.
 Currently three keywords are recognized:
 
-	helpurl - value is the URL of a page or document that provides user help 
-			regarding the features supported by the fonts in the package.
-	
-	omittedfeature - value is the name of a feature that should be completely 
-			omitted from TTW's UI
-	
-	omittedvalue - value is compound string which identifies a feature value 
-			that should be omitted from TTW's UI. The format of this compound
-			string is:  feature name : feature value
+    helpurl - value is the URL of a page or document that provides user help 
+            regarding the features supported by the fonts in the package.
+    
+    omittedfeature - value is the name of a feature that should be completely 
+            omitted from TTW's UI
+    
+    omittedvalue - value is compound string which identifies a feature value 
+            that should be omitted from TTW's UI. The format of this compound
+            string is:  feature name : feature value
+    
+    hide - any non-zero (true) value will cause this family to be omitted from
+           the list of families presented to interactive users.
 
 Example:
 
-	helpurl = http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=CharisSIL_Technical#TTW_Help
-	omittedfeature = Small Caps
-	omittedvalue = Line spacing : Imported 
-	
+    helpurl = http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=CharisSIL_Technical#TTW_Help
+    omittedfeature = Small Caps
+    omittedvalue = Line spacing : Imported 
+    
 
-5. DEBUGGING
+6. DEBUGGING
 
 Debugging CGI scripts can be a pain. To aid in that process, fonts2go.cgi sends
 progress messages to a temporary file in the /tmp folder. The file will have a name
 matching the pattern "ttw*.txt".  This file is normally deleted upon successful
 completion of the script, but if the script crashes (or you comment out the 
 appropriate unlink command), then you may get useful info out of this file.
+The subroutine appendtemp() can be called to add detail to this temporary file.
      
-Bob Hallissy  2011-08-05
+Bob Hallissy  2011-08-30
