@@ -220,21 +220,7 @@ foreach my $dir (sort readdir(DIR)) {
 	# NB: familytag should not have spaces, but subdirectory name may have them.
 	# Save mapping of familytag -> folder name for all available families:
 	$availableFamilies->{$familytag} = $dir ;
-	appendtemp("'$dir'");
-	# Retrieve 'hide' value from .ttwrc file
-	my $hide;
-	if (-f "$tunableFontsDir/$dir/.ttwrc")
-	{
-		open (FH, "< $tunableFontsDir/$dir/.ttwrc");
-		while (<FH>)
-		{
-			s/^\s*#.*$//;		# Trim comments
-			next unless /^\s*([^=]+?)\s*=\s*(.+?)\s*$/;  # Must match "keyword=value" but allow whitespace around keyword and within value
-			$hide = $2 if lc($1) eq 'hide';
-		}
-		close (FH);
-	}
-	next if (exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag) or $hide;
+	next if (exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag) or -f  "$tunableFontsDir/$dir/.hide";
 	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent non-hidden version.
 	$uiFamilies{$family} = $familytag;
 	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE; 
