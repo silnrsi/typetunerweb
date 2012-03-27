@@ -1,0 +1,30 @@
+2012-03-21
+
+TypeTuner has been integrated into FontUtils. RFComposer has been integrated in the Roman Fonts project. This repository has been retained to preserve those projects development history (including the history in the Subversion repository). 
+
+**** Do NOT make changes to the files in this location.
+
+Below is a summary of where files on AW's computer (including some not in Subversion) have been effectively moved to.
+
+- copy RFComposer.pl and RFcomposer_duck_doc.txt to Roman Fonts\rfs_code
+- move Perl_bak to Downloads\from_old_computer\Perl_5.8.8.824_modules (modules to create exe files)
+- move HR.6.Literacy to Roman Font\zMisc\Gentium_Basic_Literacy
+- copy TypeTuner.pl to scripts\typetuner
+- copy ttflang2tuner.pl to scripts\ttflang2tuner
+- copy feat_all.dtd, test\feat_all.xml, and feat_set.dtd to scripts\TypeTuner_dev
+
+The below files and subdirectories were kept for historical reasons and NOT copied anywhere
+create_exe.bat
+New TypeTuner feature.pdf
+snippet.txt
+TypeTuner.exe
+TypeTuner_notes.txt
+
+designer_pkg
+old
+test - typetuner.t was created to replicate tests in tests_tt.bat and test_tt_metrics.bat
+	WPFeatures.wpx - can show change in default encoding and to Graphite features
+	WPToneLetters.wpx
+	dump_all.bat - dump Tuner-ready and tuned fonts for inspection
+	test_tt_metrics.bat - applying metrics tested by test_tt now but does use applyset_xml;
+web
