@@ -211,7 +211,7 @@ close $tmpf;
 my ($availableFamilies, %uiFamilies, $defaultFamily);
 opendir(DIR, "$tunableFontsDir") || die ("Cannot opendir tunableFontsDir: $!\n");
 foreach my $dir (sort readdir(DIR)) {
-	next if $dir =~ m/^\./ || !(-d "$tunableFontsDir/$dir") || ($dir =~ /test/oi && $cgiPathName =~ /fonts2go/oi);
+	next if $dir =~ m/^\./ || !(-d "$tunableFontsDir/$dir") || ($dir =~ /test|alpha/oi && $cgiPathName =~ /fonts2go/oi);
 	$dir =~ m/^(.*?)(?:\s+([0-9\.]+))?$/;		# parse family name and, if present, version
 	my ($family, $ver) = ($1,$2);
 	$family =~ s/[^-A-Za-z_]//g;
