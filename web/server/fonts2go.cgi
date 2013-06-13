@@ -201,17 +201,24 @@ my $cgi = new CGI;
 my $feat_set_orig = 'feat_set_orig.xml';
 my $feat_set_tuned = 'feat_set_tuned.xml';
 
+# Dev-mode: if the URL includes the "dev" parameter then 
+# font families that contain a ".test" file will be included in the UI
+
+my ($devmode);
+$devmode = defined($cgi->param('dev')) || $cgiPathName !~ /fonts2go/oi;
+
 # Create a tempfile used for debugging output. This file will be unlinked
 # just before the script exits. Thus if the script exits prematurely, the
 # tempfile remains. To add to this file, use appendtemp() function.
 my ($tmpf, $tmpfilename) = tempfile( "ttwXXXXX", DIR => $tmpDir, SUFFIX => '.txt');
-print $tmpf "Starting $cgiPathName\n";
+print $tmpf "Starting $cgiPathName" . ($devmode ? ' (in devmode)' : '') . "\n";
 close $tmpf;
+
 
 my ($availableFamilies, %uiFamilies, $defaultFamily);
 opendir(DIR, "$tunableFontsDir") || my_die ("Cannot opendir tunableFontsDir: $!\n");
 foreach my $dir (sort readdir(DIR)) {
-	next if $dir =~ m/^\./ || !(-d "$tunableFontsDir/$dir") || ($dir =~ /test|alpha/oi && $cgiPathName =~ /fonts2go/oi);
+	next if $dir =~ m/^\./ || !(-d "$tunableFontsDir/$dir");     # || ($dir =~ /test|alpha/oi && $cgiPathName =~ /fonts2go/oi);
 	$dir =~ m/^(.*?)(?:\s+([0-9\.]+))?$/;		# parse family name and, if present, version
 	my ($family, $ver) = ($1,$2);
 	$family =~ s/[^-A-Za-z_]//g;
@@ -220,11 +227,12 @@ foreach my $dir (sort readdir(DIR)) {
 	# NB: familytag should not have spaces, but subdirectory name may have them.
 	# Save mapping of familytag -> folder name for all available families:
 	$availableFamilies->{$familytag} = $dir ;
-	next if (exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag) or -f  "$tunableFontsDir/$dir/.hide";
+	next if (exists $uiFamilies{$family} && $uiFamilies{$family} gt $familytag) 
+		or -f "$tunableFontsDir/$dir/.hide"
+		or (-f "$tunableFontsDir/$dir/.test" && !$devmode);
 	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent non-hidden version.
 	$uiFamilies{$family} = $familytag;
 	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE; 
-	
 }
 closedir(DIR);
 
@@ -306,6 +314,8 @@ if ($cgi->param('Select features')) {
 	my $familytag = getFamilytag();
 	my $fontdir = "$tunableFontsDir/$availableFamilies->{$familytag}";
 	my $help='';
+
+	appendtemp("Starting 'Select features': familytag = $familytag");
 	
 	my $ttf = ttflist($fontdir);		# Complete checking of 'family' param and retrieve one font from family to get feature info
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
@@ -406,7 +416,8 @@ if (0)   # 'Load settings' not yet implemented
 		textfield('suffix', '', 50, 80);
 	
 	print
-		hidden('family', $familytag);
+		hidden('family', $familytag),
+		hidden('dev', $devmode);
 	
 	print
 		hr,
@@ -886,4 +897,3 @@ sub my_die {
 	appendtemp @_;
 	die @_;
 }
-

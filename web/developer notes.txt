@@ -62,15 +62,13 @@ The relevant folders on xserve are:
 etc...
   -- subfolders containing source font packages. As of 2009-10-21 the names of 
      these subfolders may have spaces.
-      -- As of 2010-11-24, a subfolder name containing "test" (case insensitive) 
-         will not show up in the family list if the CGI program name matches 
-         "fonts2go". But it will if the CGI program name is something else, for 
-         example "fonts3go". This allows for testing of new font packages (e.g., 
-         use a subfolder called "Gentium Plus Test").
       -- In addition to the source font package, these folders may contain:
            -- a configuration file named ".ttwrc" (see below)
            -- a file named ".hide". If this file is present, the font family
               is hidden from interactive mode users.
+           -- a file named ".test". If present, the font family will be hidden
+              from interactive users unless the "dev" parameter is on the URL
+              or the CGI program name is something other than "fonts2go.cgi".
            -- a folder named ".packages" see below)
            -- a file named named ".help_url". The first line of this file should 
               be the URL of a page or document that provides user help regarding 
@@ -138,9 +136,6 @@ Currently three keywords are recognized:
     omittedvalue - value is compound string which identifies a feature value 
             that should be omitted from TTW's UI. The format of this compound
             string is:  feature name : feature value
-    
-    hide - any non-zero (true) value will cause this family to be omitted from
-           the list of families presented to interactive users.
 
 Example:
 
