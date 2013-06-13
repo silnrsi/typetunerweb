@@ -309,7 +309,7 @@ if ($cgi->param('Select features')) {
 	
 	my $ttf = ttflist($fontdir);		# Complete checking of 'family' param and retrieve one font from family to get feature info
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
-	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
+	my $res = run_cmd("(cd $typeTunerDir; perl typetuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
 	my_die ("$res\n") if $res;
 	
 	print
@@ -440,7 +440,7 @@ elsif ($cgi->param('Get tuned font')) {
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
 	
-	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
+	my $res = run_cmd("(cd $typeTunerDir; perl typetuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
 	my_die ("$res\n") if $res;
 	
 	my $file_name;
@@ -547,7 +547,7 @@ sub buildfonts{
 	
 	foreach (@ttfs) {
 		my $tuned = "$tunedDir/" . fontFileName($_, $suffix);
-		$res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$feat_set_tuned \"$fontdir/$_\")");
+		$res = run_cmd("(cd $typeTunerDir; perl typetuner.pl $suffixOpt -o \"$tuned\" applyset $tunedDir/$feat_set_tuned \"$fontdir/$_\")");
 		if ($res)
 		{
 			print header(-charset => 'UTF-8'),
@@ -886,3 +886,4 @@ sub my_die {
 	appendtemp @_;
 	die @_;
 }
+
