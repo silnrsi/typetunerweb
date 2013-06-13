@@ -209,7 +209,7 @@ print $tmpf "Starting $cgiPathName\n";
 close $tmpf;
 
 my ($availableFamilies, %uiFamilies, $defaultFamily);
-opendir(DIR, "$tunableFontsDir") || die ("Cannot opendir tunableFontsDir: $!\n");
+opendir(DIR, "$tunableFontsDir") || my_die ("Cannot opendir tunableFontsDir: $!\n");
 foreach my $dir (sort readdir(DIR)) {
 	next if $dir =~ m/^\./ || !(-d "$tunableFontsDir/$dir") || ($dir =~ /test|alpha/oi && $cgiPathName =~ /fonts2go/oi);
 	$dir =~ m/^(.*?)(?:\s+([0-9\.]+))?$/;		# parse family name and, if present, version
@@ -258,7 +258,7 @@ if ($cgi->param('pkg')) {
 	# Note: Settings file names can have spaces, e.g. "Literacy Compact", 
 	# but for convenience on the URL the 'pkg' parameter has no spaces.
 	# So we have to find the config file that matches the pkg being requested.
-	opendir(DIR, "$fontdir/.packages") || die ("Cannot opendir \"$fontdir/.packages\": $!\n");
+	opendir(DIR, "$fontdir/.packages") || my_die ("Cannot opendir \"$fontdir/.packages\": $!\n");
 	my $settingsFile = '';
 	foreach (sort readdir(DIR)) {
 		next unless -f "$fontdir/.packages/$_";
@@ -284,7 +284,7 @@ if ($cgi->param('pkg')) {
 	mkdir "$tunedDir";
 
 	# link in the settings file for this package
-	link("$fontdir/.packages/$settingsFile", "$tunedDir/$feat_set_tuned") or die "Unable to link settings file: $!\n";
+	link("$fontdir/.packages/$settingsFile", "$tunedDir/$feat_set_tuned") or my_die ("Unable to link settings file: $!\n");
 	
 	# Ok, write to logfile and build the fonts:
 	appendlog($familytag, "pkg $pkg = $settingsFile");
@@ -310,7 +310,7 @@ if ($cgi->param('Select features')) {
 	my $ttf = ttflist($fontdir);		# Complete checking of 'family' param and retrieve one font from family to get feature info
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
-	die "$res\n" if $res;
+	my_die ("$res\n") if $res;
 	
 	print
 		header(-charset => 'utf-8'),
@@ -395,7 +395,7 @@ if (0)   # 'Load settings' not yet implemented
 	$parser->setHandlers(
 		'Start' => \&sh_form,
 		'End'   => \&eh_form);
-	open FH, "< $tempDir/$feat_set_orig" or die ("cannot open feature_set_org: $!\n");
+	open FH, "< $tempDir/$feat_set_orig" or my_die ("cannot open feature_set_org: $!\n");
 	$parser->parse(*FH);
 	close(FH);
 	
@@ -441,7 +441,7 @@ elsif ($cgi->param('Get tuned font')) {
 	appendtemp("tempdir = $tempDir");
 	
 	my $res = run_cmd("(cd $typeTunerDir; perl TypeTuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
-	die "$res\n" if $res;
+	my_die ("$res\n") if $res;
 	
 	my $file_name;
 	if ($suffix ne '') {
@@ -462,7 +462,7 @@ elsif ($cgi->param('Get tuned font')) {
 	$parser->setHandlers(
 		'Start' => \&sh_proc,
 		'End'   => \&eh_proc);
-	open(FH, "< $tempDir/$feat_set_orig") or die ("cannot open feature_set_org: $!\n");
+	open(FH, "< $tempDir/$feat_set_orig") or my_die ("cannot open feature_set_org: $!\n");
 	$parser->parse(*FH);
 	close(FH);
 	close(SETTINGS);
@@ -576,9 +576,9 @@ sub buildfonts{
 		appendtemp ("starting subdir: '$subdir'");
 		unless (-d $subdir)
 		{
-			mkdir("$tunedDir/$subdir") or die ("Cannot mkdir '$tunedDir/$subdir': $!\n");
+			mkdir("$tunedDir/$subdir") or my_die ("Cannot mkdir '$tunedDir/$subdir': $!\n");
 		}
-		opendir(DIR, "$fontdir/$subdir") or die ("Cannot opendir '$fontdir/$subdir': $!\n");
+		opendir(DIR, "$fontdir/$subdir") or my_die ("Cannot opendir '$fontdir/$subdir': $!\n");
 		foreach (sort readdir(DIR)) {
 			next if m/^\./ || m/\.ttf$/;  # Skip .ttf files and any . files.
 			if (m/^(.*)_tt(\..*)+$/i)
@@ -587,14 +587,14 @@ sub buildfonts{
 				my $outfile = "$tunedDir/$subdir/$1$2";
 				appendtemp ("Processing '$_' -> '$subdir/$outfile'");
 				local $/;
-				open (FH, "<:raw", "$fontdir/$subdir/$_") or die ("cannot open '$fontdir/$subdir/$_' for reading: !$\n");
+				open (FH, "<:raw", "$fontdir/$subdir/$_") or my_die ("cannot open '$fontdir/$subdir/$_' for reading: !$\n");
 				my $s = <FH>;	# Slurp entire file
 				close (FH);
 				use bytes;
 				$s =~ s/%DATE%/$date/g;
 				$s =~ s/%ISODATE%/$isodate/g;
 				no bytes;
-				open (FH, ">:raw", $outfile) || die ("Cannot open '$outfile' for writing: $!\n");
+				open (FH, ">:raw", $outfile) || my_die ("Cannot open '$outfile' for writing: $!\n");
 				print FH $s;
 				close (FH);
 			}
@@ -617,7 +617,7 @@ sub buildfonts{
 	# create the zip archive
 	appendtemp ("Creating '$file_name.zip'");
 	$res = run_cmd("(cd $tempDir; zip -r $file_name.zip $file_name >> $tmpfilename)");
-	die "$res\n" if $res;
+	my_die ("$res\n") if $res;
 
 
   if (0) {
@@ -881,3 +881,8 @@ sub invalid_parameter {
 	rmtree($tempDir) if defined $tempDir && -d $tempDir;
 	exit;
 }	
+
+sub my_die {
+	appendtemp @_;
+	die @_;
+}
