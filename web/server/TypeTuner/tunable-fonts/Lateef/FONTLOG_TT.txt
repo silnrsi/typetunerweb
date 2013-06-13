@@ -1,0 +1,88 @@
+FONTLOG 
+Lateef font
+=================
+
+This file provides detailed information on the Lateef font software. 
+This information should be distributed along with the Lateef fonts 
+and any derivative works.
+
+Basic Font Information
+----------------------
+
+Lateef is named after Shah Abdul Lateef Bhitai, the famous Sindhi 
+mystic and poet. It is intended to be an appropriate style for use 
+in Sindhi and other languages of the South Asian region.
+
+This font provides a simplified rendering of Arabic script, using basic 
+connecting glyphs but not including a wide variety of additional ligatures 
+or contextual alternates (only the required lam-alef ligatures). This 
+simplified style is often preferred for clarity, especially in non-Arabic 
+languages, but may be considered unattractive in more traditional and 
+literate communities.
+
+One font from this typeface family is included in this release:
+
+     * Lateef Regular
+
+This release supports virtually all of the Unicode 5.0 Arabic character 
+repertoire (excluding the Arabic Presentation Forms blocks, which are not 
+recommended for normal use). Font smarts are implemented using OpenType 
+technology.
+
+A Note Regarding the Open Font License and TypeTuner
+----------------------------------------------------
+
+The OFL prohibits the use of Reserved Font Names "Lateef" and "SIL" in
+the name of any font that is derived from the Original Version of 
+Lateef. However, SIL International (the Copyright Holder) grants through
+this separate written agreement the right to use the Reserved Font Names
+in any Modified Version of this font created by using TypeTuner as long
+as the feature information contained in the Original Version is used, 
+unmodified, as the source for TypeTuner feature information, and 
+"Lateef" is not the resulting font family name.
+
+TypeTuner-produced fonts created in this manner are still bound by the
+terms of the OFL. Specifically, the use of Reserved Font Names is
+prohibited when making derivatives of a TypeTuner-produced font. Anyone
+making a derivative of a TypeTuner font will need to find a different
+name. For example a TypeTuner-produced font may be named 
+"Lateef SomeFarAwayPlace" but a derivative of that font made 
+with other tools would not be allowed to use the "Lateef" or "SIL"
+
+ChangeLog
+---------
+(This should list both major and minor changes, most recent first.)
+
+%ISODATE% (SIL TypeTuner) Tuned version of Lateef 1.004
+- Tuned and delivered by SIL TypeTuner 
+  (http://scripts.sil.org/ttw/fonts2go.cgi).
+- See included xml file for details of feature changes.
+
+2009-09-01 (SIL NRSI team) Lateef Version 1.004
+- Added TypeTuner feature to access language alternates
+- NB: Version jump to 1.004 to match Scheherazade
+
+2008-11-06 (SIL NRSI team) Lateef Version 1.001
+- Re-released under OFL
+- no other changes from 1.0
+
+2005-06-03 (SIL NRSI team) Lateef Version 1.0
+- First public version
+- Released under the SIL Freeware License
+
+Acknowledgements
+----------------
+(Here is where contributors can be acknowledged. If you make modifications
+be sure to add your name (N), email (E), web-address (W) and description
+(D). This list is sorted by last name in alphabetical order.)
+
+N: Bob Hallissy, Jonathan Kew
+E: fonts@sil.org
+W: http://scripts.sil.org/
+D: SIL designers and font engineers
+
+The Lateef project is maintained by SIL International.
+
+For more information please visit the Arabic Script fonts page on 
+SIL International's Computers and Writing Systems website:
+http://scripts.sil.org/ArabicFonts

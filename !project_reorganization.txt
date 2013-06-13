@@ -1,3 +1,15 @@
+2013-06-12 UPDATE!  (bh)
+
+The notes below (dated 2012-03-21) regarding TypeTuner, RFComposer, etc., are correct with one recent exception:
+
+We have decided to extend the 'web' folder to include the complete server-side file tree for TypeTuner Web
+including all SIL fonts we host on scripts.sil.org. A working copy of this repository (along with a cron
+job to keep it updated) will be created on scripts.sil.org so that NRSI team members can then manage TTW-hosted 
+fonts simply by committing changes to this SVN repository.
+
+Bottom line: The warning to "NOT make changes to files in this location" is true EXCEPT for the 'web' folder.
+
+ 
 2012-03-21
 
 TypeTuner has been integrated into FontUtils. RFComposer has been integrated in the Roman Fonts project. This repository has been retained to preserve those projects development history (including the history in the Subversion repository). 
