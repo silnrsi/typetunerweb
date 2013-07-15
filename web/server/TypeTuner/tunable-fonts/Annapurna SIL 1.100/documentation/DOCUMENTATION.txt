@@ -10,6 +10,9 @@ font and any derivative works.
 Primary documentation for the Annapurna SIL font is on the Annapurna SIL
 website (http://scripts.sil.org/AnnapurnaSIL).
 
+Annapurna SIL TypeTuner guide.pdf - documents the tunable features to
+guide the user in the selection of variant glyphs for a new font.
+
 AnnapurnaSIL-features.pdf - documents the OpenType and Graphite
 features, many for use in minority languages, in the font.
 
