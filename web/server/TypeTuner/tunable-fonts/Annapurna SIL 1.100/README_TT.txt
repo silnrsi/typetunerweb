@@ -19,7 +19,7 @@ TYPETUNER
 %DATE%
 =========
 
-This package contains a TypeTuned version of the Scheherazade test fonts.
+This package contains a TypeTuned version of the Annapurna SIL fonts.
 
 The TypeTuner settings file used to generate the enclosed font
 is included in the package as feat_set_tuned.xml.
