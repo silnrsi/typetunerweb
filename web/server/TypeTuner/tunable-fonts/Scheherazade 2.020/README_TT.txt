@@ -26,7 +26,7 @@ and licensing, please see the documentation on the website
 subfolder of this font package.
 
 TYPETUNER
-%DATE%
+%ISODATE%
 =========
 
 This package contains a TypeTuned version of the Scheherazade test fonts.
