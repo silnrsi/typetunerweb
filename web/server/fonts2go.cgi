@@ -89,7 +89,7 @@ my $preamble = <<'EOF' ;
 <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td style="background: #336699; padding-left:20; padding-top:10; white-space:nowrap;" width="110" valign="top">
-		<p><a href="http://www.sil.org/"><img src="../cms/sites/nrsi/themes/default/_media/SIL_logo_left_column.gif" width="86" height="80" border="0"></a><br><br></p>
+		<p><a href="http://www.sil.org/"><img src="../cms/sites/nrsi/themes/default/_media/SIL_Logo_TM_Blue_2014.png" width="85" height="95" border="0"></a><br><br></p>
     	<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Home">Home</a></p>
 <p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ContactUs">Contact Us</a></p>
 <p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=General">General</a></p>
@@ -261,7 +261,7 @@ if ($cgi->param('pkg')) {
 	
 	my $pkg_re = qr/[^-A-Za-z_]/o;
 	my $pkg = checkparam('pkg', $pkg_re);
-	appendtemp("pkg = $pkg");
+	appendtemp("Starting direct download: family = $familytag pkg = $pkg");
 	
 	# Note: Settings file names can have spaces, e.g. "Literacy Compact", 
 	# but for convenience on the URL the 'pkg' parameter has no spaces.
@@ -298,8 +298,9 @@ if ($cgi->param('pkg')) {
 	appendlog($familytag, "pkg $pkg = $settingsFile");
 	appendtemp("log file written");
 	buildfonts ($tempDir, $tunedDir, $file_name, $familytag, $fontdir, $pkg, $suffixOpt);
-	
+
 	# Done!
+	appendtemp("finished direct download");
 	rmtree($tempDir);
 	unlink "$tmpfilename";
 	exit;}
@@ -427,6 +428,7 @@ if (0)   # 'Load settings' not yet implemented
 		$postamble,
 		end_html;
 
+	appendtemp("finished 'Select features'");
 	rmtree($tempDir);
 	unlink "$tmpfilename";
 	exit;
@@ -484,6 +486,7 @@ elsif ($cgi->param('Get tuned font')) {
 	buildfonts ($tempDir, $tunedDir, $file_name, $familytag, $fontdir, $suffix, $suffixOpt);
 
 	# Done!
+	appendtemp("finished 'Get tuned font'");
 	rmtree($tempDir);
 	unlink "$tmpfilename";
 	exit;
@@ -496,6 +499,8 @@ else {
 	#
 	# Initial page: present welcome screen, font family choice
 	#
+
+	appendtemp('Starting Welcome');
 
 	print
 		header(-charset => 'utf-8'),
@@ -542,6 +547,7 @@ else {
 		$postamble,
 		end_html;
 	
+	appendtemp("finished Welcome");
 	unlink "$tmpfilename";
 	exit;
 }
@@ -596,7 +602,7 @@ sub buildfonts{
 			{
 				# Fix up %DATE% in any file that ends in _tt, _tt.txt, etc. 
 				my $outfile = "$tunedDir/$subdir/$1$2";
-				appendtemp ("Processing '$_' -> '$subdir/$outfile'");
+				appendtemp ("processing '$_' -> '$subdir/$outfile'");
 				local $/;
 				open (FH, "<:raw", "$fontdir/$subdir/$_") or my_die ("cannot open '$fontdir/$subdir/$_' for reading: !$\n");
 				my $s = <FH>;	# Slurp entire file
@@ -612,13 +618,13 @@ sub buildfonts{
 			elsif (-d "$fontdir/$subdir/$_")
 			{
 				# subfolder -- schedule it for a later time.
-				appendtemp ("Saving directory '$subdir/$_' for later");
+				appendtemp ("saving directory '$subdir/$_' for later");
 				push @jobs, "$subdir/$_";
 			}
 			else
 			{
 				# anything else is just linked in.
-				appendtemp ("Linking '$_'");
+				appendtemp ("linking '$_'");
 				link "$fontdir/$subdir/$_", "$tunedDir/$subdir/$_";
 			}
 		}
@@ -626,7 +632,7 @@ sub buildfonts{
 	}
 	
 	# create the zip archive
-	appendtemp ("Creating '$file_name.zip'");
+	appendtemp ("creating '$file_name.zip'");
 	$res = run_cmd("(cd $tempDir; zip -r $file_name.zip $file_name >> $tmpfilename)");
 	my_die ("$res\n") if $res;
 
