@@ -88,7 +88,7 @@ my $preamble = <<'EOF' ;
 
 <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td style="background: #336699; padding-left:20; padding-top:10; white-space:nowrap;" width="110" valign="top">
+    <td style="background: #0068a6; padding-left:20; padding-top:10; white-space:nowrap;" width="110" valign="top">
 		<p><a href="http://www.sil.org/"><img src="../cms/sites/nrsi/themes/default/_media/SIL_Logo_TM_Blue_2014.png" width="85" height="95" border="0"></a><br><br></p>
     	<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Home">Home</a></p>
 <p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ContactUs">Contact Us</a></p>
