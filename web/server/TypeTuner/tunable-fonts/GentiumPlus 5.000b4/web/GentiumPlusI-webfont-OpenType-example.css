@@ -1,0 +1,635 @@
+/*
+GentiumPlusI-webfont-OpenType-example.css
+Gentium Plus 5.000
+15 Sept 2014
+This file is part of Gentium Plus font family (http://scripts.sil.org/DoulosSIL)
+and is Copyright (c) 2003-2014 SIL International (http://www.sil.org/),
+with Reserved Font Names "Gentium" and "SIL". 
+You should have received a copy of the license along with this Font Software. 
+If this is not the case, go to (http://scripts.sil.org/OFL) for all the 
+details including a FAQ.
+*/
+
+/* use DefaultFont in .woff format */
+@font-face {
+  font-family: DefaultFont;
+  src: url(GentiumPlus-I.woff);
+}
+
+
+body {
+  font-family: DefaultFont, serif;
+    /* fall back to serif so that it's really obvious if the fonts don't load */
+}
+/* remove bold styling from heading */
+h1 {
+  font-weight: normal;	
+}
+/* Features */
+
+/* Default with small caps  */
+smcp {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "smcp" 1;
+}
+
+/* Digit Zero with slash  */
+cv10 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv10" 1;
+/*  -moz-font-feature-settings: "dig0" 1; */
+}
+
+/* Digit One without base  */
+cv01 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv01" 1;
+/*  -moz-font-feature-settings: "dig1" 1; */
+}
+
+/* Digit Four with open top  */
+cv04 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv04" 1;
+/*  -moz-font-feature-settings: "dig4" 1; */
+}
+
+/* Digit Six and Nine alternates */
+cv06 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv06" 1;
+/*  -moz-font-feature-settings: "dg69" 1; */
+}
+
+/* Digit Seven with bar  */
+cv07 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv07" 1;
+/*  -moz-font-feature-settings: "dig7" 1; */
+}
+
+/* Capital B-hook alternate */
+cv13 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv13" 1;
+/*  -moz-font-feature-settings: "B_hk" 1; */
+}
+/* Capital B-hook alternate (smcp)*/
+cv13sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv13" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "B_hk" 1, "smcp" 1; */
+}
+
+/* Serif beta alternate */
+cv14 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv14" 1;
+/*  -moz-font-feature-settings: "beta" 1; */
+}
+/* Capital D-hook alternate */
+cv17 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv17" 1;
+/*  -moz-font-feature-settings: "D_hk" 1; */
+}
+/* Capital D-hook alternate (smcp)*/
+cv17sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv17" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "D_hk" 1, "smcp" 1; */
+}
+
+/* Small ezh-curl alternate */
+cv19 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv19" 1;
+/*  -moz-font-feature-settings: "ezhc" 1; */
+}
+
+/* Capital Ezh alternates */
+cv20 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv20" 1;
+/*  -moz-font-feature-settings: "Ezhr" 1; */
+}
+
+/* Capital Ezh alternates (smcp) */
+cv20sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv20" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "Ezhr" 1, "smcp" 1; */
+}
+
+/* Rams horn alternates */
+cv25a {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv25" 1;
+/*  -moz-font-feature-settings: "ramh" 1; */
+}
+/* Rams horn alternates */
+cv25b {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv25" 2;
+/*  -moz-font-feature-settings: "ramh" 2; */
+}
+/* Capital H-stroke alternate */
+cv28 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv28" 1;
+/*  -moz-font-feature-settings: "Hstk" 1; */
+}
+/* Capital H-stroke alternate (smcp)*/
+cv28sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv28" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "Hstk" 1, "smcp" 1; */
+}
+
+/* Small i-tail alternate */
+cv31 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv31" 1;
+/*  -moz-font-feature-settings: "i_tl" 1; */
+}
+/* Small i-tail alternate (smcp) */
+cv31sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv31" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "i_tl" 1, "smcp" 1; */
+}
+/* Small j-serif alternate */
+cv34 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv34" 1;
+/*  -moz-font-feature-settings: "jser" 1; */
+}
+/* Small j-serif alternate (smcp) */
+cv34sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv34" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "jser" 1, "smcp" 1; */
+}
+/* J-stroke alternate */
+cv37 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv37" 1;
+/*  -moz-font-feature-settings: "Jstk" 1; */
+}
+
+/* Small l-tail alternate */
+cv39 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv39" 1;
+/*  -moz-font-feature-settings: "l_tl" 1; */
+}
+/* Small l-tail alternate (smcp) */
+cv39sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv39" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "l_tl" 1, "smcp" 1; */
+}
+/* Uppercase Eng alternates */
+cv43a {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 0;
+/*  -moz-font-feature-settings: "Engs" 0; */
+}
+cv43b {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 1;
+/*  -moz-font-feature-settings: "Engs" 1; */
+}
+cv43c {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 2;
+/*  -moz-font-feature-settings: "Engs" 2; */
+}
+cv43d {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 3;
+/*  -moz-font-feature-settings: "Engs" 3; */
+}
+cv43asc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 0, "smcp" 1;
+/*  -moz-font-feature-settings: "Engs" 0, "smcp" 1; */
+}
+cv43bsc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "Engs" 1, "smcp" 1; */
+}
+cv43csc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 2, "smcp" 1;
+/*  -moz-font-feature-settings: "Engs" 2, "smcp" 1; */
+}
+cv43dsc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv43" 3, "smcp" 1;
+/*  -moz-font-feature-settings: "Engs" 3, "smcp" 1; */
+}
+
+/* Capital N-left-hook alternate */
+cv44 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv44" 1;
+/*  -moz-font-feature-settings: "N_hk" 1; */
+}
+/* Capital N-left-hook alternate (smcp) */
+cv44sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv44" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "N_hk" 1, "smcp" 1; */
+}
+
+/* Open o alternate */
+cv46 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv46" 1;
+/*  -moz-font-feature-settings: "opnO" 1; */
+}
+/* Open o alternate (smcp)*/
+cv46sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv46" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "opnO" 1, "smcp" 1; */
+}
+
+/* OU alternates */
+cv47 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv47" 1;
+/*  -moz-font-feature-settings: "opOU" 1; */
+}
+/* OU alternates (smcp)*/
+cv47sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv47" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "opOU" 1, "smcp" 1; */
+}
+/* Small p-hook alternate */
+cv49 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv49" 1;
+/*  -moz-font-feature-settings: "p_hk" 1; */
+}
+/* Small p-hook alternate (smcp) */
+cv49sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv49" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "p_hk" 1, "smcp" 1; */
+}
+
+/* Small q-tail alternate */
+cv51 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv51" 1;
+/*  -moz-font-feature-settings: "q_tl" 1; */
+}
+/* Small q-tail alternate (smcp) */
+cv51sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv51" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "q_tl" 1, "smcp" 1; */
+}
+/* Capital Q alternate */
+cv52 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv52" 1;
+/*  -moz-font-feature-settings: "Qalt" 1; */
+}
+/* Capital Q alternate (smcp) */
+cv52sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv52" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "Qalt" 1, "smcp" 1; */
+}
+/* Capital R-tail alternate */
+cv55 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv55" 1;
+/*  -moz-font-feature-settings: "R_tl" 1; */
+}
+/* Capital R-tail alternate (smcp) */
+cv55sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv55" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "R_tl" 1, "smcp" 1; */
+}
+/* Small t-tail alternate */
+cv56 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv56" 1;
+/*  -moz-font-feature-settings: "t_tl" 1; */
+}
+/* Small t-tail alternate (smcp) */
+cv56sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv56" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "t_tl" 1, "smcp" 1; */
+}
+/* Capital T-hook alternate (opposite to expectation)*/
+cv57 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv57" 1;
+/*  -moz-font-feature-settings: "t_hk" 1; */
+}
+/* Capital T-hook alternate (smcp) */
+cv57sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv57" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "t_hk" 1, "smcp" 1; */
+}
+/* V-hook alternates */
+cv62a {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv62" 1;
+/*  -moz-font-feature-settings: "v_hk" 1; */
+}
+/* V-hook alternates */
+cv62b {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv62" 2;
+/*  -moz-font-feature-settings: "v_hk" 2; */
+}
+/* V-hook alternates (smcp) */
+cv62asc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv62" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "v_hk" 1, "smcp" 1; */
+}
+/* V-hook alternates (smcp) */
+cv62bsc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv62" 2, "smcp" 1;
+/*  -moz-font-feature-settings: "v_hk" 2, "smcp" 1; */
+}
+/* Small y-tail alternate */
+cv67 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv67" 1;
+/*  -moz-font-feature-settings: "y_tl" 1; */
+}
+/* Small y-tail alternate (smcp) */
+cv67sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv67" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "y_tl" 1, "smcp" 1; */
+}
+/* Capital Y-hook alternate */
+cv68 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv68" 1;
+/*  -moz-font-feature-settings: "Y_hk" 1; */
+}
+/* Capital Y-hook alternate (smcp) */
+cv68sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv68" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "Y_hk" 1, "smcp" 1; */
+}
+
+/* Modifier apostrophe alternates */
+cv70 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv70" 1;
+/*  -moz-font-feature-settings: "apos" 1; */
+}
+/* Modifier apostrophe alternates (smcp) */
+cv70sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv70" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "apos" 1, "smcp" 1; */
+}
+/* Modifier colon alternate */
+cv71 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv71" 1;
+/*  -moz-font-feature-settings: "coln" 1; */
+}
+cv75 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv75" 1;
+/*  -moz-font-feature-settings: "viet" 1;*/
+}
+cv75sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv75" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "viet" 1, "smcp" 1; */
+}
+
+/* Ogonek alternate */
+cv76 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv76" 1;
+/*  -moz-font-feature-settings: "ogon" 1; */
+}
+/* Ogonek alternate (smcp) */
+cv76sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv76" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "ogon" 1, "smcp" 1; */
+}
+/* Non-European caron alternates */
+cv77 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv77" 1;
+/*  -moz-font-feature-settings: "carn" 1; */
+}
+/* Non-European caron alternates (smcp) */
+cv77sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv77" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "carn" 1, "smcp" 1; */
+}
+/* Porsonic circumflex */
+cv78 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv78" 1;
+/*  -moz-font-feature-settings: "pcir" 1; */
+}
+/* Mongolian-style Cyrillic E */
+cv80 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv80" 1;
+/*  -moz-font-feature-settings: "mone" 1; */
+}
+/* Mongolian-style Cyrillic E small caps*/
+cv80sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv80" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "mone" 1, "smcp" 1; */
+}
+
+/* Cyrillic shha alternate */
+cv81 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv81" 1;
+/*  -moz-font-feature-settings: "shha" 1; */
+}
+/* Cyrillic shha alternate small caps */
+cv81sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv81" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "shha" 1, "smcp" 1; */
+}
+
+/* Combining breve Cyrillic form */
+cv82 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv82" 1;
+/*  -moz-font-feature-settings: "sbrv" 1; */
+}
+/* Combining breve Cyrillic form small caps */
+cv82sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv82" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "sbrv" 1, "smcp" 1; */
+}
+
+/* Chinantec tones */
+cv90 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv90" 1;
+/*  -moz-font-feature-settings: "chtn" 1; */
+}
+/* Tone numbers */
+cv91 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv91" 1;
+/*  -moz-font-feature-settings: "tone" 1; */
+}
+/* Hide tone contour staves */
+cv92 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv92" 1;
+/*  -moz-font-feature-settings: "tstv" 1; */
+}
+/* Empty set alternates */
+cv98 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "cv98" 1;
+/*  -moz-font-feature-settings: "empt" 1; */
+}
+
+/* Literacy alternates */
+ss01a {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss01" 0;
+/*  -moz-font-feature-settings: "litr" 0; */
+}
+ss01b {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss01" 1;
+/*  -moz-font-feature-settings: "litr" 1; */
+}
+ss01c {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss01" 0, "ss05" 1;
+/*  -moz-font-feature-settings: "litr" 0, "ital" 1; */
+}
+/* Literacy alternates (smcp) */
+ss01asc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss01" 0, "smcp" 1;
+/*  -moz-font-feature-settings: "litr" 0, "smcp" 1; */
+}
+ss01bsc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss01" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "litr" 1, "smcp" 1; */
+}
+/* Barred-bowl forms */
+ss04 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss04" 1;
+/*  -moz-font-feature-settings: "bowl" 1; */
+}
+/* Barred-bowl forms (smcp)*/
+ss04sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss04" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "bowl" 1, "smcp" 1; */
+}
+/* Barred-bowl forms Literacy */
+ss04lit {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss04" 1, "ss01" 1;
+/*  -moz-font-feature-settings: "bowl" 1, "litr" 1; */
+}
+/* Barred-bowl forms Literacy (smcp) */
+ss04litsc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss04" 1, "ss01" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "bowl" 1, "litr" 1, "smcp" 1; */
+}
+
+/* Slant italic specials */
+ss05 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss05" 1;
+/*  -moz-font-feature-settings: "ital" 1; */
+}
+/* Slant italic specials (smcp) */
+ss05sc {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss05" 1, "smcp" 1;
+/*  -moz-font-feature-settings: "ital" 1, "smcp" 1; */
+}
+/* Show invisible characters */
+ss06 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss06" 1;
+/*  -moz-font-feature-settings: "invs" 1; */
+}
+
+/* Low profile diacritics */
+ss07 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "ss07" 1;
+/*  -moz-font-feature-settings: "lopr" 1; */
+}
+
+
+/* these are old defs. Haven't used them in new system yet */
+
+brig {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "brig" 1;
+}
+
+pit91 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "pit9" 1;
+}
+
+pit92 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "pit9" 2;
+}
+pit93 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "pit9" 3;
+}
+
+ital0 {
+  font-family: DefaultFont;
+	font-style: italic;
+  -moz-font-feature-settings: "ital" 0;
+}
+ital1 {
+  font-family: DefaultFont;
+	font-style: italic;
+  -moz-font-feature-settings: "ital" 1;
+}
+serb0 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "serb" 0;
+}
+serb1 {
+  font-family: DefaultFont;
+  -moz-font-feature-settings: "serb" 1;
+}
+
