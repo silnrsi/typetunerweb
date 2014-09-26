@@ -149,6 +149,15 @@ ChangeLog
 - Optimized Graphite code for faster processing of plain ASCII text
 - Subscript and Superscript parentheses, minus, plus and equals were raised.
 	Metrics were not changed.
+- Modified U+0452 to have a descender
+- Changed postscript names for U+0218 and U+0219
+- Changed postscript names for U+2203, U+232A and U+2329
+- Changed design of U+A728 to use lowercase ezh form
+- Added space to right of U+201E to make it equal to that of U+201A
+- Made U+005C Reverse Solidus an actual reverse of U+002F Solidus
+- "Hide tone contour staves" feature now works with single tonebar
+- Changed U+1D44 and U+0250 to be double-story rather than single-story
+- Allowed combining marks to render properly with U+02D0
 
 1 Aug 2012 (SIL NRSI team) Andika Regular version 1.004
 - Changed Graphite feature identifiers from integers to 4-character 

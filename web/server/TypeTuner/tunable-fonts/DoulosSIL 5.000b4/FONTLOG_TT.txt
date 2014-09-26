@@ -118,6 +118,13 @@ ChangeLog
 - Adjusted tails on U+2C6B, U+2C6C
 - Arrowhead design of U+21A8 modified to match the other arrows
 - Placement of Ogonek revisited
+- Changed the strongly curved hooks on Cyrillic U+04C3..U+04C4, U+04C7..U+04C8, 
+  U+04FC..U+04FD, U+0512..U+0513 to be more consistent with other hooks
+- Modified design of U+A78D to be more curved and less squared
+- Changed postscript names for U+0218 and U+0219
+- Changed postscript names for U+2203, U+232A and U+2329
+- "Hide tone contour staves" feature now works with single tonebar
+- Allowed combining marks to render properly with U+02D0
 
 1 Aug 2012 (SIL NRSI team) Doulos SIL version 4.112
 - Changed Graphite feature identifiers from integers to 4-character 

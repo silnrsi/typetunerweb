@@ -138,6 +138,20 @@ ChangeLog
 - Slight modification to positioning of U+0361 and U+035C
 - Narrow No-Break Space (U+202F) adjusted to be narrower 
   than the No-Break Space (U+00A0)
+- Changed the strongly curved hooks on Cyrillic U+04C3..U+04C4, U+04C7..U+04C8, 
+  U+04FC..U+04FD, U+0512..U+0513 to be more consistent with other hooks and also 
+  reshaped U+0402, U+0452, U+0494, U+0495, U+04A6, U+04A7, U+0520..U+0523 to match
+- Modified Cyrillic italic versions of U+04AF, U+04B1
+- Changed postscript names for U+0218 and U+0219
+- Changed postscript names for U+2203, U+232A and U+2329
+- "Hide tone contour staves" feature now works with single tonebar
+- Fixed outline for U+1DBF
+- Allowed combining marks to render properly with U+02D0
+- Added U+037F in the Greek and Coptic block
+- Adjusted U+1FBD so that it is a spacing mark in Graphite
+- Improved design of U+2C72 and U+2C73 (hook w) for collision avoidance
+- Adjusted width of U+005F
+- Adjusted design of U+0264
 
 1 Aug 2012 (SIL NRSI team) Gentium Plus version 1.510
 - Changed Graphite feature identifiers from integers to 4-character 
