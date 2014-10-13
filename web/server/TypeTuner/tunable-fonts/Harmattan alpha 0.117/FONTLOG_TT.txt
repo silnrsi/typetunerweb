@@ -65,12 +65,18 @@ ChangeLog
   (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
-2014-10-06 (SIL NRSI team) Harmattan alpha Version 0.115 (test release)
+2014-10-13 (SIL NRSI team) Harmattan alpha Version 0.117 (test release)
 - Alpha release of font for feedback
 - Revision of design of characters based on feedback received
   - Shortened kasra and fatha (and similar characters and glyphs) to 
     help with collisions
   - Adjusted design of U+06D2 to help with collisions
+  - Increased spacing after reh-like characters
+  - African qaf, African noon, African feh added (in the Unicode pipeline)
+  - A few minor anchor point tweaks
+- Default linespacing adjusted to handle tallest base character with shadda
+  and lowest base character so these are not clipped 
+- Added Normal and Tight linespacing adjustments for TypeTunerWeb
 
 2014-06-24 (SIL NRSI team) Harmattan alpha Version 0.111 (test release)
 - Alpha release of font for feedback
