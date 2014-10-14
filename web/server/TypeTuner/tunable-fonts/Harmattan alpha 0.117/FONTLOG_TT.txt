@@ -65,7 +65,7 @@ ChangeLog
   (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
-2014-10-13 (SIL NRSI team) Harmattan alpha Version 0.117 (test release)
+2014-10-14 (SIL NRSI team) Harmattan alpha Version 0.117 (test release)
 - Alpha release of font for feedback
 - Revision of design of characters based on feedback received
   - Shortened kasra and fatha (and similar characters and glyphs) to 
@@ -74,6 +74,9 @@ ChangeLog
   - Increased spacing after reh-like characters
   - African qaf, African noon, African feh added (in the Unicode pipeline)
   - A few minor anchor point tweaks
+- Changed default behavior for cv62 to have the kasra in the "lowered" postion
+  - Removed cv62 as an OpenType feature. It is now only available through
+    Graphite or TypeTunerWeb
 - Default linespacing adjusted to handle tallest base character with shadda
   and lowest base character so these are not clipped 
 - Added Normal and Tight linespacing adjustments for TypeTunerWeb
