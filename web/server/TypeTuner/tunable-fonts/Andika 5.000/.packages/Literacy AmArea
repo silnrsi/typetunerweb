@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE features_set SYSTEM "feat_set.dtd">
+<features_set version="1.0">
+	<feature name="Literacy alternates" value="True">
+	</feature>
+	<feature name="Barred-bowl forms" value="True">
+	</feature>
+	<feature name="Chinantec tones" value="True">
+	</feature>
+	<feature name="Uppercase Eng alternates" value="Capital N with tail">
+	</feature>
+	<feature name="Show deprecated PUA" value="Through Unicode 5.1">
+	</feature>
+	<feature name="Line spacing" value="Imported">
+	</feature>
+	<imported_line_metrics font="Chinstd SILCharis" em-sqr="2048" metrics="2034 512 0 2034 512 2034 512 0"/>
+</features_set>
