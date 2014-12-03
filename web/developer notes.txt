@@ -43,22 +43,39 @@ and to retrieve an older version, say 4.106:
 
     http://scripts.sil.org/ttw/fonts2go.cgi?family=CharisSIL&pkg=LiteracyCompact&ver=4.106
 
-4. XSERVE Locations
+4. INSTALLATION 
 
-The relevant folders on xserve are:
+Dependencies and location on a Debian container hosted in proxmox.
 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw 
+To install ttw on Debian:
+
+sudo apt-get install libxml-parser-perl libfont-ttf-perl zip 
+sudo mkdir /var/log/ttw 
+sudo chown -R root:adm  /var/log/ttw
+
+apache needs to know the handler:
+add the following to a .htaccess in that folder:
+
+Options +ExecCGI
+AddHandler cgi-script .cgi
+
+(this is checked to work with apache2-mpm-worker)
+
+
+The relevant folders on are:
+
+/var/www/scripts.sil.org/cms/ttw 
   -- root folder where the fonts2go.cgi should be located
 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner 
+/var/www/scripts.sil.org/cms/ttw/TypeTuner 
   -- subfolder  containing TypeTuner.pl
 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts
+/var/www/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts
   -- subfolder containg source font packages. 
 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Andika
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Charis SIL 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Doulos SIL 
+/var/www/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Andika
+/var/www/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Charis SIL 
+/var/www/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Doulos SIL 
 etc...
   -- subfolders containing source font packages. As of 2009-10-21 the names of 
      these subfolders may have spaces.
@@ -89,7 +106,7 @@ etc...
          file, above). Other versions are available only on the 
          direct-download URLs.
 
-/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Family Name/.packages
+/var/www/scripts.sil.org/cms/ttw/TypeTuner/tunable-fonts/Family Name/.packages
   -- subfolder containing TypeTuner control files for preconfigured packages,
      thus making it possible to easily specify a URL that is a direct download
      of the specific configuration. For example, a file by the name:
