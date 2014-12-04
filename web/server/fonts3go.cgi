@@ -5,7 +5,7 @@ use strict;
 #
 # Customize these settings as needed for the host system
 #
-my $typeTunerDir = '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/TypeTuner';
+my $typeTunerDir = '/var/www/scripts.sil.org/cms/ttw/TypeTuner';
 my $tunableFontsDir = "$typeTunerDir/tunable-fonts";
 my $logDir = '/var/log';
 my $tmpDir = '/tmp';
