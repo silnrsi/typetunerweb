@@ -12,6 +12,7 @@ my $tmpDir = '/tmp';
 
 my $title = 'TypeTuner Web';
 my $defaultFamilyRE = qr/^Charis/o;
+my $permittedHelpSites = qr'^(software|scripts)\.sil\.org/'oi;
 
 my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
 $cgiPathName =~ s!^.*(?=/ttw/)!!;	# something like '/ttw/fonts2go.cgi'
@@ -380,12 +381,10 @@ if ($cgi->param('Select features')) {
 	
 	if ($help ne '')
 	{
-		# For security, make sure the help URL is http, https, or ftp, and on the same server as our CGI script
+		# For security, make sure the help URL is http, https, or ftp, and on a permitted server
 		$help =~ s/\s+$//;
 		my ($helpProtocol, $helpAddress) = split('://', $help, 2);
-		my $base = url(-base=>1);
-		my ($baseProtcol, $baseAddress) = split('://', $base, 2) ;
-		if ($helpProtocol =~ /http|ftp/ && substr($helpAddress, 0, length($baseAddress)) eq $baseAddress)
+		if ($helpProtocol =~ /^(https?|ftp)$/ && $helpAddress =~ $permittedHelpSites)
 		{
 			# Help URL looks OK
 			$help = "(for help see " . a({href=>$help, target=>"_blank"},"$availableFamilies->{$familytag} font features") . ")";
