@@ -383,7 +383,7 @@ if ($cgi->param('Select features')) {
 	{
 		# For security, make sure the help URL is http, https, or ftp, and on a permitted server
 		my $myhelp = $help;
-		$myhelp =~ s/(\.{2,}|\s)$//g;   # remove ".." or whitespace
+		$myhelp =~ s'((?<=/)\.\./)|\s''g;   #' # remove "../" or whitespace 
 		my ($helpProtocol, $helpAddress) = split('://', $myhelp, 2);
 		if ($helpProtocol =~ /^(https?|ftp)$/ && $helpAddress =~ $permittedHelpSites)
 		{
