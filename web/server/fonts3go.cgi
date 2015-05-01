@@ -382,12 +382,13 @@ if ($cgi->param('Select features')) {
 	if ($help ne '')
 	{
 		# For security, make sure the help URL is http, https, or ftp, and on a permitted server
-		$help =~ s/\s+$//;
-		my ($helpProtocol, $helpAddress) = split('://', $help, 2);
+		my $myhelp = $help;
+		$myhelp =~ s/(\.{2,}|\s)$//g;   # remove ".." or whitespace
+		my ($helpProtocol, $helpAddress) = split('://', $myhelp, 2);
 		if ($helpProtocol =~ /^(https?|ftp)$/ && $helpAddress =~ $permittedHelpSites)
 		{
 			# Help URL looks OK
-			$help = "(for help see " . a({href=>$help, target=>"_blank"},"$availableFamilies->{$familytag} font features") . ")";
+			$help = "(for help see " . a({href=>$myhelp, target=>"_blank"},"$availableFamilies->{$familytag} font features") . ")";
 		}
 	}	
 	
