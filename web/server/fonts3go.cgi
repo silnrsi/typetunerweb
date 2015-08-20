@@ -31,9 +31,10 @@ $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 sub fontFileName
 {
 	# SIL's new convention e.g. CharisSILLiteracy-R.ttf, but we should handle other things.
+	# 2015-08 allow -Regular, -SemiBold, etc.
 	my ($oldFileName, $suffix) = @_;
 	$suffix = "TT" unless $suffix;
-	if ($oldFileName =~ /^(.+)-(r|i|b|bi)\.([ot]tf)$/io)
+	if ($oldFileName =~ /^(.+)-([^-]+)\.([ot]tf)$/io)
 	{
 		# New SIL convention:
 		return "$1$suffix-$2.$3";
