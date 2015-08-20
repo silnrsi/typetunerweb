@@ -284,7 +284,7 @@ if ($cgi->param('pkg')) {
 	invalid_parameter("pkg=$pkg") unless $pkg && $settingsFile;
 	
 	my $suffixOpt = "-n \"$settingsFile\"";
-	my $file_name = fontDirName($familytag, $pkg);
+	my $file_name = fontDirName($familytag, "-$pkg");
 	
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
@@ -461,7 +461,7 @@ elsif ($cgi->param('Get tuned font')) {
 	if ($suffix ne '') {
 		$suffixOpt = "-n \"$suffix\"";
 		$suffix =~ s/\s//g;
-		$file_name = fontDirName($familytag, $suffix);
+		$file_name = fontDirName($familytag, "-$suffix");
 	}
 	else {
 		$file_name = fontDirName($familytag, '-tuned');
