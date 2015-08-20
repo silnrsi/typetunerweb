@@ -30,14 +30,13 @@ $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
 sub fontFileName
 {
-	# SIL's new convention e.g. CharisSILLiteracy-R.ttf, but we should handle other things.
-	# 2015-08 allow -Regular, -SemiBold, etc.
+	# SIL's convention e.g. CharisSIL-Literacy-Regular.ttf, but we should handle other things.
 	my ($oldFileName, $suffix) = @_;
 	$suffix = "TT" unless $suffix;
 	if ($oldFileName =~ /^(.+)-([^-]+)\.([ot]tf)$/io)
 	{
 		# New SIL convention:
-		return "$1$suffix-$2.$3";
+		return "$1-$suffix-$2.$3";
 	}
 	elsif ($oldFileName =~ /^(.+)\.([^.]+)$/o)
 	{
@@ -57,12 +56,12 @@ sub fontFileName
 sub fontDirName
 {
 	# Per SIL convention we insert the suffix in front of the version if present, e.g:
-	#		CharisSIL -> CharisSILSuffix
-	#		CharisSIL-1.408 -> CharisSILSuffix-1.408
+	#		CharisSIL -> CharisSIL-Suffix
+	#		CharisSIL-1.408 -> CharisSIL-Suffix-1.408
 	#
 	my ($familytag, $suffix) = @_;
 	my $dir = $familytag;
-	$dir =~ s/(-[0-9\.]+)?$/$suffix$1/;
+	$dir =~ s/(-[0-9\.]+)?$/-$suffix$1/;
 	return $dir;
 }
 	
@@ -284,7 +283,7 @@ if ($cgi->param('pkg')) {
 	invalid_parameter("pkg=$pkg") unless $pkg && $settingsFile;
 	
 	my $suffixOpt = "-n \"$settingsFile\"";
-	my $file_name = fontDirName($familytag, "-$pkg");
+	my $file_name = fontDirName($familytag, $pkg);
 	
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
@@ -461,10 +460,10 @@ elsif ($cgi->param('Get tuned font')) {
 	if ($suffix ne '') {
 		$suffixOpt = "-n \"$suffix\"";
 		$suffix =~ s/\s//g;
-		$file_name = fontDirName($familytag, "-$suffix");
+		$file_name = fontDirName($familytag, $suffix);
 	}
 	else {
-		$file_name = fontDirName($familytag, '-tuned');
+		$file_name = fontDirName($familytag, 'tuned');
 	}
 	my $tunedDir = "$tempDir/$file_name";
 	mkdir "$tunedDir";
