@@ -60,6 +60,7 @@ sub fontDirName
 	#		CharisSIL-1.408 -> CharisSIL-Suffix-1.408
 	#
 	my ($familytag, $suffix) = @_;
+	$suffix = "TT" unless $suffix;
 	my $dir = $familytag;
 	$dir =~ s/(-[0-9\.]+)?$/$suffix$1/;
 	return $dir;
@@ -164,7 +165,7 @@ my $postamble = <<'EOF' ;
 
 <!-- End TypeTuner Info -->
 			
-			<p><small>© 2008-2011 <a href='http://www.sil.org/' target='_blank'>SIL International</a>, all rights reserved, unless otherwise noted elsewhere on this page.<br>
+			<p><small>Â© 2008-2011 <a href='http://www.sil.org/' target='_blank'>SIL International</a>, all rights reserved, unless otherwise noted elsewhere on this page.<br>
 			Provided by SIL's Non-Roman Script Initiative. Contact us at <a href='mailto:nrsi@sil.org'>nrsi@sil.org</a>.</small></p>
 		</div>
     </td>
@@ -463,7 +464,7 @@ elsif ($cgi->param('Get tuned font')) {
 		$file_name = fontDirName($familytag, $suffix);
 	}
 	else {
-		$file_name = fontDirName($familytag, 'tuned');
+		$file_name = fontDirName($familytag);
 	}
 	my $tunedDir = "$tempDir/$file_name";
 	mkdir "$tunedDir";
