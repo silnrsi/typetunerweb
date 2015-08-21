@@ -30,22 +30,22 @@ $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
 sub fontFileName
 {
-	# SIL's convention e.g. CharisSIL-Literacy-Regular.ttf, but we should handle other things.
+	# SIL's convention e.g. CharisSILLiteracy-Regular.ttf, but we should handle other things.
 	my ($oldFileName, $suffix) = @_;
 	$suffix = "TT" unless $suffix;
 	if ($oldFileName =~ /^(.+)-([^-]+)\.([ot]tf)$/io)
 	{
 		# New SIL convention:
-		return "$1-$suffix-$2.$3";
+		return "$1$suffix-$2.$3";
 	}
 	elsif ($oldFileName =~ /^(.+)\.([^.]+)$/o)
 	{
 		# General whatever.ext
-		return "$1-$suffix.$2";
+		return "$1$suffix.$2";
 	}
 	else
 	{
-		return "$oldFileName-$suffix";
+		return "$oldFileName$suffix";
 	}
 }
 
@@ -61,7 +61,7 @@ sub fontDirName
 	#
 	my ($familytag, $suffix) = @_;
 	my $dir = $familytag;
-	$dir =~ s/(-[0-9\.]+)?$/-$suffix$1/;
+	$dir =~ s/(-[0-9\.]+)?$/$suffix$1/;
 	return $dir;
 }
 	
@@ -164,7 +164,7 @@ my $postamble = <<'EOF' ;
 
 <!-- End TypeTuner Info -->
 			
-			<p><small>Â© 2008-2011 <a href='http://www.sil.org/' target='_blank'>SIL International</a>, all rights reserved, unless otherwise noted elsewhere on this page.<br>
+			<p><small>© 2008-2011 <a href='http://www.sil.org/' target='_blank'>SIL International</a>, all rights reserved, unless otherwise noted elsewhere on this page.<br>
 			Provided by SIL's Non-Roman Script Initiative. Contact us at <a href='mailto:nrsi@sil.org'>nrsi@sil.org</a>.</small></p>
 		</div>
     </td>
