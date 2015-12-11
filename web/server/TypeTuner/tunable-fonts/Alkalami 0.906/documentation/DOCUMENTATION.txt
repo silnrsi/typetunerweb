@@ -11,5 +11,5 @@ website (does not exist yet).
 
 The Alkalami-features.pdf file illustrates the use of OpenType features.
 
-The Alkalami-features.odt file illustrates the use of OpenType features 
-(source file for the pdf).
+The Alkalami-features.indd file illustrates the use of OpenType features 
+in Adobe InDesign (source file for the pdf).
