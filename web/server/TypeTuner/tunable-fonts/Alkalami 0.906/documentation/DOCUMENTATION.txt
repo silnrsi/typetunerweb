@@ -1,0 +1,15 @@
+DOCUMENTATION
+Andika
+========================
+
+This file describes the documentation files included with the Alkalami 
+font family. This information should be distributed along with the 
+Alkalami fonts and any derivative works.
+
+Primary documentation for the Alkalami font family is on the Alkalami 
+website (does not exist yet).
+
+The Alkalami-features.pdf file illustrates the use of OpenType features.
+
+The Alkalami-features.odt file illustrates the use of OpenType features 
+(source file for the pdf).
