@@ -52,11 +52,13 @@ ChangeLog
 ---------
 (This should list both major and minor changes, most recent first.)
 
-%DATE% (SIL TypeTuner) Tuned version of Alkalami 0.906
+%DATE% (SIL TypeTuner) Tuned version of Alkalami 0.909
 - Tuned and delivered by SIL TypeTuner 
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
+2016-02-04 (Becca (Hirsbrunner) Spalinger) Alkalami 0.909 Preliminary design and smart behaviours
+- Fixed medial alternate form of peh
 2016-01-12 (Becca (Hirsbrunner) Spalinger) Alkalami 0.908 Preliminary design and smart behaviours
 - Fixed OpenType code for "Allah"
 2015-12-11 (Becca (Hirsbrunner) Spalinger) Alkalami 0.906 Preliminary design and smart behaviours
