@@ -57,6 +57,8 @@ ChangeLog
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
+2016-03-22 (Becca (Hirsbrunner) Spalinger) Alkalami 0.909 Preliminary design and smart behaviours
+- Adjusted TypeTuner settings
 2016-02-04 (Becca (Hirsbrunner) Spalinger) Alkalami 0.909 Preliminary design and smart behaviours
 - Fixed medial alternate form of peh
 2016-01-12 (Becca (Hirsbrunner) Spalinger) Alkalami 0.908 Preliminary design and smart behaviours
