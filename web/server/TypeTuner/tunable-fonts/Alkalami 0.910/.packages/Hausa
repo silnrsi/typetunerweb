@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE features_set SYSTEM "feat_set.dtd">
+<features_set version="1.0">
+	<feature name="Hausa Hack" value="Wagaf modifier">
+	</feature>
+	<feature name="Warsh Hack" value="No Dots">
+	</feature>
+</features_set>
