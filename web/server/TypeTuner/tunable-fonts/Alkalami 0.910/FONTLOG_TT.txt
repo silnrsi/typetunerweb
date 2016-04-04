@@ -57,6 +57,9 @@ ChangeLog
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
+2016-04-04 (Becca (Hirsbrunner) Spalinger) Alkalami 0.910 Preliminary design and smart behaviours
+- Added anchor points to U+FDF2
+- Removed U+064A to ss05 and added U+06CC to ss05 with wagaf above
 2016-02-04 (Becca (Hirsbrunner) Spalinger) Alkalami 0.909 Preliminary design and smart behaviours
 - Fixed medial alternate form of peh
 2016-01-12 (Becca (Hirsbrunner) Spalinger) Alkalami 0.908 Preliminary design and smart behaviours
