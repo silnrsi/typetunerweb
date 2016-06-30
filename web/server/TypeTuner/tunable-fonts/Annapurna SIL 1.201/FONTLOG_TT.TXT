@@ -38,7 +38,7 @@ ChangeLog
 
 %DATE% (SIL TypeTuner) Tuned version of Annapurna SIL Version 1.201
 - Tuned and delivered by SIL TypeTuner 
-(http://scripts.sil.org/ttw/fonts3go.cgi).
+(http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
 30 June 2016 (SIL NRSI team)  Annapurna SIL version 1.201
