@@ -1,6 +1,6 @@
 README 
 Annapurna SIL Release 1.201
-June 2016
+July 2016
 ========================
 
 Thank you for your interest in the Annapurna SIL font.

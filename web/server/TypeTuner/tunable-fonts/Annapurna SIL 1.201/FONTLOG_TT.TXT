@@ -41,7 +41,7 @@ ChangeLog
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
-30 June 2016 (SIL NRSI team)  Annapurna SIL version 1.201
+30 July 2016 (SIL NRSI team)  Annapurna SIL version 1.201
 - Fixed Graphite (reordering) issue when reph and ikar are in a cluster
 - Fixed Graphite issue related to TypeTuner fonts
 
@@ -136,7 +136,7 @@ Acknowledgements
 be sure to add your name (N), email (E), web-address (W) and description
 (D). This list is sorted by last name in alphabetical order.)
 
-N: Jon Coblentz, Sharon Correll, Peter Martin
+N: Jonathan Coblentz, Sharon Correll, Peter Martin
 E: fonts@sil.org
 W: http://scripts.sil.org/
 D: SIL font designers and engineers
@@ -144,5 +144,5 @@ D: SIL font designers and engineers
 The Annapurna SIL project is maintained by SIL International.
 
 For more information please visit the Annapurna SIL page on SIL International's 
-Computers and Writing systems website: http://scripts.sil.org/AnnapurnaSIL.
+Computers and Writing systems website: http://software.sil.org/annapurna.
 
