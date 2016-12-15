@@ -64,7 +64,10 @@ ChangeLog
 2016-12-15 (Becca Spalinger) Alkalami 0.923 
 - Repositioned below attachment points on reh and waw
 - Changed depth of swash on the sad/dad, seen/sheen, and lam isolate 
-2016-10-06 (Becca Spalinger) Alkalami 0.919 
+- Digits reduced in size
+- Width of U+0640 reduced by 50%
+- Left sidebearing on U+0621 reduced
+- Changed positioning of dagger alef above fatha and alef maksura2016-10-06 (Becca Spalinger) Alkalami 0.919 
 - Updated OpenType code to handle hah/jeem/khah/nyeh positioning
 2016-04-04 (Becca (Hirsbrunner) Spalinger) Alkalami 0.910
 - Added anchor points to U+FDF2
