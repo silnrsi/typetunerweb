@@ -7,4 +7,6 @@
 	</feature>
 	<feature name="Imala E" value="Small" >
 	</feature>
+	<feature name="Alef diacritic placement" value="Touching">
+	</feature>
 </features_set>
