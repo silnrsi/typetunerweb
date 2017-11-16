@@ -58,7 +58,7 @@ ChangeLog
 ---------
 (This should list both major and minor changes, most recent first.)
 
-%DATE% (SIL TypeTuner) Tuned version of Awami Nastaliq 1.100
+%DATE% (SIL TypeTuner) Tuned version of Awami Nastaliq 1.000
 - Tuned and delivered by SIL TypeTuner 
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
