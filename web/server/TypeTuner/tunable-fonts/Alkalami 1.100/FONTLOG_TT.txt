@@ -60,6 +60,7 @@ ChangeLog
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
 
+2018-07-11 (Becca Spalinger) Alkalami 1.100
 - Changed qaf-based characters: isolate now has tail; tail on final flattened 
   to match isolate
 2017-05-23 (Becca Spalinger) Alkalami 1.000
