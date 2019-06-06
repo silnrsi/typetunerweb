@@ -1,11 +1,13 @@
 #!/usr/bin/perl
 
 use strict;  
+use Cwd qw(cwd);
 
 #
 # Customize these settings as needed for the host system
 #
-my $typeTunerDir = '/var/www/scripts.sil.org/cms/ttw/TypeTuner';
+my $baseDir = cwd;
+my $typeTunerDir = "$baseDir/TypeTuner";
 my $tunableFontsDir = "$typeTunerDir/tunable-fonts";
 my $logDir = '/var/log';
 my $tmpDir = '/tmp';
