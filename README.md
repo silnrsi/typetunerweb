@@ -89,9 +89,9 @@ http://scripts.sil.org/ttw/fonts2go.cgi?family=CharisSIL&pkg=LiteracyCompact
 (Note the removal of the spaces in the parameter values.)
 
 ### TT files
-For certain files, e.g., FONTLOG.txt, it can be useful to adjust the contents of the for each download. Files with a basename ending in `_tt` (case insensitive; for example, `FONTLOG_TT.txt`) will undergo field substitution in their content. The following substitutions are available:
+For certain files, e.g., `FONTLOG.txt`, it can be useful to adjust the file contents prior to download. Files with a basename ending in `_tt` (case insensitive; for example, `FONTLOG_TT.txt`) will be renamed without the `_tt` and undergo field substitution within the text of the file. The following substitutions are available:
 
-- `%DATE%` replaced with current date in format `dd MMM yyyy`, e.g., 9 July 2019
+- `%DATE%` replaced with current date in format `dd MMM yyyy`, e.g., 09 Jul 2019
 - `%ISODATE%` replaced with current date in format `yyy-mm-dd`, e.g., 2019-07-09
 
 Example:
