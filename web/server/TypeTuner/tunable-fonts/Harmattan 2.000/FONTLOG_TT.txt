@@ -1,5 +1,5 @@
 FONTLOG 
-Harmattan font (test3)
+Harmattan font
 =================
 
 This file provides detailed information on the Harmattan font software. 
