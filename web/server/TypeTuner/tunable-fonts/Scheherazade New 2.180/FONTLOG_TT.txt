@@ -63,7 +63,7 @@ ChangeLog
 ---------
 (This should list both major and minor changes, most recent first.)
 
-%ISODATE% (SIL TypeTuner) Tuned version of Scheherazade New Version 2.900 (beta)
+%ISODATE% (SIL TypeTuner) Tuned version of Scheherazade New Version 2.900 (beta2)
 - Tuned and delivered by SIL TypeTuner 
 (http://scripts.sil.org/ttw/fonts2go.cgi).
 - See included xml file for details of feature changes.
