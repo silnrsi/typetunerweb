@@ -36,7 +36,7 @@ TYPETUNER
 %ISODATE%
 =========
 
-This package contains a TypeTuned version of the Alkalami font.
+This package contains a TypeTuned version of the Awami Nastaliq font.
 
 The TypeTuner settings file used to generate the enclosed font
 is included in the package as feat_set_tuned.xml.
