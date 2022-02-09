@@ -1,191 +1,25 @@
-FONTLOG
-Charis SIL
-==========
-
-This file provides detailed information on the Charis SIL family of fonts.
-This information should be distributed along with the Charis SIL fonts and
-any derivative works.
-
-## About this project
-
-This project is intended to provide a free and open font family for all
-current languages and writing systems that use Latin and Cyrillic scripts.
-It supports almost the complete range of Unicode characters for these scripts,
-including a comprehensive range of diacritics and a large set of symbols
-useful for linguistics and literacy work. Smart font routines automatically
-adjust the position of diacritics to support and optimize arbitrary
-base+diacritic combinations.
-
-Charis SIL is optimized for readability in long printed documents. It is
-highly readable and holds up well in less-than-ideal reproduction environments
-due to its simple and robust design with strong serifs and clear features.
-
-## Note regarding Charter
-
-This Charis SIL font is essentially the same design as the SIL Charis font
-first released by SIL in 1997. The design of the basic character set of Charis 
-IL is similar (but not identical) to Bitstream Charter, designed by Matthew
-Carter. The following notice accompanied the Charter fonts: 
-
-> © Copyright 1989-1992, Bitstream Inc., Cambridge, MA. 
->
-> You are hereby granted permission under all Bitstream propriety rights to
-> use, copy, modify, sublicense, sell, and redistribute the 4 Bitstream
-> Charter® Type 1 outline fonts and the 4 Courier Type 1 outline fonts for
-> any purpose and without restriction; provided, that this notice is left
-> intact on all copies of such fonts and that Bitstream's trademark is
-> acknowledged as shown below on all unmodified copies of the 4 Charter Type
-> 1 fonts. 
->
-> BITSTREAM CHARTER is a registered trademark of Bitstream Inc.
-
-SIL International is the creator of the Charis SIL fonts, and is the owner
-of all proprietary rights therein.
-
-## A Note Regarding the Open Font License and TypeTuner
-
-The OFL prohibits the use of Reserved Font Names "Charis" and "SIL" in
-the name of any font that is derived from the Original Version of Charis
-SIL. However, SIL International (the Copyright Holder) grants through
-this separate written agreement the right to use the Reserved Font Names
-in any Modified Version of this font created by using TypeTuner as long
-as the feature information contained in the Original Version is used, 
-unmodified, as the source for TypeTuner feature information, and 
-"Charis SIL" is not the resulting font family name.
-
-TypeTuner-produced fonts created in this manner are still bound by the
-terms of the OFL. Specifically, the use of Reserved Font Names is
-prohibited when making derivatives of a TypeTuner-produced font. Anyone
-making a derivative of a TypeTuner font will need to find a different
-name. For example a TypeTuner-produced font may be named 
-"Charis SIL Literacy SomeFarAwayPlace" but a derivative of that font made 
-with other tools would not be allowed to use the "Charis" and "SIL" 
-Reserved Font Names and would have to be named something like "Grace Foo".
-
-## ChangeLog
-
-(This should list both major and minor changes, most recent first.)
-
-### %DATE% (SIL TypeTuner) Tuned version of Charis SIL version 6.101
-
-- Tuned and delivered by SIL TypeTuner (http://scripts.sil.org/ttw/fonts2go.cgi)
-
-- See included xml file for details of feature changes
-
-### 9 Feb 2022 (SIL WSTech Team) Charis SIL version 6.101
-
-This is a maintenance release primarily focused on making the v6 fonts available on *TypeTuner Web*.
-
-#### New
-
-- The fonts now support SIL *TypeTuner*. Customized fonts can be created at *TypeTuner Web* (https://scripts.sil.org/ttw/fonts2go.cgi)
-
-- New `locl` OpenType feature that supports Macedonian (MKD/mk) Cyrillic alternates
-
-- Serbian and Macedonian alternates are also available through a new OpenType feature (cv84) for applications that do not support language-specific `locl` features
-
-- Characters have been added to support Unicode versions up to 14.0.0 (more to be added in future releases):
-    - U+A7C4 LATIN CAPITAL LETTER C WITH PALATAL HOOK
-    - U+A7C5 LATIN CAPITAL LETTER S WITH HOOK
-    - U+1DF00 LATIN SMALL LETTER FENG DIGRAPH WITH TRILL
-    - U+1DF01 LATIN SMALL LETTER REVERSED SCRIPT G
-    - U+1DF02 LATIN LETTER SMALL CAPITAL TURNED G
-    - U+1DF03 LATIN SMALL LETTER REVERSED K
-    - U+1DF05 LATIN SMALL LETTER LEZH WITH RETROFLEX HOOK
-    - U+1DF07 LATIN SMALL LETTER REVERSED ENG
-    - U+1DF09 LATIN SMALL LETTER T WITH HOOK AND RETROFLEX HOOK
-    - U+1DF0A LATIN LETTER RETROFLEX CLICK WITH RETROFLEX HOOK
-    - U+1DF0B LATIN SMALL LETTER ESH WITH DOUBLE BAR
-    - U+1DF0C LATIN SMALL LETTER ESH WITH DOUBLE BAR AND CURL
-    - U+1DF0D LATIN SMALL LETTER TURNED T WITH CURL
-    - U+1DF0E LATIN LETTER INVERTED GLOTTAL STOP WITH CURL
-    - U+1DF0F LATIN LETTER STRETCHED C WITH CURL
-    - U+1DF10 LATIN LETTER SMALL CAPITAL TURNED K
-    - U+1DF11 LATIN SMALL LETTER L WITH FISHHOOK
-    - U+1DF12 LATIN SMALL LETTER DEZH DIGRAPH WITH PALATAL HOOK
-    - U+1DF13 LATIN SMALL LETTER L WITH BELT AND PALATAL HOOK
-    - U+1DF14 LATIN SMALL LETTER ENG WITH PALATAL HOOK
-    - U+1DF15 LATIN SMALL LETTER TURNED R WITH PALATAL HOOK
-    - U+1DF16 LATIN SMALL LETTER R WITH FISHHOOK AND PALATAL HOOK
-    - U+1DF17 LATIN SMALL LETTER TESH DIGRAPH WITH PALATAL HOOK
-    - U+1DF19 LATIN SMALL LETTER DEZH DIGRAPH WITH RETROFLEX HOOK
-    - U+1DF1A LATIN SMALL LETTER I WITH STROKE AND RETROFLEX HOOK
-    - U+1DF1B LATIN SMALL LETTER O WITH RETROFLEX HOOK
-    - U+1DF1C LATIN SMALL LETTER TESH DIGRAPH WITH RETROFLEX HOOK
-    - U+1DF1D LATIN SMALL LETTER C WITH RETROFLEX HOOK
-    - U+1DF1E LATIN SMALL LETTER S WITH CURL
-    
-#### Improved
-
-- The special-purpose modified fonts have been updated to be based on the current version. These are available at https://software.sil.org/lcgfonts/download/ and include *Literacy* and *Compact* versions.
-
-- U+02DE MODIFIER LETTER RHOTIC HOOK position improved with modifier vowels: 
-    - U+02B8 MODIFIER LETTER SMALL Y
-    - U+1D53 MODIFIER LETTER SMALL OPEN O
-    - U+1D5A MODIFIER LETTER SMALL TURNED M
-    - U+1DBA MODIFIER LETTER SMALL TURNED V
-
-- Design improved for these characters:
-    - U+0184 LATIN CAPITAL LETTER TONE SIX
-    - U+0185 LATIN SMALL LETTER TONE SIX
-
-- The small caps feature (smcp) now supports more characters
-
-- The spacing of Serbian italic alternates has been improved
-
-#### Changed encoding
-
-- The following characters were in the SIL PUA but have now been given Unicode assignments. The SIL PUA characters are now deprecated:
-    - U+A7C6 LATIN CAPITAL LETTER Z WITH PALATAL HOOK (was U+F234)
-    - U+10783 MODIFIER LETTER SMALL AE (was U+F1A1)
-    - U+1078F MODIFIER LETTER SMALL CLOSED REVERSED OPEN E (was U+F1A4)
-    - U+10791 MODIFIER LETTER SMALL RAMS HORN (was U+F1B5)
-    - U+10795 MODIFIER LETTER SMALL H WITH STROKE (was U+F1BC)
-    - U+107A0 MODIFIER LETTER SMALL TURNED Y (was U+F1CE)
-    - U+107A2 MODIFIER LETTER SMALL O WITH STROKE (was U+F1AB)
-    - U+107A3 MODIFIER LETTER SMALL CAPITAL OE (was U+F1AE)
-    - U+107B2 MODIFIER LETTER SMALL CAPITAL Y (was U+F1B4)
-    - U+1088E NABATAEAN LETTER FINAL KAPH (was U+F1A3)
-    - U+1DF04 LATIN LETTER SMALL CAPITAL L WITH BELT (was U+F268)
-    - U+1DF06 LATIN SMALL LETTER TURNED Y WITH BELT (was U+F267)
-    - U+1DF08 LATIN SMALL LETTER TURNED R WITH LONG LEG AND RETROFLEX HOOK (was U+F269)
-    - U+1DF18 LATIN SMALL LETTER EZH WITH PALATAL HOOK (was U+F235)
 
 ### 2 July 2021 (SIL WSTech Team) Charis SIL version 6.001
 
-- Reverted font Postscript name to that used in v5 and earlier to avoid
-problems with unrecognized fonts when opening older documents.
+- Reverted font Postscript name to that used in v5 and earlier to avoid problems with unrecognized fonts when opening older documents.
 
 ### 29 Jun 2021 (SIL WSTech Team) Charis SIL version 6.000
 
-***Note that this is a major upgrade that may cause document reflow as
-some glyphs widths have changed and some features have been removed.***
+***Note that this is a major upgrade that may cause document reflow as some glyphs widths have changed and some features have been removed.***
 
 #### Removed
 
-- **Removed DSIGs added in version 5.000.** These have now been removed
-to reflect current best practice font development guidance. Adobe InDesign
-will complain that fonts cannot be found if a document last saved with
-version 5.000 is opened with version 5.960 or later installed. It will be
-necessary to find/replace the fonts in the document using the command in
-the Type menu. Please also look over the document carefully to note any
-places where changes in the fonts have affected letterforms or spacing.
+- **Removed DSIGs added in version 5.000.** These have now been removed to reflect current best practice font development guidance. Adobe InDesign will complain that fonts cannot be found if a document last saved with version 5.000 is opened with version 5.960 or later installed. It will be necessary to find/replace the fonts in the document using the command in the Type menu. Please also look over the document carefully to note any places where changes in the fonts have affected letterforms or spacing.
 
-- **Graphite has been removed.** Application and OS support for OpenType
-has greatly improved, so the need for Graphite in this font family is
-greatly reduced. *If this affects you, and you find that OpenType does 
-not provide sufficient support for your needs, please contact us right
-away.*  
+- **Graphite has been removed.** Application and OS support for OpenType has greatly improved, so the need for Graphite in this font family is greatly reduced. *If this affects you, and you find that OpenType does not provide sufficient support for your needs, please contact us right away.*  
 
-- Removed the "Show Invisibles" feature.
+- Removed the *Show Invisibles* feature.
 
-- Removed support for nine-level pitch contours. These will be replaced
-by a standalone pitch contours font in the future.
+- Removed support for nine-level pitch contours. These will be replaced by a standalone pitch contours font in the future.
 
 #### Added
 
-Characters added to support Unicode versions 7.0-13.0, including feature
-support (e.g. small caps) where appropriate:
+Characters added to support Unicode versions 7.0-13.0, including feature support (e.g. small caps) where appropriate:
 
 - U+03D1 GREEK THETA SYMBOL
 - U+03F4 GREEK CAPITAL THETA SYMBOL
@@ -253,9 +87,7 @@ support (e.g. small caps) where appropriate:
 
 #### Fixes
 
-- Width of typographic spaces have been made more consistent to reflect
-common publishing industry usage. Note that this may affect line and page
-lengths. Affected spaces:
+- Width of typographic spaces have been made more consistent to reflect common publishing industry usage. Note that this may affect line and page lengths. Affected spaces:
 
     - U+2000 EN QUAD (made width consistent)
     - U+2001 EM QUAD (made width consistent)
@@ -271,11 +103,9 @@ lengths. Affected spaces:
 
 - Fixed miscellaneous distorted glyphs
 
-- Improved miscellaneous anchor positions, including the position of diacritics 
-below glyphs with macrons below (e.g. U+1E0F LATIN SMALL LETTER D WITH LINE BELOW)
+- Improved miscellaneous anchor positions, including the position of diacritics below glyphs with macrons below (e.g. U+1E0F LATIN SMALL LETTER D WITH LINE BELOW)
 
-- Improved position of diacritics for superscripts and modifier letters
-(including cedilla, ogonek, rhotic hook)
+- Improved position of diacritics for superscripts and modifier letters (including cedilla, ogonek, rhotic hook)
 
 - Fixes and improvements to various glyphs:
     - U+0037 DIGIT SEVEN (spacing)
@@ -470,35 +300,3 @@ below glyphs with macrons below (e.g. U+1E0F LATIN SMALL LETTER D WITH LINE BELO
 ### 31 Jan 2006 (SIL NRSI team)  Charis SIL version 4.0.02 (Version 4.002)
 - First version released under the SIL Open Font License
 
-## Information for developers and contributors
-
-We welcome other developers who wish to get involved in supporting and
-enhancing these fonts or who want to modify them.
-
-SIL’s fonts are licensed according to the terms of the SIL Open Font License
-(https://scripts.sil.org/OFL). The OFL allows the fonts to be used, studied,
-modified and redistributed freely as long as they are not sold by themselves.
-For details see the OFL.txt and OFL-FAQ.txt files in the package.
-
-Full sources are included in this package. For information on the source
-formats or how the fonts are built see documentation/developer.html.
-
-## Acknowledgements
-
-(Here is where contributors can be acknowledged. If you make modifications
-be sure to add your name (N), email (E), web-address (W) and description
-(D). This list is sorted by last name in alphabetical order.)
-
-N: Walt Agee, Jon Coblentz, Sharon Correll, Lorna Evans, Victor Gaultney,
-Bob Hallissy, Martin Hosken, Jonathan Kew, Miriam Martin, Annie Olsen,
-Alan Ward
-E: https://software.sil.org/charis/about/contact/
-W: https://software.sil.org/charis/
-D: SIL designers and font engineers
-
-The Charis SIL project is maintained by SIL International, a global,
-faith-based nonprofit that works with local communities around the world
-to develop language solutions that expand possibilities for a better life.
-
-For more information or support please visit:
-https://software.sil.org/charis/
