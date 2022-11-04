@@ -32,22 +32,22 @@ $logFileName .= '.log';				# something like '/var/log/ttw/fonts2go.log'
 
 sub fontFileName
 {
-	# SIL's convention e.g. CharisSIL-Literacy-Regular.ttf, but we should handle other things.
+	# SIL's convention e.g. CharisSILLiteracy-Regular.ttf, but we should handle other things.
 	my ($oldFileName, $suffix) = @_;
 	$suffix = "TT" unless $suffix;
 	if ($oldFileName =~ /^(.+)-([^-]+)\.([ot]tf)$/io)
 	{
 		# New SIL convention:
-		return "$1-$suffix-$2.$3";
+		return "$1$suffix-$2.$3";
 	}
 	elsif ($oldFileName =~ /^(.+)\.([^.]+)$/o)
 	{
 		# General whatever.ext
-		return "$1-$suffix.$2";
+		return "$1$suffix.$2";
 	}
 	else
 	{
-		return "$oldFileName-$suffix";
+		return "$oldFileName$suffix";
 	}
 }
 
@@ -62,8 +62,9 @@ sub fontDirName
 	#		CharisSIL-1.408 -> CharisSIL-Suffix-1.408
 	#
 	my ($familytag, $suffix) = @_;
+	$suffix = "TT" unless $suffix;
 	my $dir = $familytag;
-	$dir =~ s/(-[0-9\.]+)?$/-$suffix$1/;
+	$dir =~ s/(-[0-9\.]+)?$/$suffix$1/;
 	return $dir;
 }
 	
@@ -465,7 +466,7 @@ elsif ($cgi->param('Get tuned font')) {
 		$file_name = fontDirName($familytag, $suffix);
 	}
 	else {
-		$file_name = fontDirName($familytag, 'tuned');
+		$file_name = fontDirName($familytag);
 	}
 	my $tunedDir = "$tempDir/$file_name";
 	mkdir "$tunedDir";
