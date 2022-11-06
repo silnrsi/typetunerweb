@@ -245,6 +245,7 @@ $ENV{'PATH'} = '/bin:/usr/bin';
 delete @ENV{'IFS', 'CDPATH', 'ENV', 'BASH_ENV'};
 
 my $featurelist;	# var to accumulate list of user-selected font features (for log file)
+my @fontTag;		# var to accumulate list of feature/value tags for selected features
 
 # These are global because they are referenced by XML parser:
 my %omittedfeatures = ();	# Hash of feature names that are to be completely omitted from the form
@@ -307,7 +308,8 @@ if ($cgi->param('pkg')) {
 	appendtemp("finished direct download");
 	rmtree($tempDir);
 	unlink "$tmpfilename";
-	exit;}
+	exit;
+}
 
 	
 ######################################################################
@@ -400,11 +402,12 @@ if ($cgi->param('Select features')) {
 	
 			
 
-if (0)   # 'Load settings' not yet implemented
-{
-	print
-		p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
-}
+	if (0)   # 'Load settings' not yet implemented
+	{
+		print
+			p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
+	}
+	
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_form,
@@ -456,32 +459,59 @@ elsif ($cgi->param('Get tuned font')) {
 	my $tempDir = tempdir("ttwXXXXX", DIR => $tmpDir);
 	appendtemp("tempdir = $tempDir");
 	
-	my $res = run_cmd("(cd $typeTunerDir; perl typetuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
-	my_die ("$res\n") if $res;
+	## Prior to 2022-11 we ran typtuner.pl to extract the original feature set:
+	# my $res = run_cmd("(cd $typeTunerDir; perl typetuner.pl -x $tempDir/$feat_set_orig \"$fontdir/$ttf\")");
+	# my_die ("$res\n") if $res;
+	## and then process that to create a settings file for this font. 
+	#
+	# However in the case that $suffix is empty we now want to synthesize the same "tag" that typetuner 
+	# would generate and use it as the suffix when building the font directory, zip and font file names 
+	# (still letting typetuner generate its own, possibly truncated, suffix for font names).
+	#
+	# So, instead we'll retrieve and parse the Silt table directly, and both (1) generate the settings file
+	# (albeit in $tempDir rather than its final destination) and (2) create the tuned font's "tag".
+
+	# Set typetuner -n option based on user-supplied suffix:
+	$suffixOpt = "-n \"$suffix\"" if ($suffix ne '');
+
+	# Extract complete features info from the Silt table. The following should
+	# not be able to fail as the Select Features step has already successfully run 
+	# typtuner on this font and processed the Silt table into a settings file.
+	my $ttf = ttflist($fontdir);
+	my $f = Font::TTF::Font->open("$fontdir/$ttf");
+	my $Silt = Compress::Zlib::memGunzip($f->{'Silt'}->read()->{' dat'});
+	$f->release;
+	appendtemp("Silt extracted.");
+
+	# create settings file as well as $featurelist (for log file) and synthesize @fontTag
+	open(SETTINGS, "> $tempDir/$feat_set_tuned");
+	my $parser = new XML::Parser::Expat;
+	$parser->setHandlers(
+		'Start' => \&sh_proc,
+		'End'   => \&eh_proc);
+	$parser->parse($Silt);
+	close(SETTINGS);
+	appendtemp("Settings file created");
+
+	# If user-supplied suffix is empty, replace it with synthesized font tag
+	if ($suffix eq '') {
+		$suffix = join('', @fontTag);
+		appendtemp("replacing empty suffix with '$suffix'");
+	}
 	
-	my $file_name;
+	my $file_name;  # This will be the name of the directory and the zip file
 	if ($suffix ne '') {
-		$suffixOpt = "-n \"$suffix\"";
 		$suffix =~ s/\s//g;
 		$file_name = fontDirName($familytag, $suffix);
-	}
-	else {
+	} else {
 		$file_name = fontDirName($familytag);
 	}
 	my $tunedDir = "$tempDir/$file_name";
 	mkdir "$tunedDir";
 	appendtemp("tunedDir = $tunedDir");
-	
-	# create the customized settings file
-	open(SETTINGS, "> $tunedDir/$feat_set_tuned");
-	my $parser = new XML::Parser::Expat;
-	$parser->setHandlers(
-		'Start' => \&sh_proc,
-		'End'   => \&eh_proc);
-	open(FH, "< $tempDir/$feat_set_orig") or my_die ("cannot open feature_set_org: $!\n");
-	$parser->parse(*FH);
-	close(FH);
-	close(SETTINGS);
+
+	# Move settings file into $tunedDir
+	rename "$tmpDir/$feat_set_tuned", "$tunedDir/$feat_set_tuned";
 	
 	# Ok, write to logfile and build the fonts:
 	appendlog($familytag, $featurelist);
@@ -735,11 +765,13 @@ sub eh_form
 	}
 }
 
+my ($featureTag, $newvalue);
+
 sub sh_proc
 {
 	my ($p, $el, %atts) = @_;
 
-	if ($el eq 'features_set') {
+	if ($el eq 'all_features') {
 		print SETTINGS <<__EOT__;
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE features_set SYSTEM "feat_set.dtd">
@@ -749,16 +781,26 @@ __EOT__
 
 	elsif ($el eq 'feature') {
 		my $featureName = $atts{'name'};
+		$featureTag = $atts{'tag'};
 		my $oldvalue = $atts{'value'};
-		my $newvalue = defined $cgi->param($featureName) ? $cgi->param($featureName) : $atts{'value'};
+		$newvalue = defined $cgi->param($featureName) ? $cgi->param($featureName) : $oldvalue;
 		print SETTINGS "\t<feature name=\"$featureName\" value=\"$newvalue\">\n";
 		if ($newvalue ne $oldvalue) {
 			$featurelist .= $featureName . (lc($newvalue) eq 'true' ? '; ' : " = $newvalue; ") ;
+		} else {
+			# signal that we don't need to add to font tag.
+			$newvalue = '' ;
 		}
 	}
 
 	elsif ($el eq 'value') {
-		print SETTINGS "\t\t<value name=\"$atts{'name'}\"/>\n";
+		my $valueName = $atts{'name'};
+		print SETTINGS "\t\t<value name=\"$valueName\"/>\n";
+		if ($valueName eq $newvalue) {
+			# Append to @fontTag
+			push @fontTag, "$featureTag$atts{'tag'}"
+		}
+
 	}
 }
 
@@ -774,6 +816,7 @@ sub eh_proc
 		print SETTINGS "\t</feature>\n";
 	}
 }
+
 
 # Retrieve 'family' and 'ver' varibles from CGI; detaint them and
 # determine the familytag value to be used. 
@@ -903,6 +946,6 @@ sub invalid_parameter {
 }	
 
 sub my_die {
-	appendtemp @_;
+	appendtemp(@_);
 	die @_;
 }
