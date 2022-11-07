@@ -512,7 +512,7 @@ elsif ($cgi->param('Get tuned font')) {
 	appendtemp("tunedDir = $tunedDir");
 
 	# Move settings file into $tunedDir
-	rename "$tmpDir/$feat_set_tuned", "$tunedDir/$feat_set_tuned";
+	rename "$tempDir/$feat_set_tuned", "$tunedDir/$feat_set_tuned";
 	
 	# Ok, write to logfile and build the fonts:
 	appendlog($familytag, $featurelist);
