@@ -2,6 +2,7 @@
 
 use strict;  
 use Cwd qw(cwd);
+use Font::TTF::Font;
 
 #
 # Customize these settings as needed for the host system
