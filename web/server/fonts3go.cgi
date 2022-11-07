@@ -809,7 +809,7 @@ sub eh_proc
 {
 	my ($p, $el) = @_;
 
-	if ($el eq 'features_set') {
+	if ($el eq 'all_features') {
 		print SETTINGS "</features_set>\n";
 	}
 
