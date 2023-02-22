@@ -7,17 +7,21 @@ Ruwudu is the Manga word for "writing". This style of writing is used by the Man
 
 Four weights for this typeface family are included:
 
-    - Ruwudu Regular
-    - Ruwudu Medium
-    - Ruwudu SemiBold
-    - Ruwudu Bold
+- Ruwudu Regular
+- Ruwudu Medium
+- Ruwudu SemiBold
+- Ruwudu Bold
 
 ## Type Samples
 
 Type samples showing some of the inventory of glyphs can be found here: 
 [Ruwudu Type Sample](sample.md).
 
-An example of some text is shown below. 
+Examples of some text is shown below. 
+
+![Ruwudu Sample - Four weights](assets/images/weights.png){.fullsize}
+<!-- PRODUCT SITE IMAGE SRC https://software.sil.org/ruwudu/wp-content/uploads/sites/62/2023/02/weights.png -->
+<figcaption>Ruwudu Sample - Four weights</figcaption>
 
 ![Ruwudu Sample - Genesis 11](assets/images/RuwuduGen11-BoldRegular.png){.fullsize}
 <!-- PRODUCT SITE IMAGE SRC https://software.sil.org/ruwudu/wp-content/uploads/sites/62/2023/02/RuwuduGen11-BoldRegular.png -->

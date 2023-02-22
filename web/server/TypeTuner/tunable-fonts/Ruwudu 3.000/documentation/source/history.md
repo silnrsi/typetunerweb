@@ -3,7 +3,7 @@ title: Ruwudu - Version History
 fontversion: 3.000
 ---
 
-### 2023-02-23 (WSTech team) Ruwudu Version 3.000
+### 2023-02-22 (WSTech team) Ruwudu Version 3.000
 #### New
 - Added 3 weights — Medium, SemiBold, and Bold
 - Added OpenType language support for Hausa
