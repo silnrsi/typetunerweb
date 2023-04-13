@@ -87,7 +87,7 @@ Standard | <span dir="rtl" class='lateef-R normal'>&#x06be;&#x0020;&#x06be;&#x06
 Knotted | <span dir="rtl" class='lateef-R normal' style='font-feature-settings: "cv49" 1'>&#x06be;&#x0020;&#x06be;&#x06be;&#x06be;</span>| `cv49=1`
 Kurdish-style | <span dir="rtl" class='lateef-R normal' style='font-feature-settings: "cv49" 3'>&#x06be;&#x0020;&#x06be;&#x06be;&#x06be;</span>| `cv49=3`
 
-#### Kirghiz OE 
+#### Kyrgyz OE 
 
 <span class='affects'>Affects: U+06C5</span>
 
@@ -246,7 +246,7 @@ Slash | <span dir="rtl" class='lateef-R normal' style='font-feature-settings: "c
 
 #### Disable digit kerning (see FAQ) &#x2014; TypeTuner-only
 
-<span class='affects'>The Arabic digits are proportional by default and Lateef includes kerning to improve the spacing of certain pairs of digits such as &#x0667;&#x0668;. However there are some applications, including Microsoft Word for Windows, that process the digit kerning information incorrectly, actually making some digits too far apart and some too close together. We have added a special Typetuner feature that can be used create a version of the Lateef fonts in which the digit kerning is _disabled_. When using those fonts in Microsoft Word the resulting digit spacing will be much nicer than Tabular, but not quite as good as it would be if the application's kerning worked correctly. This is discussed further in the [FAQ](faq.md).</span>
+<span class='affects'>The Arabic digits are proportional by default and Lateef includes kerning to improve the spacing of certain pairs of digits such as &#x0667;&#x0668;. However there are some applications, including Microsoft Word for Windows, that process the digit kerning information incorrectly, actually making some digits too far apart and some too close together. We have added a special Typetuner feature that can be used to create a version of the Lateef fonts in which the digit kerning is _disabled_. When using those fonts in Microsoft Word the resulting digit spacing will be much nicer than Tabular, but not quite as good as it would be if the application's kerning worked correctly. This is discussed further in the [FAQ](faq.md).</span>
 
 <!-- PRODUCT SITE ONLY
 [font id='lateef' face='Lateef-Regular' bold='Lateef-Bold' size='160%' rtl=1]
