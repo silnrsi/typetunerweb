@@ -68,12 +68,16 @@ sub fontDirName
 	$dir =~ s/(-[0-9\.]+)?$/$suffix$1/;
 	return $dir;
 }
-	
+
+my $self_full_url = url();
+my $scripts_base_url = "//scripts.sil.org/cms";
+my $scripts_pages = "$scripts_base_url/scripts/page.php?site_id=nrsi";
+my $scripts_theme = "$scripts_base_url/sites/nrsi/themes/default";
 # Below are literals to override style info -- these are set to match scripts.sil.org as of Jan 2011
 
 my $dtd = "-//W3C//DTD HTML 4.01 Transitional//EN";
 
-my $css = "../cms/sites/nrsi/themes/default/_css/default.css";
+my $css = "$scripts_theme/_css/default.css";
 
 my $style_verbatim = <<'EOF' ;
 
@@ -89,76 +93,76 @@ A.GlobalNavLink, A.GlobalNavLink:visited {
 
 EOF
 
-my $preamble = <<'EOF' ;
+my $preamble = <<"EOF" ;
 
 <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td style="background: #0068a6; padding-left:20; padding-top:10; white-space:nowrap;" width="110" valign="top">
-		<p><a href="http://www.sil.org/"><img src="../cms/sites/nrsi/themes/default/_media/SIL_Logo_TM_Blue_2014.png" width="85" height="95" border="0"></a><br><br></p>
-    	<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Home">Home</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ContactUs">Contact Us</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=General">General</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Babel">Initiative B@bel</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=WSI_Guidelines">WSI Guidelines</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Encoding">Encoding</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=EncodingPrinciples">Principles</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Unicode">Unicode</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=UnicodeTraining">Training</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=UnicodeTutorials">Tutorials</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=UnicodePUA">PUA</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Conversion">Conversion</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=EncConvRes">Resources</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ConversionUtilities">Utilities</a></p>
-<p class="Cat4"><a class="Cat4" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TECkit">TECkit</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=ConversionMaps">Maps</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=EncodingResources">Resources</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Input">Input</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputPrinciples">Principles</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputUtilities">Utilities</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputTutorials">Tutorials</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=InputResources">Resources</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TypeDesign">Type Design</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TypeDesignPrinciples">Principles</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDesignTools">Design Tools</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontFormats">Formats</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=TypeDesignResources">Resources</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloads">Font Downloads</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloadsGentium">Gentium</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloadsDoulos">Doulos</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontDownloadsIPA">IPA</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Rendering">Rendering</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingPrinciples">Principles</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingTechnologies">Technologies</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingOpenType">OpenType</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingGraphite">Graphite</a></p>
-<p class="Cat2"><a class="Cat2" href="../cms/scripts/page.php?site_id=nrsi&cat_id=RenderingResources">Resources</a></p>
-<p class="Cat3"><a class="Cat3" href="../cms/scripts/page.php?site_id=nrsi&cat_id=FontFAQ">Font FAQ</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Links">Links</a></p>
-<p class="Cat1"><a class="Cat1" href="../cms/scripts/page.php?site_id=nrsi&cat_id=Glossary">Glossary</a></p>
+		<p><a href="https://www.sil.org/"><img src="$scripts_theme/_media/SIL_Logo_TM_Blue_2014.png" width="85" height="95" border="0"></a><br><br></p>
+    	<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=Home">Home</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=ContactUs">Contact Us</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=General">General</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=Babel">Initiative B\@bel</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=WSI_Guidelines">WSI Guidelines</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=Encoding">Encoding</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=EncodingPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=Unicode">Unicode</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=UnicodeTraining">Training</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=UnicodeTutorials">Tutorials</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=UnicodePUA">PUA</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=Conversion">Conversion</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=EncConvRes">Resources</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=ConversionUtilities">Utilities</a></p>
+<p class="Cat4"><a class="Cat4" href="$scripts_pages&cat_id=TECkit">TECkit</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=ConversionMaps">Maps</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=EncodingResources">Resources</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=Input">Input</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=InputPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=InputUtilities">Utilities</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=InputTutorials">Tutorials</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=InputResources">Resources</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=TypeDesign">Type Design</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=TypeDesignPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=FontDesignTools">Design Tools</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=FontFormats">Formats</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=TypeDesignResources">Resources</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=FontDownloads">Font Downloads</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=FontDownloadsGentium">Gentium</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=FontDownloadsDoulos">Doulos</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=FontDownloadsIPA">IPA</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=Rendering">Rendering</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=RenderingPrinciples">Principles</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=RenderingTechnologies">Technologies</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=RenderingOpenType">OpenType</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=RenderingGraphite">Graphite</a></p>
+<p class="Cat2"><a class="Cat2" href="$scripts_pages&cat_id=RenderingResources">Resources</a></p>
+<p class="Cat3"><a class="Cat3" href="$scripts_pages&cat_id=FontFAQ">Font FAQ</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=Links">Links</a></p>
+<p class="Cat1"><a class="Cat1" href="$scripts_pages&cat_id=Glossary">Glossary</a></p>
 
     	<br>
 	</td>
 
     <td valign="top" style="padding:0" xwidth="650">
-		<div style="background: #6699CC url(../cms/sites/nrsi/themes/default/_media/home_banner_gradient.gif) no-repeat right; padding:0 0 0 25; height:36px; margin:0; color:#FFFFFF;">
+		<div style="background: #6699CC url($scripts_theme/_media/home_banner_gradient.gif) no-repeat right; padding:0 0 0 25; height:36px; margin:0; color:#FFFFFF;">
 			<p style="font-family:Times New Roman; font-size:25px; color:#FFFFFF; padding:10 0 0 0; margin:0 0 0 0">NRSI: Computers & Writing Systems</p>
 		</div>
 		<div style="padding:0 0 0 0; background-color:#000000; color:#FFFFFF">
 			<table width='100%'>
 				<tr>
-					<td style="padding: 0 0 0 25px"><a class="GlobalNavLink" href="http://www.sil.org/">SIL HOME</a>
-							| <a class="GlobalNavLink" href="http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&cat_id=ContactUs">CONTACT US</a>
+					<td style="padding: 0 0 0 25px"><a class="GlobalNavLink" href="https://www.sil.org/">SIL HOME</a>
+							| <a class="GlobalNavLink" href="$scripts_pages&cat_id=ContactUs">CONTACT US</a>
 					</td>
 					<td align='right'>
-						<p><!-- RegionBegin: region_type='SearchForm' id='e3c92b87' --><form action='../cms/scripts/page.php?site_id=nrsi' method='POST' name='search_form'><input style='font-size:9' maxlength='200' name='search_query' size='30' value=''/> <input style='font-size:9' type='submit' value='Search'/></form><!-- RegionEnd: region_type='SearchForm' id='e3c92b87' --></p>
+						<p><!-- RegionBegin: region_type='SearchForm' id='e3c92b87' --><form action='$scripts_pages' method='POST' name='search_form'><input style='font-size:9' maxlength='200' name='search_query' size='30' value=''/> <input style='font-size:9' type='submit' value='Search'/></form><!-- RegionEnd: region_type='SearchForm' id='e3c92b87' --></p>
 					</td>
 				</tr>
 			</table>
 		</div>
 
 		<div style="padding:0 25 25 25">
-			<p class='CategoryPath'>You are here: <a class='CategoryPath' href='http://scripts.sil.org/ttw/fonts2go.cgi'>TypeTuner Web</a><br>
-			Short URL: <a href='http://scripts.sil.org/ttw/fonts2go.cgi'>http://scripts.sil.org/ttw/fonts2go.cgi</a></p>
+			<p class='CategoryPath'>You are here: <a class='CategoryPath' href='$self_full_url'>TypeTuner Web</a><br>
+			Short URL: <a href='$self_full_url'>$self_full_url</a></p>
 
 <!-- Begin TypeTuner Info -->
 
