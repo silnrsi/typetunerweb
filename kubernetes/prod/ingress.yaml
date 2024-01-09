@@ -2,10 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: typetunerweb
-  namespace: wstech
 spec:
   rules:
-  - host: typetuner.languagetechnology.org
+  - host: typetunerweb.languagetechnology.org
     http:
       paths:
       - path: /ttw
