@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
 FROM alpine
+LABEL org.opencontainers.image.source=https://github.com/silnrsi/typetunerweb
+LABEL org.opencontainers.image.description="TypeTunerWeb for customising default OpenType features on selected fonts"
+LABEL org.opencontainers.image.licenses=MIT
 COPY --link web/server/fonts?go.cgi /var/www/typetunerweb/web/server/
 COPY --link web/server/TypeTuner/typetuner.pl /var/www/typetunerweb/web/server/TypeTuner/
 VOLUME /tunable-fonts
