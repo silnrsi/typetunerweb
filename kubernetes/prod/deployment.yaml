@@ -11,6 +11,8 @@ spec:
     type: Recreate
   template:
     metadata:
+      labels:
+        app: typetunerweb
       name: typetunerweb
     spec:
       restartPolicy: Always
