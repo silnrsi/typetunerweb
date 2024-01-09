@@ -36,7 +36,7 @@ spec:
 
         - name: app
           image: ghcr.io/silnrsi/typetunerweb:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 9000
               name: fastcgi
