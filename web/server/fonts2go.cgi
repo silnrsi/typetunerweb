@@ -68,7 +68,7 @@ sub fontDirName
 	return $dir;
 }
 
-my $self_full_url = url();
+my $self_full_url = "https://scripts.sil.org/ttw/fonts2go.cgi"; # url();
 my $scripts_base_url = "//scripts.sil.org/cms";
 my $scripts_pages = "$scripts_base_url/scripts/page.php?site_id=nrsi";
 my $scripts_theme = "$scripts_base_url/sites/nrsi/themes/default";
