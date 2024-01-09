@@ -405,11 +405,11 @@ if ($cgi->param('Select features')) {
 	
 			
 
-if (0)   # 'Load settings' not yet implemented
-{
-	print
-		p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
-}
+	if (0)   # 'Load settings' not yet implemented
+	{
+		print
+			p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
+	}
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_form,

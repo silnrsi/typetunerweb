@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 FROM alpine
-COPY --link docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --link web/server/fonts?go.cgi /var/www/typetunerweb/web/server/
 COPY --link web/server/TypeTuner/typetuner.pl /var/www/typetunerweb/web/server/TypeTuner/
 VOLUME /tunable-fonts
@@ -12,7 +11,6 @@ RUN --mount=type=cache,target=/var/cache/apk,sharing=private \
     apk upgrade
     apk --no-cache add fcgiwrap \
         perl-font-ttf perl-xml-parser perl-cgi zip
-    adduser nginx www-data
     mkdir /var/log/ttw
     ln -s /tunable-fonts /var/www/typetunerweb/web/server/TypeTuner/
     ln -s /var/www/typetunerweb/web/server /var/www/ttw
