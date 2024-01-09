@@ -1,0 +1,8 @@
+resources:
+- ../prod
+patches:
+- target:
+    version: v1
+    kind: Service
+    name: typetunerweb
+  path: nodeport_service.yaml

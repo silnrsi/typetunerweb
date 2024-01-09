@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typetunerweb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: typetunerweb
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: sync-tunable-fonts-repo
+          image: registry.k8s.io/git-sync/git-sync:v4.1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - '--repo=https://github.com/silnrsi/typetunerweb'
+            - '--depth=1'
+            - '--root=/mnt'
+            - '--period=10m'
+          volumeMounts:
+            - mountPath: /mnt
+              name: typetuner-repo
+          resources: &git-sync-resources
+            requests:
+              memory: "128Mi"
+            limits:
+              memory: "128Mi"
+
+        - name: app
+          image: ghcr.io/silnrsi/typetunerweb:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+              name: fastcgi
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /tunable-fonts
+              name: typetuner-repo
+              subPath: typetunerweb/web/server/TypeTuner/tunable-fonts
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+            limits:
+              memory: "64Mi"
+
+        - name: proxy
+          image: nginx:mainline-alpine-slim
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d
+            readOnly: true
+          resources:
+            requests:
+              memory: "24Mi"
+            limits:
+              memory: "24Mi"
+      initContainers:
+        - name: sync-init-tunable-fonts-repo
+          image: registry.k8s.io/git-sync/git-sync:v4.1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - '--repo=https://github.com/silnrsi/typetunerweb'
+            - '--one-time'
+            - '--depth=1'
+            - '--root=/mnt'
+            - '--period=10m'
+          volumeMounts:
+            - mountPath: /mnt
+              name: typetuner-repo
+          resources: *git-sync-resources
+
+      volumes:
+        - name: typetuner-repo
+          emptyDir:
+            sizeLimit: 500Mi
+        - name: nginx-config
+          configMap:
+            name: typetunerweb
+            items:
+            - key: nginx.default.conf
+              path: default.conf
+              mode: 420
