@@ -4,6 +4,9 @@ metadata:
   name: typetunerweb
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: typetunerweb
   strategy:
     type: Recreate
   template:
