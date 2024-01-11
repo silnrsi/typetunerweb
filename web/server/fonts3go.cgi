@@ -154,7 +154,9 @@ my $preamble = <<"EOF" ;
 							| <a class="GlobalNavLink" href="$scripts_pages&cat_id=ContactUs">CONTACT US</a>
 					</td>
 					<td align='right'>
-						<p><!-- RegionBegin: region_type='SearchForm' id='e3c92b87' --><form action='$scripts_pages' method='POST' name='search_form'><input style='font-size:9' maxlength='200' name='search_query' size='30' value=''/> <input style='font-size:9' type='submit' value='Search'/></form><!-- RegionEnd: region_type='SearchForm' id='e3c92b87' --></p>
+						<script async src="https://cse.google.com/cse.js?cx=0760bf09a6bff4b0c"></script>
+                    	<style>.gsc-control-cse {padding: 0.6em; min-width: 10em; width: 18em; max-width: 20em} form.gsc-search-box {display: unset;}</style>
+                    	<div class="gcse-search"></div>
 					</td>
 				</tr>
 			</table>
