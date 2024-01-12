@@ -2,6 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: typetunerweb
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: FCGI
+    nginx.ingress.kubernetes.io/configuration-snippet: |-
+      fastcgi_param DOCUMENT_ROOT /var/www/;
+      fastcgi_param SERVER_NAME $http_host;
+    nginx.ingress.kubernetes.io/fastcgi-index: fonts3go.cgi
 spec:
   rules:
   - host: typetunerweb.languagetechnology.org
@@ -13,4 +19,4 @@ spec:
           service:
             name: typetunerweb
             port:
-              name: http
+              name: fastcgi
