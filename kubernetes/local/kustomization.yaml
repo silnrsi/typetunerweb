@@ -1,5 +1,10 @@
 resources:
 - ../prod
+configMapGenerator:
+- name: typetunerweb
+  namespace: wstech
+  files:
+  - nginx.default.conf
 patches:
 - target:
     version: v1
@@ -12,3 +17,4 @@ patches:
     kind: Deployment
     name: typetunerweb
   path: patch_image_pull.yaml
+- path: patch_in_proxy.yaml

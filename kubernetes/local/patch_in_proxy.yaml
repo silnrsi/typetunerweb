@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typetunerweb
+spec:
+  template:
+    spec:
+      containers:
+        - name: proxy
+          image: nginx:mainline-alpine-slim
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d
+            readOnly: true
+          resources:
+            requests:
+              memory: "24Mi"
+            limits:
+              memory: "24Mi"
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: typetunerweb
+            items:
+            - key: nginx.default.conf
+              path: default.conf
+              mode: 420
