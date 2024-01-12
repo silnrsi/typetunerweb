@@ -6,8 +6,6 @@ metadata:
   name: typetunerweb
 spec:
   ports:
-  - name: http
-    port: 80
   - name: fastcgi
     port: 9000
     protocol: TCP

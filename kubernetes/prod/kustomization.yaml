@@ -5,10 +5,5 @@ resources:
 - deployment.yaml
 - service.yaml
 - ingress.yaml
-configMapGenerator:
-- name: typetunerweb
-  namespace: wstech
-  files:
-  - nginx.default.conf
 generatorOptions:
   disableNameSuffixHash: true

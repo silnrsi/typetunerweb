@@ -52,22 +52,6 @@ spec:
             limits:
               memory: "64Mi"
 
-        - name: proxy
-          image: nginx:mainline-alpine-slim
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 80
-              name: http
-              protocol: TCP
-          volumeMounts:
-          - name: nginx-config
-            mountPath: /etc/nginx/conf.d
-            readOnly: true
-          resources:
-            requests:
-              memory: "24Mi"
-            limits:
-              memory: "24Mi"
       initContainers:
         - name: sync-init-tunable-fonts-repo
           image: registry.k8s.io/git-sync/git-sync:v4.1.0
@@ -87,10 +71,3 @@ spec:
         - name: typetuner-repo
           emptyDir:
             sizeLimit: 500Mi
-        - name: nginx-config
-          configMap:
-            name: typetunerweb
-            items:
-            - key: nginx.default.conf
-              path: default.conf
-              mode: 420
