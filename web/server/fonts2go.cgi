@@ -302,7 +302,7 @@ if ($cgi->param('pkg')) {
 	mkdir "$tunedDir";
 
 	# link in the settings file for this package
-	link("$fontdir/.packages/$settingsFile", "$tunedDir/$feat_set_tuned") or my_die ("Unable to link settings file: $!\n");
+	symlink("$fontdir/.packages/$settingsFile", "$tunedDir/$feat_set_tuned") or my_die ("Unable to link settings file: $!\n");
 	
 	# Ok, write to logfile and build the fonts:
 	appendlog($familytag, "pkg $pkg = $settingsFile");
