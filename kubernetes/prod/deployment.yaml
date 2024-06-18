@@ -43,13 +43,20 @@ spec:
           volumeMounts:
             - mountPath: /tunable-fonts
               name: typetuner-repo
-              subPath: typetunerweb/web/server/TypeTuner/tunable-fonts
               readOnly: true
           resources:
             requests:
               memory: "64Mi"
             limits:
               memory: "64Mi"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - '/bin/ln'
+                - '-sf'
+                - '/tunable-fonts/typetunerweb/web/server/TypeTuner/tunable-fonts'
+                - '/var/www/typetunerweb/web/server/TypeTuner/'
 
       initContainers:
         - name: sync-init-tunable-fonts-repo
