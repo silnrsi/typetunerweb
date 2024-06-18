@@ -29,10 +29,9 @@ spec:
             - mountPath: /mnt
               name: typetuner-repo
           resources: &git-sync-resources
-            requests:
+            requests: &guarenteed
               memory: "128Mi"
-            limits:
-              memory: "128Mi"
+            limits: *guarenteed
 
         - name: app
           image: ghcr.io/silnrsi/typetunerweb:latest
