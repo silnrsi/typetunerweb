@@ -53,25 +53,23 @@ spec:
             postStart:
               exec:
                 command:
-                - '/bin/ln'
-                - '-sf'
-                - '/tunable-fonts/typetunerweb/web/server/TypeTuner/tunable-fonts'
-                - '/var/www/typetunerweb/web/server/TypeTuner/'
-
-      initContainers:
-        - name: sync-init-tunable-fonts-repo
-          image: registry.k8s.io/git-sync/git-sync:v4.1.0
-          imagePullPolicy: IfNotPresent
-          args:
-            - '--repo=https://github.com/silnrsi/typetunerweb'
-            - '--one-time'
-            - '--depth=1'
-            - '--root=/mnt'
-            - '--period=10m'
-          volumeMounts:
-            - mountPath: /mnt
-              name: typetuner-repo
-          resources: *git-sync-resources
+                - /bin/ln
+                - -sf
+                - /tunable-fonts/typetunerweb/web/server/TypeTuner/tunable-fonts
+                - /var/www/typetunerweb/web/server/TypeTuner/
+          startupProbe:
+            exec:
+              command:
+              - /usr/bin/test
+              - -d
+              - /tunable-fonts/typetunerweb/web/server/TypeTuner/tunable-fonts/.
+            periodSeconds: 10
+            failureThreshold: 7
+          livenessProbe:
+            tcpSocket:
+              port: fastcgi
+            periodSeconds: 5
+            failureThreshold: 2
 
       volumes:
         - name: typetuner-repo
