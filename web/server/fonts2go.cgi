@@ -412,6 +412,7 @@ if ($cgi->param('Select features')) {
 		print
 			p('Existing font:', filefield(-name => 'load_settings'), submit('Load settings'));
 	}
+
 	my $parser = new XML::Parser::Expat;
 	$parser->setHandlers(
 		'Start' => \&sh_form,
@@ -471,8 +472,7 @@ elsif ($cgi->param('Get tuned font')) {
 		$suffixOpt = "-n \"$suffix\"";
 		$suffix =~ s/\s//g;
 		$file_name = fontDirName($familytag, $suffix);
-	}
-	else {
+	} else {
 		$file_name = fontDirName($familytag);
 	}
 	my $tunedDir = "$tempDir/$file_name";

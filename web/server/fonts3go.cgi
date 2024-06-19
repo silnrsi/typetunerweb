@@ -807,7 +807,6 @@ __EOT__
 			# Append to @fontTag
 			push @fontTag, "$featureTag$atts{'tag'}"
 		}
-
 	}
 }
 
@@ -823,7 +822,6 @@ sub eh_proc
 		print SETTINGS "\t</feature>\n";
 	}
 }
-
 
 # Retrieve 'family' and 'ver' varibles from CGI; detaint them and
 # determine the familytag value to be used. 
