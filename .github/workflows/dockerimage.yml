@@ -1,7 +1,7 @@
 name: Build Docker fastcgi image
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
     paths-ignore:
     - kubernetes/**
     - web/server/TypeTuner/tunable-fonts/**
