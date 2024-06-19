@@ -665,7 +665,7 @@ sub buildfonts{
 			{
 				# anything else is just linked in.
 				appendtemp ("linking '$_'");
-				link "$fontdir/$subdir/$_", "$tunedDir/$subdir/$_";
+				symlink "$fontdir/$subdir/$_", "$tunedDir/$subdir/$_";
 			}
 		}
 		closedir(DIR);	
