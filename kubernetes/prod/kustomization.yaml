@@ -1,0 +1,9 @@
+namespace: wstech
+commonLabels:
+  app: typetunerweb
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+generatorOptions:
+  disableNameSuffixHash: true

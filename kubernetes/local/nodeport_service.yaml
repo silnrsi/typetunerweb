@@ -1,0 +1,12 @@
+- op: add
+  path: /spec/type
+  value: NodePort
+- op: add
+  path: /spec/ports/0/nodePort
+  value: 30080
+- op: replace
+  path: /spec/ports/0/port
+  value: 80
+- op: replace
+  path: /spec/ports/0/name
+  value: http

@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typetunerweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typetunerweb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: typetunerweb
+      name: typetunerweb
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: sync-tunable-fonts-repo
+          image: registry.k8s.io/git-sync/git-sync:v4.1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - '--repo=https://github.com/silnrsi/typetunerweb'
+            - '--depth=1'
+            - '--root=/mnt'
+            - '--period=10m'
+          volumeMounts:
+            - mountPath: /mnt
+              name: typetuner-repo
+          resources: &git-sync-resources
+            requests: &guarenteed
+              memory: "128Mi"
+            limits: *guarenteed
+
+        - name: app
+          image: ghcr.io/silnrsi/typetunerweb:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+              name: fastcgi
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /tunable-fonts
+              name: typetuner-repo
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+            limits:
+              memory: "64Mi"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - /bin/ln
+                - -sf
+                - /tunable-fonts/typetunerweb/web/server/TypeTuner/tunable-fonts
+                - /var/www/typetunerweb/web/server/TypeTuner/
+          startupProbe:
+            exec:
+              command:
+              - /usr/bin/test
+              - -d
+              - /tunable-fonts/typetunerweb/web/server/TypeTuner/tunable-fonts/.
+            periodSeconds: 10
+            failureThreshold: 7
+          livenessProbe:
+            tcpSocket:
+              port: fastcgi
+            periodSeconds: 5
+            failureThreshold: 2
+
+      volumes:
+        - name: typetuner-repo
+          emptyDir:
+            sizeLimit: 500Mi

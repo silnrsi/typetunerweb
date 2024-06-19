@@ -110,7 +110,7 @@ etc...
   -- subfolder containing TypeTuner control files for preconfigured packages,
      thus making it possible to easily specify a URL that is a direct download
      of the specific configuration. For example, a file by the name:
-        .../cms/TypeTuner/tunable-fonts/Charis SIL/.packages/Literacy Compact
+        .https://scripts.sil.org/cms/TypeTuner/tunable-fonts/Charis SIL/.packages/Literacy Compact
      might contain the Typetuner control information for selecting the Literacy
      alternates and Tight line spacing, and thus the following URL would be a
      direct download link for that package:
