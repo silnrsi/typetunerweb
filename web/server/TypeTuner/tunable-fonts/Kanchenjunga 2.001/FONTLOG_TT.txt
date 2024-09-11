@@ -1,0 +1,85 @@
+﻿FONTLOG
+Kanchenjunga
+===================
+
+
+This file provides detailed information on the Kanchenjunga font.
+This information should be distributed along with the Kanchenjunga font and
+any derivative works.
+
+
+Basic Font Information
+----------------------
+
+Kanchenjunga is a font family for the Kirat Rai script of South Asia. It is named after the third highest mountain in the world.
+
+A Note Regarding the Open Font License and TypeTuner
+----------------------------------------------------
+
+The OFL prohibits the use of Reserved Font Names "Kanchenjunga" and "SIL" in
+the name of any font that is derived from the Original Version of 
+Kanchenjunga. However, SIL International (the Copyright Holder) grants 
+through this separate written agreement the right to use the Reserved Font
+Names in any Modified Version of this font created by using TypeTuner as 
+long as the feature information contained in the Original Version is used, 
+unmodified, as the source for TypeTuner feature information, and 
+"Kanchenjunga" is not the resulting font family name.
+
+TypeTuner-produced fonts created in this manner are still bound by the
+terms of the OFL. Specifically, the use of Reserved Font Names is
+prohibited when making derivatives of a TypeTuner-produced font. Anyone
+making a derivative of a TypeTuner font will need to find a different
+name. For example a TypeTuner-produced font may be named 
+"Kanchenjunga SomeFarAwayPlace" but a derivative of that font made 
+with other tools would not be allowed to use the "Kanchenjunga" and "SIL" 
+Reserved Font Names and would have to be named something like "Sikkim Kirat Rai".
+
+
+ChangeLog
+---------
+(This should list both major and minor changes, most recent first.)
+
+%DATE% (SIL TypeTuner) Tuned version of Kanchenjunga Version 2.001
+- Tuned and delivered by SIL TypeTuner 
+(https://scripts.sil.org/ttw/fonts2go.cgi).
+- See included xml file for details of feature changes.
+
+### 11 Sep 2024 (WSTech team) Kanchenjunga Version 2.001 
+- Updated documentation to indicate Unicode 16.0 support for the script
+
+### 10 Sep 2024 (WSTech team) Kanchenjunga Version 2.000 
+- Official release of Regular, Medium, SemiBold, and Bold using official Unicode codepoints
+- Added support for TypeTuner
+
+### 02 Aug 2023 (WSTech team) Kanchenjunga Version 1.000 
+- Official release of Regular and Bold using provisional codepoints
+- Latin glyphs reimported from the Andika project (400 and 600 weight) at 100%
+
+### 29 Apr 2022 (WSTech team) Kanchenjunga Test A version 0.200 (test release)
+- All Kirat Rai characters were added
+
+### 7 Sep 2021 (WSTech team) Kanchenjunga Test A version 0.100
+- New public repository and open source build workflow
+- Latin glyphs imported from the Andika project
+
+
+Acknowledgements
+----------------
+(Here is where contributors can be acknowledged. If you make modifications
+be sure to add your name (N), email (E), web-address (W) and description
+(D). This list is sorted by last name in alphabetical order.)
+
+N: Becca Spalinger
+E: fonts@sil.org
+W: https://software.sil.org/kanchenjunga
+D: Font design
+
+N: Lorna Evans
+E: fonts@sil.org
+W: https://software.sil.org/kanchenjunga
+D: Font production
+
+
+The Kanchenjunga project is maintained by SIL International.
+
+For more information please visit SIL International's website: https://software.sil.org/fonts/
