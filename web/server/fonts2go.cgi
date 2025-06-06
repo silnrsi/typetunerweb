@@ -242,7 +242,7 @@ foreach my $dir (sort readdir(DIR)) {
 		or (-f "$tunableFontsDir/$dir/.test" && !$devmode);
 	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent non-hidden version.
 	$uiFamilies{$family} = $familytag;
-	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE; 
+	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE && not defined $defaultFamily;
 }
 closedir(DIR);
 
