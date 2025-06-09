@@ -13,7 +13,7 @@ my $logDir = '/var/log';
 my $tmpDir = '/tmp';
 
 my $title = 'TypeTuner Web';
-my $defaultFamilyRE = qr/^Charis/o;
+my $defaultFamilyRE = qr/^Charis\s+(?!SIL)/o;
 my $permittedHelpSites = qr'^(software|scripts)\.sil\.org/'oi;
 
 my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
@@ -242,7 +242,7 @@ foreach my $dir (sort readdir(DIR)) {
 		or (-f "$tunableFontsDir/$dir/.test" && !$devmode);
 	# Keep a mapping of family -> familytag of the families we present in the UI, i.e., just the most recent non-hidden version.
 	$uiFamilies{$family} = $familytag;
-	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE && not defined $defaultFamily;
+	$defaultFamily = $familytag if $dir =~ $defaultFamilyRE;
 }
 closedir(DIR);
 
