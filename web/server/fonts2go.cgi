@@ -13,7 +13,7 @@ my $logDir = '/var/log';
 my $tmpDir = '/tmp';
 
 my $title = 'TypeTuner Web';
-my $defaultFamilyRE = qr/^Charis\s+(?!SIL)/o;
+my $defaultFamilyRE = qr/^Charis\s+[0-9\.]+$/o;
 my $permittedHelpSites = qr'^(software|scripts)\.sil\.org/'oi;
 
 my $cgiPathName = $0;     			# $0 will be something like '/Volumes/Data/Web/NRSI/scripts.sil.org/cms/ttw/fonts2go.cgi'
