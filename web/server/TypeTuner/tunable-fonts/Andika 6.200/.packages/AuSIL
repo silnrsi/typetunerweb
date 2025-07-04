@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE features_set SYSTEM "feat_set.dtd">
+<features_set version="1.0">
+	<feature name="Lowercase q" value="pointed"/>
+	<feature name="Capital Q" value="Crossing tail"/>
+	<feature name="Lowercase y" value="Standard (curved tail)"/>
+	<feature name="Lowercase j" value="Standard (no top serif)"/>
+	<feature name="Capital J" value="Standard (no top bar)"/>
+	<feature name="Lowercase i" value="Curved tail"/>
+	<feature name="Lowercase l" value="Curved tail"/>
+	<feature name="Lowercase t" value="Standard (curved tail)"/>
+	<feature name="One" value="No base serif"/>
+	<feature name="Six and Nine" value="Diagonal stems"/>
+	<feature name="Four" value="Open top"/>
+	<feature name="Capital Eng" value="Capital form"/>
+</features_set>
