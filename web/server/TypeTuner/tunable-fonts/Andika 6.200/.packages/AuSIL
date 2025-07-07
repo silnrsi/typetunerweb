@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE features_set SYSTEM "feat_set.dtd">
 <features_set version="1.0">
-	<feature name="Lowercase q" value="pointed"/>
+	<feature name="Lowercase q" value="Pointed"/>
 	<feature name="Capital Q" value="Crossing tail"/>
 	<feature name="Lowercase y" value="Standard (curved tail)"/>
 	<feature name="Lowercase j" value="Standard (no top serif)"/>
