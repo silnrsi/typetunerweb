@@ -48,7 +48,7 @@ spec:
             requests:
               memory: "64Mi"
             limits:
-              memory: "64Mi"
+              memory: "128Mi"
           lifecycle:
             postStart:
               exec:
