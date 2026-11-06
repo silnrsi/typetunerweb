@@ -30,7 +30,7 @@ spec:
               name: typetuner-repo
           resources: &git-sync-resources
             requests: &guarenteed
-              memory: "128Mi"
+              memory: "512Mi"
             limits: *guarenteed
 
         - name: app
